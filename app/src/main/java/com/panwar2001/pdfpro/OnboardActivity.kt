@@ -1,5 +1,6 @@
 package com.panwar2001.pdfpro
 //icons: https://fonts.google.com/icons
+import android.content.Intent
 import android.content.res.Configuration
 import android.os.Bundle
 import androidx.activity.ComponentActivity
@@ -26,6 +27,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalConfiguration
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
@@ -70,10 +72,11 @@ fun HandleOrientationChanges() {
 
 @Composable
 fun CommonLayout( modifier:Modifier = Modifier) {
+    val context = LocalContext.current
     Scaffold(
         floatingActionButton = {
             LargeFloatingActionButton(
-                onClick = { },
+                onClick = {context.startActivity(Intent(context,MainScreen::class.java)) },
                 shape = CircleShape,
                 containerColor = Color.White,
             ) {

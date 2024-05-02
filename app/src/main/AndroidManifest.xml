@@ -13,19 +13,24 @@
         android:theme="@style/Theme.PDFPro"
         tools:targetApi="31">
         <activity
+            android:name=".MainScreen"
+            android:exported="false"
+            android:label="@string/title_activity_main_screen"
+            android:theme="@style/Theme.PDFPro" />
+        <activity
             android:name=".OnboardActivity"
             android:exported="true"
-            android:theme="@style/Theme.PDFPro"
-            >
+            android:theme="@style/Theme.PDFPro">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
         <meta-data
             android:name="com.google.android.gms.ads.APPLICATION_ID"
-            android:value="ca-app-pub-9471515798383572~1026627627"
-            />
+            android:value="ca-app-pub-9471515798383572~1026627627" />
     </application>
+
 </manifest>
