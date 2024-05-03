@@ -3,4 +3,5 @@
     <string name="banner_test">ca-app-pub-3940256099942544/9214589741</string>
     <string name="onboard_title">Experience the ultimate free PDF service.</string>
     <string name="title_activity_main_screen">MainScreen</string>
+    <string name="title_activity_test">Test</string>
 </resources>

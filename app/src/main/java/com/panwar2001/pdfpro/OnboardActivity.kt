@@ -106,17 +106,21 @@ fun CommonLayout( modifier:Modifier = Modifier) {
 }
 
 @Composable
+fun BackgroundDesign(){
+    Image(
+        painter = painterResource(id = R.drawable.resource_try),
+        contentDescription = "Rectangle curved design",
+        contentScale = ContentScale.Crop,
+        modifier = Modifier.fillMaxWidth(),
+    )
+}
+@Composable
 fun PortraitLayout( modifier: Modifier = Modifier) {
     Box(
         modifier = Modifier
             .fillMaxWidth()
     ) {
-        Image(
-            painter = painterResource(id = R.drawable.resource_try),
-            contentDescription = "Rectangle curved design",
-            contentScale = ContentScale.Crop,
-            modifier = Modifier.fillMaxWidth(1f),
-        )
+        BackgroundDesign()
         Text(
             text = stringResource(id = R.string.onboard_title),
             style = TextStyle(
