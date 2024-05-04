@@ -4,7 +4,6 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.BorderStroke
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -64,7 +63,17 @@ import kotlinx.coroutines.launch
 
 
 class MainScreen : ComponentActivity() {
-   private val list = listOf("Pdf to text", "Pdf to images", "Ocr pdf", "Images to pdf", "Unlock pdf", "Summarize pdf", "Compress pdf", "Searchable pdf", "word to pdf")
+    private val list = listOf(
+        ToolsData(R.drawable.outline_text,"Pdf to text"),
+        ToolsData(R.drawable.ion_images,"Pdf to images"),
+        ToolsData(R.drawable.compress,"Compress pdf"),
+        ToolsData(R.drawable.ocr,"Ocr pdf"),
+        ToolsData(R.drawable.pdf_icon,"Images to pdf"),
+        ToolsData(R.drawable.unlock_pdf,"Unlock pdf"),
+        ToolsData(R.drawable.summary_icon,"Summarize pdf"),
+        ToolsData(R.drawable.search_icon,"Searchable pdf"),
+        ToolsData(R.drawable.msword_icon,"Word to pdf")
+    )
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -76,34 +85,34 @@ class MainScreen : ComponentActivity() {
 
                 ModalNavigationDrawer(drawerState = scaffoldState
                     , drawerContent = {
-                    ModalDrawerSheet(Modifier.padding(0.dp,0.dp,60.dp,0.dp)){
-                        DrawerHeader()
-                        DrawerBody(
-                            items = listOf(
-                                MenuItem(
-                                    id = "home",
-                                    title = "Home",
-                                    contentDescription = "Go to home screen",
-                                    icon = Icons.Default.Home
-                                ),
-                                MenuItem(
-                                    id = "settings",
-                                    title = "Settings",
-                                    contentDescription = "Go to settings screen",
-                                    icon = Icons.Default.Settings
-                                ),
-                                MenuItem(
-                                    id = "help",
-                                    title = "Help",
-                                    contentDescription = "Get help",
-                                    icon = Icons.Default.Info
-                                ),
-                            ),onItemClick = {
-                                println("Clicked on ${it.title}")
-                            }
-                        )
-                    }
-                }) {
+                        ModalDrawerSheet(Modifier.padding(0.dp,0.dp,60.dp,0.dp)){
+                            DrawerHeader()
+                            DrawerBody(
+                                items = listOf(
+                                    MenuItem(
+                                        id = "home",
+                                        title = "Home",
+                                        contentDescription = "Go to home screen",
+                                        icon = Icons.Default.Home
+                                    ),
+                                    MenuItem(
+                                        id = "settings",
+                                        title = "Settings",
+                                        contentDescription = "Go to settings screen",
+                                        icon = Icons.Default.Settings
+                                    ),
+                                    MenuItem(
+                                        id = "help",
+                                        title = "Help",
+                                        contentDescription = "Get help",
+                                        icon = Icons.Default.Info
+                                    ),
+                                ),onItemClick = {
+                                    println("Clicked on ${it.title}")
+                                }
+                            )
+                        }
+                    }) {
                     // A surface container using the 'background' color from the theme
                     Surface(
                         modifier = Modifier.fillMaxSize(),
@@ -122,9 +131,9 @@ class MainScreen : ComponentActivity() {
                                     }
                                 )
 
-                         },
-                             ) {
-                            innerPadding->    Box(
+                            },
+                        ) {
+                                innerPadding->    Box(
                             modifier = Modifier
                                 .fillMaxWidth()
                                 .padding(innerPadding)
@@ -146,30 +155,25 @@ class MainScreen : ComponentActivity() {
 
 
 
-//data class SliderData(
-//    val drawableId: Int,
-//    val description: String
-//)
-//SliderData(
-//            drawableId = R.drawable.find_job,
-//            description = "Find and land your next job"
-//        ),
+data class ToolsData(
+    val iconId: Int,
+    val description: String)
 
 @Composable
-fun Screen(searchedText:String, list: List<String>) {
-        LazyVerticalGrid(columns = GridCells.Fixed(2),
-            contentPadding = PaddingValues(20.dp)
-        ) {
-            items(items = list.filter {
-                it.contains(searchedText, ignoreCase = true)
-            }, key = {it}) {item ->
-                Card(item = item)
-            }
+fun Screen(searchedText:String, list: List<ToolsData>) {
+    LazyVerticalGrid(columns = GridCells.Fixed(2),
+        contentPadding = PaddingValues(20.dp)
+    ) {
+        items(items = list.filter {
+            it.description.contains(searchedText, ignoreCase = true)
+        }, key = {it.iconId}) {item ->
+            Card(item =item)
         }
+    }
 }
 
 @Composable
-fun Card(item:String,modifier:Modifier=Modifier){
+fun Card(item:ToolsData,modifier:Modifier=Modifier){
     ElevatedCard(
         elevation = CardDefaults.cardElevation(
             defaultElevation = 15.dp
@@ -183,7 +187,7 @@ fun Card(item:String,modifier:Modifier=Modifier){
         )
     ) {
         Text(
-            text = item,
+            text = item.description,
             textAlign = TextAlign.Center, // make text center horizontal
             modifier = modifier
                 .width(150.dp)
@@ -193,12 +197,13 @@ fun Card(item:String,modifier:Modifier=Modifier){
             fontWeight = FontWeight.Bold,
             color = Color.Black
         )
-        Image(
-            painter = painterResource(id = R.drawable.ion_images),
+        Icon(
+            painter = painterResource(id = item.iconId),
             contentDescription = "text icon",
             modifier= modifier
-                .size(width = 30.dp, height = 30.dp)
-                .align(Alignment.CenterHorizontally)
+                .size(width = 40.dp, height = 40.dp).padding(vertical = 1.dp)
+                .align(Alignment.CenterHorizontally),
+            tint=Color.Blue
         )
     }
 }
@@ -250,7 +255,7 @@ fun SearchView(
         maxLines = 1,
         singleLine = true,
         textStyle = TextStyle(
-             fontSize = 20.sp
+            fontSize = 20.sp
         )
     )
 }
