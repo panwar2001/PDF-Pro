@@ -4,6 +4,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.Menu
+import androidx.compose.material.icons.filled.MoreVert
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -31,21 +32,23 @@ fun AppBar( onNavigationIconClick: () -> Unit){
         )
         },
         navigationIcon = {
-            Icon(
-                imageVector = Icons.Default.Home,
-                contentDescription = "Home Icon",
-                modifier = Modifier.size(30.dp),
-                tint= Color.White,
-            )
+            IconButton(onClick = {onNavigationIconClick() }) {
+                Icon(
+                    imageVector = Icons.Filled.Menu,
+                    contentDescription = "Navigation Bar Icon",
+                    modifier= Modifier.size(80.dp),
+                    tint = Color.White
+                )
+            }
         },
         colors = TopAppBarDefaults.topAppBarColors(
             containerColor = Color.Red,
         ),
         actions = {
-            IconButton(onClick = {onNavigationIconClick() }) {
+            IconButton(onClick = { /* */}) {
                 Icon(
-                    imageVector = Icons.Filled.Menu,
-                    contentDescription = "Localized description",
+                    imageVector = Icons.Filled.MoreVert,
+                    contentDescription = "More options",
                     modifier= Modifier.size(80.dp),
                     tint = Color.White
                 )

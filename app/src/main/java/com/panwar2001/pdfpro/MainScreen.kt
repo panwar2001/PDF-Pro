@@ -1,5 +1,6 @@
 package com.panwar2001.pdfpro
 
+import android.content.Intent
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -48,6 +49,7 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
@@ -64,15 +66,15 @@ import kotlinx.coroutines.launch
 
 class MainScreen : ComponentActivity() {
     private val list = listOf(
-        ToolsData(R.drawable.outline_text,"Pdf to text"),
-        ToolsData(R.drawable.ion_images,"Pdf to images"),
-        ToolsData(R.drawable.compress,"Compress pdf"),
-        ToolsData(R.drawable.ocr,"Ocr pdf"),
-        ToolsData(R.drawable.pdf_icon,"Images to pdf"),
-        ToolsData(R.drawable.unlock_pdf,"Unlock pdf"),
-        ToolsData(R.drawable.summary_icon,"Summarize pdf"),
-        ToolsData(R.drawable.search_icon,"Searchable pdf"),
-        ToolsData(R.drawable.msword_icon,"Word to pdf")
+        ToolsData(R.drawable.outline_text,"Pdf to text",0),
+        ToolsData(R.drawable.ion_images,"Pdf to images",1),
+        ToolsData(R.drawable.compress,"Compress pdf",2),
+        ToolsData(R.drawable.ocr,"Ocr pdf",3),
+        ToolsData(R.drawable.pdf_icon,"Images to pdf",4),
+        ToolsData(R.drawable.unlock_pdf,"lock pdf",5),
+        ToolsData(R.drawable.summary_icon,"Summarize pdf",6),
+        ToolsData(R.drawable.search_icon,"Searchable pdf",7),
+        ToolsData(R.drawable.msword_icon,"Word to pdf",8)
     )
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -157,7 +159,9 @@ class MainScreen : ComponentActivity() {
 
 data class ToolsData(
     val iconId: Int,
-    val description: String)
+    val description: String,
+    val key :Int
+)
 
 @Composable
 fun Screen(searchedText:String, list: List<ToolsData>) {
@@ -166,7 +170,7 @@ fun Screen(searchedText:String, list: List<ToolsData>) {
     ) {
         items(items = list.filter {
             it.description.contains(searchedText, ignoreCase = true)
-        }, key = {it.iconId}) {item ->
+        }, key = {it.key}) {item ->
             Card(item =item)
         }
     }
@@ -174,6 +178,9 @@ fun Screen(searchedText:String, list: List<ToolsData>) {
 
 @Composable
 fun Card(item:ToolsData,modifier:Modifier=Modifier){
+    val context = LocalContext.current
+    val intent= Intent(context,Upload::class.java)
+    intent.putExtra("ID",item.key)
     ElevatedCard(
         elevation = CardDefaults.cardElevation(
             defaultElevation = 15.dp
@@ -181,7 +188,7 @@ fun Card(item:ToolsData,modifier:Modifier=Modifier){
         modifier = Modifier
             .size(width = 10.dp, height = 130.dp)
             .padding(10.dp)
-            .clickable { }
+            .clickable {context.startActivity(intent)}
         ,colors = CardDefaults.cardColors(
             containerColor =Color.White,
         )
