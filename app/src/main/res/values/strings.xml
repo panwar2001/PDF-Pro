@@ -4,5 +4,8 @@
     <string name="onboard_title">Experience the ultimate free PDF service.</string>
     <string name="title_activity_main_screen">MainScreen</string>
     <string name="title_activity_test">Test</string>
-    <string name="title_activity_upload">Upload</string>
+    <string name="upload">Upload</string>
+    <string name="splash">splash</string>
+    <string name="onBoard">walk through</string>
+    <string name="home">Home</string>
 </resources>
