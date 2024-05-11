@@ -8,6 +8,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -23,6 +24,7 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.rememberDrawerState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontFamily
@@ -30,6 +32,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
+import androidx.navigation.NavGraph.Companion.findStartDestination
 import com.panwar2001.pdfpro.data.DataSource
 import com.panwar2001.pdfpro.data.Tool
 import com.panwar2001.pdfpro.ui.components.DrawerBody
@@ -45,7 +48,9 @@ fun getToolData(id:Int): Tool{
 }
 
 @Composable
-fun UploadScreen(navController: NavController) {
+fun UploadScreen(navController: NavController,
+                 onUpload:()->Unit
+                 ) {
 
                 val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
                 val scope = rememberCoroutineScope()
@@ -57,7 +62,19 @@ fun UploadScreen(navController: NavController) {
                             DrawerBody(
                                 items = DataSource.MenuItems,
                                 onItemClick = {
-                                    navController.navigate(it.id)
+                                    navController.navigate(it.id){
+                                        // Pop up to the start destination of the graph to
+                                        // avoid building up a large stack of destinations
+                                        // on the back stack as users select items
+                                        popUpTo(navController.graph.findStartDestination().id) {
+                                            saveState = true
+                                        }
+                                        // Avoid multiple copies of the same destination when
+                                        // selecting the same item
+                                        launchSingleTop = true
+                                        // Restore state when selecting a previously selected item
+                                        restoreState = true
+                                    }
                                 }
                             )
                         }
@@ -72,7 +89,7 @@ fun UploadScreen(navController: NavController) {
                                 }
                             }) //Appbar scope end
                         }) { innerPadding ->
-                            UploadScreenContent(innerPadding = innerPadding,id=0)
+                            UploadScreenContent(innerPadding = innerPadding,id=0,onUpload=onUpload)
                         } //Scaffold scope end
                 }
 }
@@ -84,10 +101,14 @@ fun UploadScreen(navController: NavController) {
  * @param id unique id for a tool
  */
 @Composable
-fun UploadScreenContent(innerPadding:PaddingValues,id:Int){
+fun UploadScreenContent(innerPadding:PaddingValues,
+                        id:Int,
+                        onUpload: () -> Unit){
         val tool = getToolData(id)
         Column(
-            modifier = Modifier.padding(innerPadding)
+            modifier = Modifier.padding(innerPadding).fillMaxHeight(),
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.SpaceBetween
         )
         {
             Text(
@@ -107,7 +128,7 @@ fun UploadScreenContent(innerPadding:PaddingValues,id:Int){
             )
             {
                 ElevatedButton(
-                    onClick = { },
+                    onClick = {onUpload()},
                     colors = ButtonDefaults.buttonColors(
                         containerColor = Color.Red,
                         contentColor = Color.White

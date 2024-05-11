@@ -2,6 +2,7 @@ package com.panwar2001.pdfpro.data
 
 import androidx.annotation.StringRes
 import com.panwar2001.pdfpro.R
+import android.net.Uri
 
 /**
  *  This data class represents the tool data mentioned in home screen
@@ -58,3 +59,13 @@ data class OnBoardData(
     val description:String,
     val icon: Int
 )
+
+
+/**
+ * Data class that represents the current UI state in terms of [id] and [uri]
+ */
+data class OrderUiState(
+   val id : Int=0,
+   val uri: Uri=Uri.EMPTY
+)
+
