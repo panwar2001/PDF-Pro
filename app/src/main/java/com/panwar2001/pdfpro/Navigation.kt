@@ -80,8 +80,14 @@ fun NavigationController(
     setOnboardingFinished:()->Unit
 )
 {
-val navigateTo:(String)->Unit={
+    val scope = rememberCoroutineScope()
+    val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
+
+    val navigateTo:(String)->Unit={
     navController.navigate(it){
+        if(drawerState.isOpen){
+            scope.launch {drawerState.apply {close()}}
+        }
         // Pop up to the start destination of the graph to
         // avoid building up a large stack of destinations
         // on the back stack as users select items
@@ -95,8 +101,6 @@ val navigateTo:(String)->Unit={
         restoreState = true
     }
 }
-    val scope = rememberCoroutineScope()
-    val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
     ModalNavigationDrawer(
         drawerState = drawerState,
         drawerContent = {

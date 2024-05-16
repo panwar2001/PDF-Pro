@@ -21,7 +21,7 @@ import androidx.compose.ui.unit.dp
 fun AppBar( onNavigationIconClick: () -> Unit){
     TopAppBar(
         title = { Text(
-            "Home",
+            "",
             maxLines = 1,
             overflow = TextOverflow.Ellipsis,
             fontWeight = FontWeight.Bold
