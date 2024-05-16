@@ -9,13 +9,13 @@ import com.panwar2001.pdfpro.R
 object DataSource {
     val MenuItems=listOf(
         MenuItem(
-            id = PdfProScreen.Home.name,
+            screen = Screens.Home.name,
             title = "Home",
             contentDescription = "Go to home screen",
             icon = R.drawable.home
         ),
         MenuItem(
-            id= PdfProScreen.Upload.name,
+            screen= Screens.Upload.name,
             title = "Pdf to text",
             contentDescription = "Convert pdf to text",
             icon = R.drawable.outline_text
@@ -24,7 +24,7 @@ object DataSource {
 
 
     val FeatureList = listOf(
-        ToolsData(R.drawable.outline_text,"Pdf to text",0,PdfProScreen.Upload.name),
+        ToolsData(R.drawable.outline_text,"Pdf to text",0,Screens.Upload.name),
 //        ToolsData(R.drawable.ion_images,"Pdf to images",1),
 //        ToolsData(R.drawable.compress,"Compress pdf",2),
 //        ToolsData(R.drawable.ocr,"Ocr pdf",3),

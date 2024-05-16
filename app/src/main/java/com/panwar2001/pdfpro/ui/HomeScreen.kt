@@ -1,6 +1,5 @@
 package com.panwar2001.pdfpro.ui
 
-import android.content.Intent
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -16,100 +15,57 @@ import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.material3.CardDefaults
-import androidx.compose.material3.DrawerValue
 import androidx.compose.material3.ElevatedCard
 import androidx.compose.material3.Icon
-import androidx.compose.material3.ModalDrawerSheet
-import androidx.compose.material3.ModalNavigationDrawer
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
-import androidx.compose.material3.rememberDrawerState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.navigation.NavController
-import androidx.navigation.NavGraph.Companion.findStartDestination
-import com.panwar2001.pdfpro.Navigation
 import com.panwar2001.pdfpro.data.DataSource
 import com.panwar2001.pdfpro.data.ToolsData
 import com.panwar2001.pdfpro.ui.components.SearchView
-import com.panwar2001.pdfpro.ui.components.DrawerBody
-import com.panwar2001.pdfpro.ui.components.DrawerHeader
-import kotlinx.coroutines.launch
 
 @Composable
-fun HomeScreen(navController: NavController)
-{
-    val scaffoldState = rememberDrawerState(initialValue = DrawerValue.Closed)
-    val scope = rememberCoroutineScope()
+fun HomeScreen(onNavigationIconClick:()->Unit,
+    navigateTo: (String)->Unit) {
     val textState = remember { mutableStateOf(TextFieldValue("")) }
+    Scaffold(
+        topBar = {
+            SearchView(
+                state = textState,
+                placeHolder = "Search here...",
+                modifier = Modifier,
+                onNavigationIconClick = onNavigationIconClick
+            )
+        },
+    ) { innerPadding ->
+        Box(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(innerPadding)
+        )
+        {
+            Column(Modifier.fillMaxSize()) {
+                Screen(
+                    searchedText = textState.value.text,
+                    list = DataSource.FeatureList,
+                    navigateTo
+                )
+            }
+        }
 
-    ModalNavigationDrawer(
-        drawerState = scaffoldState,
-        drawerContent = {
-             ModalDrawerSheet(Modifier.padding(0.dp,0.dp,60.dp,0.dp)){
-                  DrawerHeader()
-                  DrawerBody(
-                       items = DataSource.MenuItems,
-                       onItemClick = {navController.navigate(it.id){
-                           // Pop up to the start destination of the graph to
-                           // avoid building up a large stack of destinations
-                           // on the back stack as users select items
-                           popUpTo(navController.graph.findStartDestination().id) {
-                               saveState = true
-                           }
-                           // Avoid multiple copies of the same destination when
-                           // selecting the same item
-                           launchSingleTop = true
-                           // Restore state when selecting a previously selected item
-                           restoreState = true
-                       } }
-                  )}
-          }){
-                    // A surface container using the 'background' color from the theme
-                    Surface(
-                        modifier = Modifier.fillMaxSize(),
-                    ) {
-                        Scaffold(
-                            topBar = {
-                                SearchView(state = textState,
-                                    placeHolder = "Search here...",
-                                    modifier = Modifier,
-                                    onNavigationIconClick = {
-                                        scope.launch {
-                                            scaffoldState.apply {
-                                                if(isClosed) open() else close()
-                                            }
-                                        }
-                                    }
-                                )
-
-                            },
-                        ) {
-                            innerPadding->    Box(modifier = Modifier.fillMaxWidth().padding(innerPadding))
-                             {
-                                Column(Modifier.fillMaxSize()) {
-                                Screen(searchedText = textState.value.text,
-                                    list = DataSource.FeatureList,
-                                    navController=navController)
-                                }
-                             }
-                         }
-                    } //Surface end
-           }
+    }
 }
-
 
 /**
  *  Composable that iterates through various tools and display them on a card
@@ -118,14 +74,14 @@ fun HomeScreen(navController: NavController)
  *  @param list the list of tools which match with the [searchedText]
  */
 @Composable
-fun Screen(searchedText:String, list: List<ToolsData>,navController: NavController) {
+fun Screen(searchedText:String, list: List<ToolsData>,navigateTo: (String)->Unit) {
     LazyVerticalGrid(columns = GridCells.Fixed(2),
         contentPadding = PaddingValues(20.dp)
     ) {
         items(items = list.filter {
             it.description.contains(searchedText, ignoreCase = true)
         }, key = {it.key}) {item ->
-            Card(item =item,navController=navController)
+            Card(item =item,navigateTo=navigateTo)
         }
     }
 }
@@ -136,7 +92,7 @@ fun Screen(searchedText:String, list: List<ToolsData>,navController: NavControll
  * @param item contains data of a tool
  */
 @Composable
-fun Card(item: ToolsData, modifier:Modifier=Modifier,navController: NavController){
+fun Card(item: ToolsData, modifier:Modifier=Modifier,navigateTo: (String)->Unit){
     ElevatedCard(
         elevation = CardDefaults.cardElevation(
             defaultElevation = 15.dp
@@ -144,21 +100,7 @@ fun Card(item: ToolsData, modifier:Modifier=Modifier,navController: NavControlle
         modifier = Modifier
             .size(width = 10.dp, height = 130.dp)
             .padding(10.dp)
-            .clickable {
-                navController.navigate(item.id){
-                    // Pop up to the start destination of the graph to
-                    // avoid building up a large stack of destinations
-                    // on the back stack as users select items
-                    popUpTo(navController.graph.findStartDestination().id) {
-                        saveState = true
-                    }
-                    // Avoid multiple copies of the same destination when
-                    // selecting the same item
-                    launchSingleTop = true
-                    // Restore state when selecting a previously selected item
-                    restoreState = true
-                }
-            }
+            .clickable { navigateTo(item.screen) }
         ,colors = CardDefaults.cardColors(
             containerColor =Color.White,
         )
@@ -178,13 +120,19 @@ fun Card(item: ToolsData, modifier:Modifier=Modifier,navController: NavControlle
             painter = painterResource(id = item.iconId),
             contentDescription = "text icon",
             modifier= modifier
-                .size(width = 40.dp, height = 40.dp).padding(vertical = 1.dp)
+                .size(width = 40.dp, height = 40.dp)
+                .padding(vertical = 1.dp)
                 .align(Alignment.CenterHorizontally),
             tint=Color.Blue
         )
     }
 }
 
+@Preview
+@Composable
+fun Preview(){
+    HomeScreen({}) {
 
-
+    }
+}
 

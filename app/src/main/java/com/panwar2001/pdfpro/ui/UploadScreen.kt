@@ -1,8 +1,9 @@
 package com.panwar2001.pdfpro.ui
 
 import android.content.Intent
+import android.net.Uri
+import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
-import androidx.appcompat.app.AppCompatActivity
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -13,17 +14,10 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.DrawerValue
 import androidx.compose.material3.ElevatedButton
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.ModalDrawerSheet
-import androidx.compose.material3.ModalNavigationDrawer
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
-import androidx.compose.material3.rememberDrawerState
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -31,13 +25,7 @@ import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.navigation.NavController
-import androidx.navigation.NavGraph.Companion.findStartDestination
-import com.panwar2001.pdfpro.data.DataSource
 import com.panwar2001.pdfpro.data.Tool
-import com.panwar2001.pdfpro.ui.components.DrawerBody
-import com.panwar2001.pdfpro.ui.components.DrawerHeader
-import kotlinx.coroutines.launch
 
 
 fun getToolData(id:Int): Tool{
@@ -48,50 +36,14 @@ fun getToolData(id:Int): Tool{
 }
 
 @Composable
-fun UploadScreen(navController: NavController,
-                 onUpload:()->Unit
-                 ) {
+fun UploadScreen(onNavigationIconClick:()->Unit,
+                 navigateTo: (String)->Unit) {
 
-                val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
-                val scope = rememberCoroutineScope()
-                ModalNavigationDrawer(
-                    drawerState = drawerState,
-                    drawerContent = {
-                        ModalDrawerSheet(Modifier.padding(0.dp,0.dp,60.dp,0.dp)) {
-                            DrawerHeader()
-                            DrawerBody(
-                                items = DataSource.MenuItems,
-                                onItemClick = {
-                                    navController.navigate(it.id){
-                                        // Pop up to the start destination of the graph to
-                                        // avoid building up a large stack of destinations
-                                        // on the back stack as users select items
-                                        popUpTo(navController.graph.findStartDestination().id) {
-                                            saveState = true
-                                        }
-                                        // Avoid multiple copies of the same destination when
-                                        // selecting the same item
-                                        launchSingleTop = true
-                                        // Restore state when selecting a previously selected item
-                                        restoreState = true
-                                    }
-                                }
-                            )
-                        }
-                    })
-                {
                         Scaffold(topBar = {
-                            AppBar(onNavigationIconClick = {
-                                scope.launch {
-                             drawerState.apply {
-                                 if(isClosed) open() else close()
-                              }
-                                }
-                            }) //Appbar scope end
+                            AppBar(onNavigationIconClick =onNavigationIconClick ) //Appbar scope end
                         }) { innerPadding ->
-                            UploadScreenContent(innerPadding = innerPadding,id=0,onUpload=onUpload)
+                            UploadScreenContent(innerPadding = innerPadding,id=0,navigateTo=navigateTo)
                         } //Scaffold scope end
-                }
 }
 
 /**
@@ -103,9 +55,19 @@ fun UploadScreen(navController: NavController,
 @Composable
 fun UploadScreenContent(innerPadding:PaddingValues,
                         id:Int,
-                        onUpload: () -> Unit){
-        val tool = getToolData(id)
-        Column(
+                        navigateTo: (String) -> Unit){
+    val resultLauncher= rememberLauncherForActivityResult(contract = ActivityResultContracts.StartActivityForResult()) {
+        if (it.resultCode == -1) { // -1 constant represents operation succeeded
+            val data: Uri? = it.data?.data
+        }
+    }
+    val pdfIntent = Intent(Intent.ACTION_OPEN_DOCUMENT).apply {
+        addCategory(Intent.CATEGORY_OPENABLE)
+        type = "application/pdf"
+    }
+    val tool = getToolData(id)
+
+    Column(
             modifier = Modifier.padding(innerPadding).fillMaxHeight(),
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.SpaceBetween
@@ -128,7 +90,9 @@ fun UploadScreenContent(innerPadding:PaddingValues,
             )
             {
                 ElevatedButton(
-                    onClick = {onUpload()},
+                    onClick = {
+                        resultLauncher.launch(pdfIntent)
+                    },
                     colors = ButtonDefaults.buttonColors(
                         containerColor = Color.Red,
                         contentColor = Color.White

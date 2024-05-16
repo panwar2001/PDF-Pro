@@ -38,33 +38,35 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.panwar2001.pdfpro.R
 import com.panwar2001.pdfpro.data.DataSource
+import com.panwar2001.pdfpro.data.Screens
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
 /**
- * @param switchToHome function that helps to navigate to home screen
+ * @param navigateTo function that helps to navigate to a screen
  */
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
-fun OnboardScreen( switchToHome:()->Unit) {
+fun OnboardScreen( navigateTo:(String)->Unit) {
     val pagerState = rememberPagerState( pageCount = {DataSource.OnBoardList.size})
     val configuration = LocalConfiguration.current
     if (configuration.orientation==Configuration.ORIENTATION_LANDSCAPE) {
-        LandscapeLayout(pagerState = pagerState, switchToHome = switchToHome)
+        LandscapeLayout(pagerState = pagerState, navigateTo=navigateTo)
     } else {
-        PortraitLayout(pagerState = pagerState, switchToHome = switchToHome)
+        PortraitLayout(pagerState = pagerState, navigateTo=navigateTo)
     }
 }
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun PortraitLayout( modifier: Modifier = Modifier,
                     pagerState:PagerState,
-                    switchToHome: () -> Unit) {
+                    navigateTo: (String) -> Unit) {
     Column(
         modifier.fillMaxSize(),
         horizontalAlignment = Alignment.CenterHorizontally,
@@ -80,7 +82,7 @@ fun PortraitLayout( modifier: Modifier = Modifier,
              horizontalAlignment = Alignment.CenterHorizontally,
              verticalArrangement = Arrangement.SpaceBetween
          ) {
-             Skip(switchToHome = switchToHome)
+             Skip(navigateTo)
              DisplayImage(page = page)
              Title(page = page)
              Description(page = page)
@@ -89,7 +91,7 @@ fun PortraitLayout( modifier: Modifier = Modifier,
                  currentPage = pagerState.currentPage,
                  modifier = Modifier.padding(0.dp,0.dp,0.dp,30.dp)
              )
-             NextButton(pagerState = pagerState, page = page,switchToHome = switchToHome)
+             NextButton(pagerState = pagerState, page = page,navigateTo)
          }
         }
     }
@@ -99,7 +101,7 @@ fun PortraitLayout( modifier: Modifier = Modifier,
 @Composable
 fun LandscapeLayout(modifier: Modifier=Modifier,
                     pagerState: PagerState,
-                    switchToHome: () -> Unit){
+                    navigateTo: (String) -> Unit){
     HorizontalPager(state = pagerState, modifier.wrapContentSize()) { page ->
     Row(modifier.fillMaxSize(),
         horizontalArrangement = Arrangement.SpaceBetween,
@@ -119,10 +121,10 @@ fun LandscapeLayout(modifier: Modifier=Modifier,
         Column(modifier.fillMaxSize(),
             verticalArrangement = Arrangement.SpaceBetween,
             horizontalAlignment = Alignment.CenterHorizontally) {
-            Skip(switchToHome = switchToHome)
+            Skip(navigateTo)
             Title(page = page)
             Description(page = page)
-            NextButton(pagerState = pagerState, page = page,switchToHome=switchToHome)
+            NextButton(pagerState = pagerState, page = page,navigateTo)
          }
         }
     }
@@ -131,11 +133,11 @@ fun LandscapeLayout(modifier: Modifier=Modifier,
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
-fun NextButton(pagerState: PagerState,page:Int,switchToHome: () -> Unit){
+fun NextButton(pagerState: PagerState,page:Int,navigateTo: (String) -> Unit){
     Button(
         onClick = {
           if(pagerState.currentPage+1==DataSource.OnBoardList.size){
-              switchToHome()
+              navigateTo(Screens.Home.name)
           }else {
               CoroutineScope(Dispatchers.Main).launch {
                   pagerState.scrollToPage(pagerState.currentPage + 1)
@@ -188,7 +190,7 @@ fun Description(page:Int){
 }
 
 @Composable
-fun Skip(switchToHome: () -> Unit){
+fun Skip(navigateTo: (String) -> Unit){
     Row(horizontalArrangement = Arrangement.End,
         modifier = Modifier.fillMaxWidth()) {
         Text(
@@ -197,7 +199,7 @@ fun Skip(switchToHome: () -> Unit){
             fontSize = 20.sp,
             fontWeight = FontWeight.Bold,
             modifier = Modifier.clickable {
-               switchToHome()
+                navigateTo(Screens.Home.name)
             }
         )
     }
@@ -222,5 +224,15 @@ fun PageIndicator(pageCount: Int, currentPage: Int, modifier: Modifier) {
                 .background(if (isSystemInDarkTheme()) Color.White else Color.DarkGray)
             )
         }
+    }
+}
+
+@OptIn(ExperimentalFoundationApi::class)
+@Preview(showSystemUi = true, device = "id:pixel_5")
+@Composable
+fun OnBoardingScreenPreview(){
+    val pagerState = rememberPagerState( pageCount = {DataSource.OnBoardList.size})
+    PortraitLayout(pagerState=pagerState){
+
     }
 }
