@@ -1,6 +1,7 @@
 package com.panwar2001.pdfpro
 
 import android.content.Context
+import android.net.Uri
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -15,30 +16,42 @@ import androidx.compose.material3.ModalNavigationDrawer
 import androidx.compose.material3.Surface
 import androidx.compose.material3.rememberDrawerState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.ViewModel
 import com.panwar2001.pdfpro.ui.theme.PDFProTheme
-import com.panwar2001.pdfpro.ui.view_models.ProViewModel
 import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.navigation.NavBackStackEntry
+import androidx.navigation.NavController
 import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import androidx.navigation.navigation
 import com.panwar2001.pdfpro.data.DataSource
 import com.panwar2001.pdfpro.data.Screens
+import com.panwar2001.pdfpro.ui.PdfToText.FilePickerScreen
 import com.panwar2001.pdfpro.ui.HomeScreen
 import com.panwar2001.pdfpro.ui.OnboardScreen
-import com.panwar2001.pdfpro.ui.UploadScreen
+import com.panwar2001.pdfpro.ui.PdfToText.PreviewFileScreen
 import com.panwar2001.pdfpro.ui.components.DrawerBody
 import com.panwar2001.pdfpro.ui.components.DrawerHeader
+import com.panwar2001.pdfpro.ui.view_models.PdfToImagesViewModel
+import com.panwar2001.pdfpro.ui.view_models.PdfToTextViewModel
+import com.tom_roush.pdfbox.android.PDFBoxResourceLoader
 import kotlinx.coroutines.launch
 
 
 class Navigation : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        PDFBoxResourceLoader.init(applicationContext);
         setContent{
             PDFProTheme {
                 // A surface container using the 'background' color from the theme
@@ -61,7 +74,7 @@ class Navigation : ComponentActivity() {
     private fun getStartDestination( ): String {
         val sharedPreferences = this.getSharedPreferences("onBoarding", Context.MODE_PRIVATE)
         val onBoardingIsFinished= sharedPreferences.getBoolean("isFinished", false)
-        return if(onBoardingIsFinished) Screens.Home.name else Screens.OnBoard.name
+        return if(onBoardingIsFinished) Screens.home.route else Screens.onBoard.route
     }
 }
 
@@ -74,7 +87,6 @@ class Navigation : ComponentActivity() {
  */
 @Composable
 fun NavigationController(
-    viewModel: ProViewModel = viewModel(),
     navController: NavHostController= rememberNavController(),
     startDestination:String,
     setOnboardingFinished:()->Unit
@@ -82,7 +94,6 @@ fun NavigationController(
 {
     val scope = rememberCoroutineScope()
     val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
-
     val navigateTo:(String)->Unit={
     navController.navigate(it){
         if(drawerState.isOpen){
@@ -127,7 +138,7 @@ fun NavigationController(
             )
             {
 
-                composable(route = Screens.OnBoard.name) {
+                composable(route = Screens.onBoard.route) {
                     OnboardScreen {
                         // lambda function for navigation
                         setOnboardingFinished()
@@ -135,20 +146,63 @@ fun NavigationController(
                         navController.navigate(it)
                     }
                 }
-                composable(route = Screens.Home.name) {
+                composable(route = Screens.home.route) {
                     HomeScreen(onNavigationIconClick = {
-                        scope.launch {drawerState.apply {if(isClosed) open() else close()}}
+                        scope.launch { drawerState.apply { if (isClosed) open() else close() } }
                     }) {    // lambda function for navigation
                         navigateTo(it)
                     }
                 }
-                composable(route = Screens.Upload.name) {
-                    UploadScreen(onNavigationIconClick = {
-                        scope.launch {drawerState.apply {if(isClosed) open() else close()}}
-                    }) { navigateTo(it) }
+                navigation(route=Screens.PdfToText.route,startDestination=Screens.PdfToText.FilePicker.route){
+                    composable(route=Screens.PdfToText.FilePicker.route){
+                        val viewModel = it.sharedViewModel<PdfToTextViewModel>(navController)
+                        val uiState by viewModel.uiState.collectAsState()
+                        val context= LocalContext.current
+                        FilePickerScreen(onNavigationIconClick = {
+                            scope.launch { drawerState.apply { if (isClosed) open() else close() } }
+                        }, isLoading = uiState.isLoading) {
+                            uri: Uri?,dest:String->
+                            viewModel.setLoading(true)
+                            viewModel.setUri(uri)
+                            viewModel.generateThumbnailFromPDF(context)
+                            viewModel.setLoading(false)
+                            navigateTo(dest)
+                        }
+                    }
+                    composable(route=Screens.PdfToText.previewFile.route){
+                        val viewModel = it.sharedViewModel<PdfToTextViewModel>(navController)
+                        val uiState by viewModel.uiState.collectAsState()
+                        PreviewFileScreen(
+                            onNavigationIconClick = { /*TODO*/ },
+                            navigateTo = {navigateTo(it)} ,
+                            thumbnail = uiState.thumbnail
+                        )
+
+                    }
                 }
+                navigation(route=Screens.PdfToImage.route,startDestination=Screens.PdfToImage.FilePicker.route){
+                    composable(route=Screens.PdfToImage.FilePicker.route){
+                        val viewModel = it.sharedViewModel<PdfToImagesViewModel>(navController)
+                        val uiState by viewModel.uiState.collectAsState()
+                    }
+                }
+
             }
         }
     }
 }
 
+
+
+
+/**
+ *  Extend the nav back stack entry function to create sharedViewModel Instance with it.
+ */
+@Composable
+inline fun <reified T : ViewModel> NavBackStackEntry.sharedViewModel(navController:NavController): T {
+    val navGraphRoute = destination.parent?.route ?: return viewModel()
+    val parentEntry = remember(this) {
+        navController.getBackStackEntry(navGraphRoute)
+    }
+    return viewModel(parentEntry)
+}

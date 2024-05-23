@@ -137,7 +137,7 @@ fun NextButton(pagerState: PagerState,page:Int,navigateTo: (String) -> Unit){
     Button(
         onClick = {
           if(pagerState.currentPage+1==DataSource.OnBoardList.size){
-              navigateTo(Screens.Home.name)
+              navigateTo(Screens.home.route)
           }else {
               CoroutineScope(Dispatchers.Main).launch {
                   pagerState.scrollToPage(pagerState.currentPage + 1)
@@ -151,7 +151,7 @@ fun NextButton(pagerState: PagerState,page:Int,navigateTo: (String) -> Unit){
         Text(
             text = if(DataSource.OnBoardList.size!=page+1) "Next" else "Get Started",
             fontSize = 20.sp,
-            color = if(isSystemInDarkTheme()) Color.White else Color.Black
+            color = Color.White
         )
     }
 }
@@ -199,7 +199,7 @@ fun Skip(navigateTo: (String) -> Unit){
             fontSize = 20.sp,
             fontWeight = FontWeight.Bold,
             modifier = Modifier.clickable {
-                navigateTo(Screens.Home.name)
+                navigateTo(Screens.home.route)
             }
         )
     }

@@ -33,6 +33,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.panwar2001.pdfpro.data.DataSource
 import com.panwar2001.pdfpro.data.ToolsData
+import com.panwar2001.pdfpro.ui.components.ProgressIndicator
 import com.panwar2001.pdfpro.ui.components.SearchView
 
 @Composable

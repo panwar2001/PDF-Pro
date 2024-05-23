@@ -67,6 +67,7 @@ dependencies {
     implementation(libs.material)
     implementation(libs.androidx.navigation.compose)
     implementation(libs.androidx.fragment.ktx)
+    implementation(libs.pdfbox.android)
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)

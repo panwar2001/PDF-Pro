@@ -1,4 +1,4 @@
-package com.panwar2001.pdfpro.ui
+package com.panwar2001.pdfpro.ui.PdfToText
 
 import android.content.Intent
 import android.net.Uri
@@ -25,7 +25,10 @@ import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.panwar2001.pdfpro.data.Screens
 import com.panwar2001.pdfpro.data.Tool
+import com.panwar2001.pdfpro.ui.AppBar
+import com.panwar2001.pdfpro.ui.components.ProgressIndicator
 
 
 fun getToolData(id:Int): Tool{
@@ -34,15 +37,24 @@ fun getToolData(id:Int): Tool{
        else-> Tool("","upload")
     }
 }
-
 @Composable
-fun UploadScreen(onNavigationIconClick:()->Unit,
-                 navigateTo: (String)->Unit) {
+fun FilePickerScreen(onNavigationIconClick:()->Unit,
+                     isLoading:Boolean,
+                 navigateTo: (Uri?,String)->Unit
+                     ) {
 
                         Scaffold(topBar = {
                             AppBar(onNavigationIconClick =onNavigationIconClick ) //Appbar scope end
                         }) { innerPadding ->
-                            UploadScreenContent(innerPadding = innerPadding,id=0,navigateTo=navigateTo)
+                            if(isLoading) {
+                              ProgressIndicator(modifier=Modifier.padding(innerPadding))
+                            }else {
+                                UploadScreenContent(
+                                    innerPadding = innerPadding,
+                                    id = 0,
+                                    navigateTo = navigateTo
+                                )
+                            }
                         } //Scaffold scope end
 }
 
@@ -52,13 +64,14 @@ fun UploadScreen(onNavigationIconClick:()->Unit,
  * @param innerPadding  inner padding of content
  * @param id unique id for a tool
  */
+
 @Composable
 fun UploadScreenContent(innerPadding:PaddingValues,
                         id:Int,
-                        navigateTo: (String) -> Unit){
+                        navigateTo: (Uri?,String) -> Unit){
     val resultLauncher= rememberLauncherForActivityResult(contract = ActivityResultContracts.StartActivityForResult()) {
         if (it.resultCode == -1) { // -1 constant represents operation succeeded
-            val data: Uri? = it.data?.data
+            navigateTo(it.data?.data,Screens.PdfToText.previewFile.route)
         }
     }
     val pdfIntent = Intent(Intent.ACTION_OPEN_DOCUMENT).apply {
@@ -68,11 +81,14 @@ fun UploadScreenContent(innerPadding:PaddingValues,
     val tool = getToolData(id)
 
     Column(
-            modifier = Modifier.padding(innerPadding).fillMaxHeight(),
+            modifier = Modifier
+                .padding(innerPadding)
+                .fillMaxHeight(),
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.SpaceBetween
         )
         {
+
             Text(
                 text = tool.toolDescription,
                 modifier = Modifier.padding(
@@ -108,6 +124,7 @@ fun UploadScreenContent(innerPadding:PaddingValues,
                     )
                 }
             }
+
         }
     }
 

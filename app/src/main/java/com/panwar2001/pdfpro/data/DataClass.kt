@@ -1,7 +1,5 @@
 package com.panwar2001.pdfpro.data
 
-import androidx.annotation.StringRes
-import com.panwar2001.pdfpro.R
 import android.net.Uri
 
 /**
@@ -38,11 +36,25 @@ data class MenuItem(
  * navigation.kt
  * enum values that represent the screens in the app
  */
-enum class Screens(@StringRes val title: Int) {
-    Splash(title = R.string.splash),
-    OnBoard(title = R.string.onBoard),
-    Home(title = R.string.home),
-    Upload(title = R.string.upload)
+//enum class df(@StringRes val title: Int) {
+//    Splash(title = R.string.splash),
+//    OnBoard(title = R.string.onBoard),
+//    Home(title = R.string.home),
+//    Pick(title = R.string.pick),
+////    PreviewFile(title=R.string.)
+//}
+
+sealed class Screens(val route: String) {
+    object onBoard : Screens("onboard")
+    object home: Screens("home")
+    object PdfToText: Screens("PdfToText") {
+        object  FilePicker: Screens("pick")
+        object previewFile : Screens("previewFile")
+    }
+    object PdfToImage: Screens("PdfToImage") {
+        object  FilePicker: Screens("pick")
+        object previewFile : Screens("previewFile")
+    }
 }
 
 /**
