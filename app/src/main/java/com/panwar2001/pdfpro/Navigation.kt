@@ -1,6 +1,7 @@
 package com.panwar2001.pdfpro
 
 import android.content.Context
+import android.net.Uri
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -35,13 +36,13 @@ import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navigation
 import com.panwar2001.pdfpro.data.DataSource
 import com.panwar2001.pdfpro.data.Screens
-import com.panwar2001.pdfpro.ui.pdfToText.FilePickerScreen
 import com.panwar2001.pdfpro.ui.HomeScreen
 import com.panwar2001.pdfpro.ui.OnboardScreen
-import com.panwar2001.pdfpro.ui.pdfToText.PreviewFileScreen
 import com.panwar2001.pdfpro.ui.components.DrawerBody
 import com.panwar2001.pdfpro.ui.components.DrawerHeader
 import com.panwar2001.pdfpro.ui.components.ProgressIndicator
+import com.panwar2001.pdfpro.ui.pdfToText.FilePickerScreen
+import com.panwar2001.pdfpro.ui.pdfToText.PreviewFileScreen
 import com.panwar2001.pdfpro.ui.view_models.PdfToImagesViewModel
 import com.panwar2001.pdfpro.ui.view_models.PdfToTextViewModel
 import com.tom_roush.pdfbox.android.PDFBoxResourceLoader
@@ -155,13 +156,13 @@ fun NavigationController(
                 }
                 navigation(route=Screens.PdfToText.route,startDestination=Screens.PdfToText.FilePicker.route){
                     composable(route=Screens.PdfToText.FilePicker.route){ model->
-                        val viewModel = model.sharedViewModel<PdfToTextViewModel>(navController)
+                            val viewModel = model.sharedViewModel<PdfToTextViewModel>(navController)
                             FilePickerScreen(onNavigationIconClick = {
                                 scope.launch { drawerState.apply { if (isClosed) open() else close() } }
                             },
-                                setUri = { viewModel.setUri(it) },
-                                setLoading={viewModel.setLoading(it)}) {
-                                navController.navigate(it) {
+                                setUri = {uri:Uri?-> viewModel.setUri(uri) },
+                                setLoading={loading:Boolean->viewModel.setLoading(loading)}) {dest:String->
+                                navController.navigate(dest) {
                                     if (drawerState.isOpen) {
                                         scope.launch { drawerState.apply { close() } }
                                     }
@@ -179,8 +180,9 @@ fun NavigationController(
                                 onNavigationIconClick = {
                                     scope.launch { drawerState.apply { if (isClosed) open() else close() } }
                                 },
-                                navigateTo = { viewModel.setLoading(true)
-                                    navigateTo(it) },
+                                navigateTo = { dest:String->
+                                    viewModel.setLoading(true)
+                                    navigateTo(dest) },
                                 thumbnail = uiState.thumbnail!!
                             )
                         }
