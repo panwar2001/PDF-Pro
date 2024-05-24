@@ -1,4 +1,4 @@
-package com.panwar2001.pdfpro.ui.PdfToText
+package com.panwar2001.pdfpro.ui.pdfToText
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement

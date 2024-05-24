@@ -2,10 +2,8 @@ package com.panwar2001.pdfpro.ui.view_models
 
 import android.content.Context
 import android.net.Uri
-import androidx.annotation.WorkerThread
 import androidx.compose.ui.graphics.ImageBitmap
 import androidx.compose.ui.graphics.asImageBitmap
-import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.ViewModel
 import com.tom_roush.pdfbox.pdmodel.PDDocument
 import com.tom_roush.pdfbox.rendering.ImageType
@@ -14,6 +12,8 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
+import java.util.Timer
+import kotlin.concurrent.schedule
 
 /**
  * Data class that represents the current UI state in terms of  and [uri]
@@ -33,7 +33,7 @@ class PdfToTextViewModel:ViewModel() {
      */
     fun setUri(uri: Uri?) {
         _uiState.update {
-            it.copy(uri = uri,isLoading = false)
+            it.copy(uri = uri)
         }
     }
     fun setLoading(isLoading:Boolean){
@@ -54,18 +54,17 @@ class PdfToTextViewModel:ViewModel() {
      */
 //    @WorkerThread
     fun generateThumbnailFromPDF(context: Context?){
-//        this.setLoading(true)
-//        setUri()
-        val inputStream= context?.contentResolver?.openInputStream(uiState.value.uri!!)
-        inputStream.use {
-            val document= PDDocument.load(it)
-            val renderer= PDFRenderer(document)
-            val bitmap=renderer.renderImage(0,1F, ImageType.RGB)
-            document.close()
-            _uiState.update {
-                it.copy(thumbnail = bitmap.asImageBitmap()) }
-//            return bitmap.asImageBitmap()
-            setLoading(false)
+        Timer().schedule(1){
+            val inputStream= context?.contentResolver?.openInputStream(uiState.value.uri!!)
+            inputStream.use {
+                val document= PDDocument.load(it)
+                val renderer= PDFRenderer(document)
+                val bitmap=renderer.renderImage(0,0.5F, ImageType.RGB)
+                _uiState.update {state->
+                    state.copy(thumbnail = bitmap.asImageBitmap()) }
+                setLoading(false)
+                document.close()
+            }
         }
     }
 }
