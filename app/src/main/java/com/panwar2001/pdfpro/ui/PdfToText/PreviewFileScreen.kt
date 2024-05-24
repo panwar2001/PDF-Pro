@@ -16,7 +16,7 @@ import com.panwar2001.pdfpro.ui.AppBar
 @Composable
 fun PreviewFileScreen(onNavigationIconClick:()->Unit,
                  navigateTo: (String)->Unit,
-                  thumbnail:ImageBitmap) {
+                  thumbnail:ImageBitmap?) {
     Scaffold(topBar = {
         AppBar(onNavigationIconClick =onNavigationIconClick ) //Appbar scope end
     }) { innerPadding ->
@@ -24,11 +24,13 @@ fun PreviewFileScreen(onNavigationIconClick:()->Unit,
             modifier = Modifier.fillMaxWidth().padding(innerPadding),
             horizontalArrangement = Arrangement.Center
         ){
+            if(thumbnail!=null) {
                 Image(
-                    bitmap = thumbnail ,
+                    bitmap = thumbnail,
                     contentDescription = "jadu tona",
                     modifier = Modifier.size(300.dp)
                 )
+            }
         }
     } //Scaffold scope end
 }

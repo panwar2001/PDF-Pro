@@ -42,6 +42,7 @@ import com.panwar2001.pdfpro.ui.OnboardScreen
 import com.panwar2001.pdfpro.ui.PdfToText.PreviewFileScreen
 import com.panwar2001.pdfpro.ui.components.DrawerBody
 import com.panwar2001.pdfpro.ui.components.DrawerHeader
+import com.panwar2001.pdfpro.ui.components.ProgressIndicator
 import com.panwar2001.pdfpro.ui.view_models.PdfToImagesViewModel
 import com.panwar2001.pdfpro.ui.view_models.PdfToTextViewModel
 import com.tom_roush.pdfbox.android.PDFBoxResourceLoader
@@ -156,28 +157,30 @@ fun NavigationController(
                 navigation(route=Screens.PdfToText.route,startDestination=Screens.PdfToText.FilePicker.route){
                     composable(route=Screens.PdfToText.FilePicker.route){
                         val viewModel = it.sharedViewModel<PdfToTextViewModel>(navController)
-                        val uiState by viewModel.uiState.collectAsState()
                         val context= LocalContext.current
-                        FilePickerScreen(onNavigationIconClick = {
-                            scope.launch { drawerState.apply { if (isClosed) open() else close() } }
-                        }, isLoading = uiState.isLoading) {
-                            uri: Uri?,dest:String->
-                            viewModel.setLoading(true)
-                            viewModel.setUri(uri)
-                            viewModel.generateThumbnailFromPDF(context)
-                            viewModel.setLoading(false)
-                            navigateTo(dest)
+                            FilePickerScreen(onNavigationIconClick = {
+                                scope.launch { drawerState.apply { if (isClosed) open() else close() } }
+                            },
+                                setUri = { viewModel.setUri(it) },
+                                scope=scope,
+                                generateThumbnail={viewModel.generateThumbnailFromPDF(context) }) {
+                                navController.navigate(it) {
+                                    if (drawerState.isOpen) {
+                                        scope.launch { drawerState.apply { close() } }
+                                    }
+                                }
                         }
                     }
                     composable(route=Screens.PdfToText.previewFile.route){
                         val viewModel = it.sharedViewModel<PdfToTextViewModel>(navController)
                         val uiState by viewModel.uiState.collectAsState()
                         PreviewFileScreen(
-                            onNavigationIconClick = { /*TODO*/ },
+                            onNavigationIconClick = {
+                                scope.launch { drawerState.apply { if (isClosed) open() else close() } }
+                            },
                             navigateTo = {navigateTo(it)} ,
-                            thumbnail = uiState.thumbnail
+                            thumbnail = uiState.thumbnail!!
                         )
-
                     }
                 }
                 navigation(route=Screens.PdfToImage.route,startDestination=Screens.PdfToImage.FilePicker.route){
