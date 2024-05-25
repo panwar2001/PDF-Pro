@@ -1,6 +1,5 @@
 package com.panwar2001.pdfpro.ui.pdfToText
 
-import android.content.Intent
 import android.net.Uri
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
@@ -68,16 +67,14 @@ fun UploadScreenContent(innerPadding:PaddingValues,
                         navigateTo: (String) -> Unit,
                         setUri: (Uri?)->Unit,
                         setLoading: (Boolean) -> Unit){
-    val resultLauncher= rememberLauncherForActivityResult(contract = ActivityResultContracts.StartActivityForResult()) {
-        if (it.resultCode == -1) { // -1 constant represents operation succeeded
-                setUri(it.data?.data)
-                navigateTo(Screens.PdfToText.previewFile.route)
+    val resultLauncher= rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.OpenDocument(),
+        onResult = {
+            setUri(it)
+            navigateTo(Screens.PdfToText.previewFile.route)
         }
-    }
-    val pdfIntent = Intent(Intent.ACTION_OPEN_DOCUMENT).apply {
-        addCategory(Intent.CATEGORY_OPENABLE)
-        type = "application/pdf"
-    }
+    )
+
     val tool = getToolData(id)
     Column(
             modifier = Modifier
@@ -107,7 +104,7 @@ fun UploadScreenContent(innerPadding:PaddingValues,
 
                 ElevatedButton(
                     onClick = {
-                        resultLauncher.launch(pdfIntent)
+                        resultLauncher.launch(arrayOf("application/pdf"))
                         setLoading(true)
                         },
                     colors = ButtonDefaults.buttonColors(
