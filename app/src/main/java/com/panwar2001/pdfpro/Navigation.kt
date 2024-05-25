@@ -18,6 +18,7 @@ import androidx.compose.material3.rememberDrawerState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
@@ -54,7 +55,10 @@ class Navigation : ComponentActivity() {
         super.onCreate(savedInstanceState)
         PDFBoxResourceLoader.init(applicationContext)
         setContent{
-            PDFProTheme {
+            val theme= remember {
+                mutableStateOf<Boolean>(isDarkTheme())
+            }
+            PDFProTheme(darkTheme =theme.value) {
                 // A surface container using the 'background' color from the theme
                 Surface(
                     modifier = Modifier.fillMaxSize(),
@@ -65,9 +69,18 @@ class Navigation : ComponentActivity() {
                         setOnboardingFinished = {
                             val sharedPreferences = this.getSharedPreferences("onBoarding", Context.MODE_PRIVATE)
                             val editor = sharedPreferences.edit()
+
                             editor.putBoolean("isFinished", true)
                             editor.apply()
-                        })
+                        },
+                        setTheme={
+                            val sharedPreferences = this.getSharedPreferences("Theme", Context.MODE_PRIVATE)
+                            val editor = sharedPreferences.edit()
+                            editor.putBoolean("theme", it)
+                            editor.apply()
+                            theme.value=it
+                        },
+                        currentTheme=theme.value)
                 }
             }
         }
@@ -76,6 +89,10 @@ class Navigation : ComponentActivity() {
         val sharedPreferences = this.getSharedPreferences("onBoarding", Context.MODE_PRIVATE)
         val onBoardingIsFinished= sharedPreferences.getBoolean("isFinished", false)
         return if(onBoardingIsFinished) Screens.home.route else Screens.onBoard.route
+    }
+    private fun isDarkTheme():Boolean{
+        val sharedPreferences = this.getSharedPreferences("Theme", Context.MODE_PRIVATE)
+        return sharedPreferences.getBoolean("theme", false)
     }
 }
 
@@ -90,7 +107,9 @@ class Navigation : ComponentActivity() {
 fun NavigationController(
     navController: NavHostController= rememberNavController(),
     startDestination:String,
-    setOnboardingFinished:()->Unit
+    setOnboardingFinished:()->Unit,
+    setTheme:(Boolean)->Unit,
+    currentTheme:Boolean
 )
 {
     val scope = rememberCoroutineScope()
@@ -118,7 +137,7 @@ fun NavigationController(
         drawerContent = {
             ModalDrawerSheet(Modifier.padding(0.dp,0.dp,60.dp,0.dp)) {
                 DrawerHeader()
-                DrawerBody(items = DataSource.MenuItems){
+                DrawerBody(items = DataSource.MenuItems,setTheme=setTheme,currentTheme=currentTheme){
                     navigateTo(it)
                 }
             }

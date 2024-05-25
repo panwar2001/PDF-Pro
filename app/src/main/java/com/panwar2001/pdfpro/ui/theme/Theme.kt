@@ -3,6 +3,7 @@ package com.panwar2001.pdfpro.ui.theme
 import android.app.Activity
 import android.os.Build
 import androidx.compose.foundation.isSystemInDarkTheme
+import androidx.compose.material3.ColorScheme
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.darkColorScheme
 import androidx.compose.material3.dynamicDarkColorScheme
@@ -22,7 +23,7 @@ private val DarkColorScheme = darkColorScheme(
 )
 
 private val LightColorScheme = lightColorScheme(
-    primary = Purple40,
+    primary = White10,
     secondary = PurpleGrey40,
     tertiary = Pink40
 
@@ -58,6 +59,12 @@ fun PDFProTheme(
         SideEffect {
             val window = (view.context as Activity).window
             WindowCompat.getInsetsController(window, view).isAppearanceLightStatusBars = darkTheme
+            // Adjust status bar appearance based on theme
+            window.statusBarColor =  colorScheme.tertiary.toArgb()
+            // Set the navigation bar color based on the theme
+            window.navigationBarColor = colorScheme.tertiary.toArgb()
+            // Adjust navigation bar icon colors based on the theme
+            WindowCompat.getInsetsController(window, view).isAppearanceLightNavigationBars = darkTheme
         }
     }
 
