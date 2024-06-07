@@ -115,6 +115,8 @@ fun NavigationController(
 {
     val scope = rememberCoroutineScope()
     val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
+
+    // used for navigation through navigation drawer
     val navigateTo:(String)->Unit={
     navController.navigate(it){
         if(drawerState.isOpen){
@@ -142,7 +144,8 @@ fun NavigationController(
                     navigateTo(it)
                 }
             }
-        })
+        },
+        gesturesEnabled = drawerState.isOpen)
     {
         // A surface container using the 'background' color from the theme
         Surface(
