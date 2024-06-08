@@ -27,6 +27,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.panwar2001.pdfpro.data.DataSource
+import com.panwar2001.pdfpro.data.Screens
 import com.panwar2001.pdfpro.ui.AppBar
 
 @Composable
@@ -73,9 +74,11 @@ fun PreviewFileScreen(onNavigationIconClick:()->Unit,
                 modifier = Modifier.padding(100.dp),
                 horizontalArrangement = Arrangement.Center
             ){
-                Box(modifier=Modifier.background(color = Color.LightGray).clickable {
-
-                }){
+                Box(modifier= Modifier
+                    .background(color = Color.LightGray)
+                    .clickable {
+                        navigateTo(Screens.PdfToText.PdfDisplay.route)
+                    }){
                     Column(
                         horizontalAlignment = Alignment.CenterHorizontally,
                     ){

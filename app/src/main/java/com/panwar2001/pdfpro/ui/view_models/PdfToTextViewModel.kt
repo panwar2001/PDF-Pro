@@ -41,6 +41,9 @@ class PdfToTextViewModel:ViewModel() {
             it.copy(uri = uri)
         }
     }
+    fun getUri():Uri{
+        return uiState.value.uri
+    }
     fun setLoading(isLoading:Boolean){
         _uiState.update {
             it.copy(isLoading = isLoading)

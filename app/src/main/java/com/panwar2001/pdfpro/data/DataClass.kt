@@ -50,10 +50,13 @@ sealed class Screens(val route: String) {
     object PdfToText: Screens("PdfToText") {
         object  FilePicker: Screens("pick")
         object previewFile : Screens("previewFile")
+        object PdfDisplay: Screens("pdfDisplay")
+
     }
     object PdfToImage: Screens("PdfToImage") {
         object  FilePicker: Screens("pick")
         object previewFile : Screens("previewFile")
+        object PdfDisplay: Screens("pdfDisplay")
     }
 }
 

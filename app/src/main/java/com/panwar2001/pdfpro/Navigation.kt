@@ -43,6 +43,7 @@ import com.panwar2001.pdfpro.ui.components.DrawerBody
 import com.panwar2001.pdfpro.ui.components.DrawerHeader
 import com.panwar2001.pdfpro.ui.components.ProgressIndicator
 import com.panwar2001.pdfpro.ui.pdfToText.FilePickerScreen
+import com.panwar2001.pdfpro.ui.pdfToText.PdfViewerScreen
 import com.panwar2001.pdfpro.ui.pdfToText.PreviewFileScreen
 import com.panwar2001.pdfpro.ui.view_models.PdfToImagesViewModel
 import com.panwar2001.pdfpro.ui.view_models.PdfToTextViewModel
@@ -204,12 +205,21 @@ fun NavigationController(
                                     scope.launch { drawerState.apply { if (isClosed) open() else close() } }
                                 },
                                 navigateTo = { dest:String->
-                                    viewModel.setLoading(true)
-                                    navigateTo(dest) },
+                                    navController.navigate(dest) {
+                                        if (drawerState.isOpen) {
+                                            scope.launch { drawerState.apply { close() } }
+                                        }
+                                    }
+                                },
                                 thumbnail = uiState.thumbnail,
                                 fileName = uiState.fileName
                             )
                         }
+                    }
+                    composable(route=Screens.PdfToText.PdfDisplay.route){model->
+                        val viewModel = model.sharedViewModel<PdfToTextViewModel>(navController)
+                        val uiState by viewModel.uiState.collectAsState()
+                        PdfViewerScreen(uri = uiState.uri, navigateUp ={navController.navigateUp()},uiState.fileName)
                     }
                 }
                 navigation(route=Screens.PdfToImage.route,startDestination=Screens.PdfToImage.FilePicker.route){
