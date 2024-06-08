@@ -40,5 +40,11 @@ object DataSource {
         OnBoardData(icon=R.drawable.pdf_compresser,title="Compress PDF", description = "Effortlessly compress PDF files while preserving quality and reducing file size with our intuitive compression tool"),
         OnBoardData(icon=R.drawable.lock_pdf,title="Lock PDF", description = "Secure your PDF with password protection to safeguard sensitive information.")
     )
+    fun getToolData(id:Int): Tool{
+        return when(id){
+            0-> Tool("Our advanced text extraction algorithm ensures high accuracy, preserving formatting and layout faithfully.","Select PDF file")
+            else-> Tool("","upload")
+        }
+    }
 
 }

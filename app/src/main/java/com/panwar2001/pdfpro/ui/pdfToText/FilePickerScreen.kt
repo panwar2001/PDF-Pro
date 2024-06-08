@@ -15,8 +15,13 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.ElevatedButton
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SnackbarDuration
+import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -24,24 +29,22 @@ import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.panwar2001.pdfpro.data.DataSource
 import com.panwar2001.pdfpro.data.Screens
-import com.panwar2001.pdfpro.data.Tool
 import com.panwar2001.pdfpro.ui.AppBar
+import kotlinx.coroutines.launch
 
 
-fun getToolData(id:Int): Tool{
-    return when(id){
-       0-> Tool("Our advanced text extraction algorithm ensures high accuracy, preserving formatting and layout faithfully.","Select PDF file")
-       else-> Tool("","upload")
-    }
-}
+
 @Composable
 fun FilePickerScreen(onNavigationIconClick:()->Unit,
-                     setUri: (Uri?)->Unit,
+                     setUri: (Uri)->Unit,
                      setLoading:(Boolean)->Unit,
                      navigateTo: (String)->Unit) {
-
+                        val snackBarHostState = remember { SnackbarHostState() }
+                        val scope = rememberCoroutineScope()
                         Scaffold(topBar = {
+                            SnackbarHost(hostState = snackBarHostState)
                             AppBar(onNavigationIconClick =onNavigationIconClick ) //Appbar scope end
                         }) { innerPadding ->
                                 UploadScreenContent(
@@ -49,7 +52,16 @@ fun FilePickerScreen(onNavigationIconClick:()->Unit,
                                     id = 0,
                                     navigateTo = navigateTo,
                                     setUri,
-                                    setLoading
+                                    setLoading,
+                                    showSnackBar={
+                                        scope.launch {
+                                            snackBarHostState.showSnackbar(
+                                                message = "Something went wrong. Please try again.",
+                                                // Defaults to SnackbarDuration.Short
+                                                duration = SnackbarDuration.Indefinite
+                                            )
+                                        }
+                                    }
                                 )
                         } //Scaffold scope end
 }
@@ -65,17 +77,22 @@ fun FilePickerScreen(onNavigationIconClick:()->Unit,
 fun UploadScreenContent(innerPadding:PaddingValues,
                         id:Int,
                         navigateTo: (String) -> Unit,
-                        setUri: (Uri?)->Unit,
-                        setLoading: (Boolean) -> Unit){
+                        setUri: (Uri)->Unit,
+                        setLoading: (Boolean) -> Unit,
+                        showSnackBar:()->Unit){
     val resultLauncher= rememberLauncherForActivityResult(
         contract = ActivityResultContracts.OpenDocument(),
         onResult = {
-            setUri(it)
-            navigateTo(Screens.PdfToText.previewFile.route)
+            if(it== null){
+               showSnackBar()
+            }else {
+                setUri(it)
+                navigateTo(Screens.PdfToText.previewFile.route)
+            }
         }
     )
 
-    val tool = getToolData(id)
+    val tool = DataSource.getToolData(id)
     Column(
             modifier = Modifier
                 .padding(innerPadding)

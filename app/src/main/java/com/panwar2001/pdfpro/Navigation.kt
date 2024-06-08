@@ -5,7 +5,6 @@ import android.net.Uri
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
-import androidx.activity.enableEdgeToEdge
 import androidx.compose.animation.EnterTransition
 import androidx.compose.animation.ExitTransition
 import androidx.compose.foundation.layout.fillMaxSize
@@ -57,7 +56,7 @@ class Navigation : ComponentActivity() {
         PDFBoxResourceLoader.init(applicationContext)
         setContent{
             val theme= remember {
-                mutableStateOf<Boolean>(isDarkTheme())
+                mutableStateOf(isDarkTheme())
             }
             PDFProTheme(darkTheme =theme.value) {
                 // A surface container using the 'background' color from the theme
@@ -184,7 +183,7 @@ fun NavigationController(
                             FilePickerScreen(onNavigationIconClick = {
                                 scope.launch { drawerState.apply { if (isClosed) open() else close() } }
                             },
-                                setUri = {uri:Uri?-> viewModel.setUri(uri) },
+                                setUri = {uri:Uri-> viewModel.setUri(uri) },
                                 setLoading={loading:Boolean->viewModel.setLoading(loading)}) {dest:String->
                                 navController.navigate(dest) {
                                     if (drawerState.isOpen) {
@@ -207,7 +206,8 @@ fun NavigationController(
                                 navigateTo = { dest:String->
                                     viewModel.setLoading(true)
                                     navigateTo(dest) },
-                                thumbnail = uiState.thumbnail!!
+                                thumbnail = uiState.thumbnail,
+                                fileName = uiState.fileName
                             )
                         }
                     }
