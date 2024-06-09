@@ -45,6 +45,7 @@ import com.panwar2001.pdfpro.ui.components.ProgressIndicator
 import com.panwar2001.pdfpro.ui.pdfToText.FilePickerScreen
 import com.panwar2001.pdfpro.ui.pdfToText.PdfViewerScreen
 import com.panwar2001.pdfpro.ui.pdfToText.PreviewFileScreen
+import com.panwar2001.pdfpro.ui.pdfToText.TextScreen
 import com.panwar2001.pdfpro.ui.view_models.PdfToImagesViewModel
 import com.panwar2001.pdfpro.ui.view_models.PdfToTextViewModel
 import com.tom_roush.pdfbox.android.PDFBoxResourceLoader
@@ -212,7 +213,8 @@ fun NavigationController(
                                     }
                                 },
                                 thumbnail = uiState.thumbnail,
-                                fileName = uiState.fileName
+                                fileName = uiState.fileName,
+                                setLoading={loading:Boolean->viewModel.setLoading(loading)}
                             )
                         }
                     }
@@ -221,6 +223,18 @@ fun NavigationController(
                         val uiState by viewModel.uiState.collectAsState()
                         PdfViewerScreen(uri = uiState.uri, navigateUp ={navController.navigateUp()},uiState.fileName)
                     }
+                    composable(route=Screens.PdfToText.TextScreen.route){model->
+                        val viewModel = model.sharedViewModel<PdfToTextViewModel>(navController)
+                        val uiState by viewModel.uiState.collectAsState()
+                        if(uiState.isLoading){
+                            ProgressIndicator(modifier = Modifier)
+                            viewModel.convertToText(LocalContext.current)
+                        }else {
+                            TextScreen(text = uiState.text) {
+                                scope.launch { drawerState.apply { if (isClosed) open() else close() } }
+                            }
+                        }
+                    }
                 }
                 navigation(route=Screens.PdfToImage.route,startDestination=Screens.PdfToImage.FilePicker.route){
                     composable(route=Screens.PdfToImage.FilePicker.route){
@@ -228,7 +242,6 @@ fun NavigationController(
                         val uiState by viewModel.uiState.collectAsState()
                     }
                 }
-
             }
         }
     }

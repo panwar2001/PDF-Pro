@@ -36,27 +36,20 @@ data class MenuItem(
  * navigation.kt
  * enum values that represent the screens in the app
  */
-//enum class df(@StringRes val title: Int) {
-//    Splash(title = R.string.splash),
-//    OnBoard(title = R.string.onBoard),
-//    Home(title = R.string.home),
-//    Pick(title = R.string.pick),
-////    PreviewFile(title=R.string.)
-//}
 
 sealed class Screens(val route: String) {
-    object onBoard : Screens("onboard")
-    object home: Screens("home")
-    object PdfToText: Screens("PdfToText") {
-        object  FilePicker: Screens("pick")
-        object previewFile : Screens("previewFile")
-        object PdfDisplay: Screens("pdfDisplay")
-
+    data object onBoard : Screens("onboard")
+    data object home: Screens("home")
+    data object PdfToText: Screens("PdfToText") {
+        data object  FilePicker: Screens("pick")
+        data object previewFile : Screens("previewFile")
+        data object PdfDisplay: Screens("pdfDisplay")
+        data object TextScreen: Screens("textScreen")
     }
-    object PdfToImage: Screens("PdfToImage") {
-        object  FilePicker: Screens("pick")
-        object previewFile : Screens("previewFile")
-        object PdfDisplay: Screens("pdfDisplay")
+    data object PdfToImage: Screens("PdfToImage") {
+        data object  FilePicker: Screens("pick")
+        data object PreviewFile : Screens("previewFile")
+        data object PdfDisplay: Screens("pdfDisplay")
     }
 }
 

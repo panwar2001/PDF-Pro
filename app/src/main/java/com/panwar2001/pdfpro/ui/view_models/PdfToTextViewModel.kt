@@ -1,8 +1,10 @@
 package com.panwar2001.pdfpro.ui.view_models
 
+import android.content.ContentResolver
 import android.content.Context
 import android.net.Uri
 import android.provider.OpenableColumns
+import androidx.annotation.WorkerThread
 import androidx.compose.ui.graphics.ImageBitmap
 import androidx.compose.ui.graphics.asImageBitmap
 import androidx.core.graphics.drawable.toBitmap
@@ -12,6 +14,7 @@ import com.panwar2001.pdfpro.R
 import com.tom_roush.pdfbox.pdmodel.PDDocument
 import com.tom_roush.pdfbox.rendering.ImageType
 import com.tom_roush.pdfbox.rendering.PDFRenderer
+import com.tom_roush.pdfbox.text.PDFTextStripper
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -26,7 +29,8 @@ data class PdfToTextUiState(
     val uri: Uri=Uri.EMPTY,
     val isLoading:Boolean=false,
     val thumbnail: ImageBitmap= R.drawable.default_photo.toDrawable().toBitmap(width =300, height = 300).asImageBitmap(),
-    val fileName: String="file.pdf"
+    val fileName: String="file.pdf",
+    val text: String = ""
 )
 
 
@@ -85,6 +89,21 @@ class PdfToTextViewModel:ViewModel() {
                         state.copy(fileName = fileName)
                     }
                 }
+            }
+        }
+    }
+    @WorkerThread
+    fun convertToText(context:Context?){
+        val inputStream=context?.contentResolver?.openInputStream(uiState.value.uri)
+        Timer().schedule(1) {
+            inputStream.use {
+                val document = PDDocument.load(it)
+                val textStripper = PDFTextStripper()
+                _uiState.update { state ->
+                    state.copy(text = textStripper.getText(document))
+                }
+                document.close()
+                setLoading(false)
             }
         }
     }

@@ -34,11 +34,15 @@ import com.panwar2001.pdfpro.ui.AppBar
 fun PreviewFileScreen(onNavigationIconClick:()->Unit,
                  navigateTo: (String)->Unit,
                   thumbnail:ImageBitmap,
-                      fileName:String) {
+                      fileName:String,
+                      setLoading:(Boolean)->Unit) {
     val tool = DataSource.getToolData(0)
     Scaffold(
         floatingActionButton = {
-            FloatingActionButton(onClick = { /*TODO*/ },
+            FloatingActionButton(onClick = {
+               setLoading(true)
+                navigateTo(Screens.PdfToText.TextScreen.route)
+            },
                 containerColor = Color.Red,
                 contentColor = Color.White,
                 ) {
