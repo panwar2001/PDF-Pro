@@ -3,6 +3,7 @@ package com.panwar2001.pdfpro.ui.pdfToText
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.wrapContentSize
+import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Scaffold
@@ -24,13 +25,13 @@ fun TextScreen(text:String,onNavigationIconClick:()->Unit){
             modifier = Modifier
                 .padding(padding)
                 .verticalScroll(state = scrollState)
-        ){
-            Text(
-                text = text,
-                modifier=Modifier.wrapContentSize().padding(5.dp),
-                fontWeight = FontWeight.SemiBold,
-                fontFamily = FontFamily.Monospace
-            )
+        ) {
+                Text(
+                    text = text,
+                    modifier = Modifier.wrapContentSize().padding(5.dp),
+                    fontWeight = FontWeight.SemiBold,
+                    fontFamily = FontFamily.Monospace
+                )
         }
         }
 }

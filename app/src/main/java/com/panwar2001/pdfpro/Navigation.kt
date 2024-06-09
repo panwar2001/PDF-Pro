@@ -226,12 +226,16 @@ fun NavigationController(
                     composable(route=Screens.PdfToText.TextScreen.route){model->
                         val viewModel = model.sharedViewModel<PdfToTextViewModel>(navController)
                         val uiState by viewModel.uiState.collectAsState()
-                        if(uiState.isLoading){
+                        if(uiState.isLoading && uiState.text==""){
                             ProgressIndicator(modifier = Modifier)
                             viewModel.convertToText(LocalContext.current)
                         }else {
-                            TextScreen(text = uiState.text) {
-                                scope.launch { drawerState.apply { if (isClosed) open() else close() } }
+                            if(uiState.text!="") {
+                                TextScreen(text = uiState.text) {
+                                    scope.launch { drawerState.apply { if (isClosed) open() else close() } }
+                                }
+                            }else{
+                                ProgressIndicator(modifier = Modifier)
                             }
                         }
                     }

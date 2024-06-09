@@ -42,12 +42,12 @@ class PdfToTextViewModel:ViewModel() {
      */
     fun setUri(uri: Uri) {
         _uiState.update {
-            it.copy(uri = uri)
+            it.copy(uri = uri,
+                fileName = "",
+                text="")
         }
     }
-    fun getUri():Uri{
-        return uiState.value.uri
-    }
+
     fun setLoading(isLoading:Boolean){
         _uiState.update {
             it.copy(isLoading = isLoading)
@@ -56,7 +56,7 @@ class PdfToTextViewModel:ViewModel() {
     /**
      * Reset the order state
      */
-    fun resetOrder() {
+    fun resetState() {
         _uiState.value = PdfToTextUiState()
     }
 
