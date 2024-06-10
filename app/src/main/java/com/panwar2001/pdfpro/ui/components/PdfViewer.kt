@@ -1,4 +1,4 @@
-package com.panwar2001.pdfpro.ui.pdfToText
+package com.panwar2001.pdfpro.ui.components
 
 import android.net.Uri
 import androidx.compose.foundation.layout.Column
@@ -28,12 +28,12 @@ import com.github.barteksc.pdfviewer.PDFView
  */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun PdfViewerScreen( uri: Uri,navigateUp:()->Unit,fileName:String) {
+fun PdfViewer( uri: Uri,navigateUp:()->Unit,fileName:String) {
     Scaffold(topBar = {
         TopAppBar(
             title = { Text(text = fileName,
-                 overflow = TextOverflow.Ellipsis,
-                  maxLines = 1)},
+                overflow = TextOverflow.Ellipsis,
+                maxLines = 1)},
             navigationIcon = {
                 IconButton(onClick = {navigateUp()}) {
                     Icon(

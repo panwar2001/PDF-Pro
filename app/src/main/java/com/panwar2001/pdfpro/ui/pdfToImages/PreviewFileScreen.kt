@@ -1,4 +1,4 @@
-package com.panwar2001.pdfpro.ui.pdfToText
+package com.panwar2001.pdfpro.ui.pdfToImages
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -36,7 +36,7 @@ fun PreviewFileScreen(onNavigationIconClick:()->Unit,
                   thumbnail:ImageBitmap,
                       fileName:String,
                       setLoading:(Boolean)->Unit) {
-    val tool = DataSource.getToolData(0)
+    val tool = DataSource.getToolData(1)
     Scaffold(
         floatingActionButton = {
             FloatingActionButton(onClick = {
@@ -49,7 +49,7 @@ fun PreviewFileScreen(onNavigationIconClick:()->Unit,
                 Row(verticalAlignment = Alignment.CenterVertically,
                     modifier = Modifier.padding(5.dp)
                 ){
-                    Text(text = "Convert To Text",
+                    Text(text = "Convert To Images",
                         fontSize = 20.sp)
                     Icon(Icons.Filled.ArrowForward, "Next")
                 }
@@ -63,7 +63,17 @@ fun PreviewFileScreen(onNavigationIconClick:()->Unit,
             .fillMaxHeight(),
             horizontalAlignment = Alignment.CenterHorizontally
         ){
-            ToolDescription(description = tool.toolDescription)
+            Text(
+                text = tool.toolDescription,
+                modifier = Modifier.padding(
+                    start = 20.dp,
+                    end = 20.dp,
+                    top = 30.dp
+                ),
+                fontSize = 20.sp,
+                fontWeight = FontWeight.SemiBold,
+                fontFamily = FontFamily.Monospace
+            )
             Row(
                 modifier = Modifier.padding(100.dp),
                 horizontalArrangement = Arrangement.Center
@@ -93,17 +103,4 @@ fun PreviewFileScreen(onNavigationIconClick:()->Unit,
         }
 } //Scaffold scope end
 
-@Composable
-fun ToolDescription(description:String){
-    Text(
-        text = description,
-        modifier = Modifier.padding(
-            start = 20.dp,
-            end = 20.dp,
-            top = 30.dp
-        ),
-        fontSize = 20.sp,
-        fontWeight = FontWeight.SemiBold,
-        fontFamily = FontFamily.Monospace
-    )
-}
+

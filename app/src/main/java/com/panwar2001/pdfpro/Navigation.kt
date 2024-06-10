@@ -41,9 +41,9 @@ import com.panwar2001.pdfpro.ui.HomeScreen
 import com.panwar2001.pdfpro.ui.OnboardScreen
 import com.panwar2001.pdfpro.ui.components.DrawerBody
 import com.panwar2001.pdfpro.ui.components.DrawerHeader
+import com.panwar2001.pdfpro.ui.components.FilePickerScreen
+import com.panwar2001.pdfpro.ui.components.PdfViewer
 import com.panwar2001.pdfpro.ui.components.ProgressIndicator
-import com.panwar2001.pdfpro.ui.pdfToText.FilePickerScreen
-import com.panwar2001.pdfpro.ui.pdfToText.PdfViewerScreen
 import com.panwar2001.pdfpro.ui.pdfToText.PreviewFileScreen
 import com.panwar2001.pdfpro.ui.pdfToText.TextScreen
 import com.panwar2001.pdfpro.ui.view_models.PdfToImagesViewModel
@@ -185,14 +185,17 @@ fun NavigationController(
                             FilePickerScreen(onNavigationIconClick = {
                                 scope.launch { drawerState.apply { if (isClosed) open() else close() } }
                             },
-                                setUri = {uri:Uri-> viewModel.setUri(uri) },
-                                setLoading={loading:Boolean->viewModel.setLoading(loading)}) {dest:String->
-                                navController.navigate(dest) {
-                                    if (drawerState.isOpen) {
-                                        scope.launch { drawerState.apply { close() } }
+                                setUri = {uri:Uri-> viewModel.setUri(uri)},
+                                setLoading={loading:Boolean->viewModel.setLoading(loading)},
+                                navigate = {
+                                    navController.navigate(Screens.PdfToText.previewFile.route) {
+                                        if (drawerState.isOpen) {
+                                            scope.launch { drawerState.apply { close() } }
+                                        }
                                     }
-                                }
-                        }
+                                },selectMultipleFile = false,
+                                mimeType = "application/pdf",
+                                tool=DataSource.getToolData(0))
                     }
                     composable(route=Screens.PdfToText.previewFile.route) {model->
                         val viewModel = model.sharedViewModel<PdfToTextViewModel>(navController)
@@ -221,7 +224,7 @@ fun NavigationController(
                     composable(route=Screens.PdfToText.PdfDisplay.route){model->
                         val viewModel = model.sharedViewModel<PdfToTextViewModel>(navController)
                         val uiState by viewModel.uiState.collectAsState()
-                        PdfViewerScreen(uri = uiState.uri, navigateUp ={navController.navigateUp()},uiState.fileName)
+                        PdfViewer(uri = uiState.uri, navigateUp ={navController.navigateUp()},uiState.fileName)
                     }
                     composable(route=Screens.PdfToText.TextScreen.route){model->
                         val viewModel = model.sharedViewModel<PdfToTextViewModel>(navController)
@@ -243,7 +246,44 @@ fun NavigationController(
                 navigation(route=Screens.PdfToImage.route,startDestination=Screens.PdfToImage.FilePicker.route){
                     composable(route=Screens.PdfToImage.FilePicker.route){
                         val viewModel = it.sharedViewModel<PdfToImagesViewModel>(navController)
+                        FilePickerScreen(onNavigationIconClick = {
+                            scope.launch { drawerState.apply { if (isClosed) open() else close() } }
+                        },
+                            setUri = {uri:Uri-> viewModel.setUri(uri)},
+                            setLoading={loading:Boolean->viewModel.setLoading(loading)},
+                            navigate = {
+                                navController.navigate(Screens.PdfToImage.PreviewFile.route) {
+                                    if (drawerState.isOpen) {
+                                        scope.launch { drawerState.apply { close() } }
+                                    }
+                                }
+                            },selectMultipleFile = false,
+                            mimeType = "application/pdf",
+                            tool=DataSource.getToolData(1))
+                    }
+                    composable(route=Screens.PdfToImage.PreviewFile.route) {model->
+                        val viewModel = model.sharedViewModel<PdfToImagesViewModel>(navController)
                         val uiState by viewModel.uiState.collectAsState()
+                        if (uiState.isLoading) {
+                            ProgressIndicator(modifier = Modifier)
+                            viewModel.generateThumbnailFromPDF(LocalContext.current)
+                        } else {
+                            PreviewFileScreen(
+                                onNavigationIconClick = {
+                                    scope.launch { drawerState.apply { if (isClosed) open() else close() } }
+                                },
+                                navigateTo = { dest:String->
+                                    navController.navigate(dest) {
+                                        if (drawerState.isOpen) {
+                                            scope.launch { drawerState.apply { close() } }
+                                        }
+                                    }
+                                },
+                                thumbnail = uiState.thumbnail,
+                                fileName = uiState.fileName,
+                                setLoading={loading:Boolean->viewModel.setLoading(loading)}
+                            )
+                        }
                     }
                 }
             }
