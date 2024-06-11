@@ -29,6 +29,7 @@ fun NavGraphBuilder.imgGraph(navController: NavController,
     navigation(route= Screens.PdfToImage.route,startDestination= Screens.FilePicker.route){
         composable(route= Screens.FilePicker.route){
             val viewModel = it.sharedViewModel<PdfToImagesViewModel>(navController)
+            val context= LocalContext.current
             FilePickerScreen(onNavigationIconClick = {
                 scope.launch { drawerState.apply { if (isClosed) open() else close() } }
             },
@@ -42,14 +43,19 @@ fun NavGraphBuilder.imgGraph(navController: NavController,
                     }
                 },selectMultipleFile = false,
                 mimeType = "application/pdf",
-                tool= DataSource.getToolData(1))
+                tool= DataSource.getToolData(1),
+                generateThumbnail={
+                    scope.launch {
+                        viewModel.generateThumbnailFromPDF(context)
+                    }
+                })
         }
         composable(route= Screens.PdfToImage.PreviewFile.route) { model->
             val viewModel = model.sharedViewModel<PdfToImagesViewModel>(navController)
             val uiState by viewModel.uiState.collectAsState()
+            val context= LocalContext.current
             if (uiState.isLoading) {
                 ProgressIndicator(modifier = Modifier)
-                viewModel.generateThumbnailFromPDF(LocalContext.current)
             } else {
                 PreviewFileScreen(
                     onNavigationIconClick = {
@@ -64,7 +70,12 @@ fun NavGraphBuilder.imgGraph(navController: NavController,
                     },
                     thumbnail = uiState.thumbnail,
                     fileName = uiState.fileName,
-                    setLoading={loading:Boolean->viewModel.setLoading(loading)}
+                    setLoading={loading:Boolean->viewModel.setLoading(loading)},
+                    convertToImages={
+                        scope.launch {
+                            viewModel.generateImages(context)
+                        }
+                    }
                 )
             }
         }
@@ -81,7 +92,6 @@ fun NavGraphBuilder.imgGraph(navController: NavController,
             val progress by viewModel.progress.collectAsState()
             if (uiState.isLoading) {
                 DeterminateIndicator(progress)
-                viewModel.generateImages(LocalContext.current)
             } else {
                 if (uiState.images.isEmpty()) {
                     DeterminateIndicator(progress)

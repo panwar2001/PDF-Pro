@@ -35,12 +35,14 @@ fun PreviewFileScreen(onNavigationIconClick:()->Unit,
                  navigateTo: (String)->Unit,
                   thumbnail:ImageBitmap,
                       fileName:String,
-                      setLoading:(Boolean)->Unit) {
+                      setLoading:(Boolean)->Unit,
+                      convertToImages:()->Unit) {
     val tool = DataSource.getToolData(1)
     Scaffold(
         floatingActionButton = {
             FloatingActionButton(onClick = {
                setLoading(true)
+               convertToImages()
                 navigateTo(Screens.PdfToImage.ImageScreen.route)
             },
                 containerColor = Color.Red,

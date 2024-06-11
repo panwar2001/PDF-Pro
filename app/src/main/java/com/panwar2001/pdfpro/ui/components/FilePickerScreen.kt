@@ -19,8 +19,11 @@ import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -44,9 +47,11 @@ fun FilePickerScreen(onNavigationIconClick:()->Unit,
                      navigate: ()->Unit,
                      selectMultipleFile: Boolean=false,
                      mimeType:String,
-                     tool:Tool) {
+                     tool:Tool,
+                     generateThumbnail:()->Unit) {
     val snackBarHostState = remember { SnackbarHostState() }
     val scope = rememberCoroutineScope()
+
     val context= LocalContext.current
     val tryAgain:()->Unit={ ->
         scope.launch {
@@ -70,12 +75,9 @@ fun FilePickerScreen(onNavigationIconClick:()->Unit,
             contract = ActivityResultContracts.OpenDocument(),
             onResult = {
                 if(it!=null){
-                    if(context.contentResolver.getType(it)!=mimeType){
-                        tryAgain()
-                    }else {
                         setUri(it)
+                        generateThumbnail()
                         navigate()
-                    }
                 }
             })
     }

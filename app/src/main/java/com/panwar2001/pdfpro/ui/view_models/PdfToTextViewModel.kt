@@ -65,7 +65,7 @@ class PdfToTextViewModel:ViewModel() {
      * @param context application context
      */
 //    @WorkerThread
-    fun generateThumbnailFromPDF(context: Context){
+    suspend fun generateThumbnailFromPDF(context: Context){
         Timer().schedule(1){
             val inputStream= context.contentResolver.openInputStream(uiState.value.uri)
             inputStream.use {
@@ -93,7 +93,7 @@ class PdfToTextViewModel:ViewModel() {
         }
     }
     @WorkerThread
-    fun convertToText(context:Context){
+    suspend fun convertToText(context:Context){
         val inputStream=context.contentResolver.openInputStream(uiState.value.uri)
         Timer().schedule(1) {
             inputStream.use {

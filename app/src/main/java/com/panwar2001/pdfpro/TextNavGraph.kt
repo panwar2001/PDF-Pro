@@ -27,6 +27,7 @@ fun NavGraphBuilder.textGraph(navController:NavController,
     navigation(route= Screens.PdfToText.route,startDestination= Screens.FilePicker.route){
         composable(route= Screens.FilePicker.route){ model->
             val viewModel = model.sharedViewModel<PdfToTextViewModel>(navController)
+            val context= LocalContext.current
             FilePickerScreen(onNavigationIconClick = {
                 scope.launch { drawerState.apply { if (isClosed) open() else close() } }
             },
@@ -40,14 +41,19 @@ fun NavGraphBuilder.textGraph(navController:NavController,
                     }
                 },selectMultipleFile = false,
                 mimeType = "application/pdf",
-                tool= DataSource.getToolData(0))
+                tool= DataSource.getToolData(0),
+                generateThumbnail = {
+                    scope.launch {
+                        viewModel.generateThumbnailFromPDF(context)
+                    }
+                })
         }
         composable(route= Screens.PdfToText.previewFile.route) { model->
             val viewModel = model.sharedViewModel<PdfToTextViewModel>(navController)
             val uiState by viewModel.uiState.collectAsState()
+            val context= LocalContext.current
             if (uiState.isLoading) {
                 ProgressIndicator(modifier = Modifier)
-                viewModel.generateThumbnailFromPDF(LocalContext.current)
             } else {
                 PreviewFileScreen(
                     onNavigationIconClick = {
@@ -62,7 +68,12 @@ fun NavGraphBuilder.textGraph(navController:NavController,
                     },
                     thumbnail = uiState.thumbnail,
                     fileName = uiState.fileName,
-                    setLoading={loading:Boolean->viewModel.setLoading(loading)}
+                    setLoading={loading:Boolean->viewModel.setLoading(loading)},
+                    convertToText={
+                        scope.launch {
+                            viewModel.convertToText(context)
+                        }
+                    }
                 )
             }
         }
@@ -76,7 +87,6 @@ fun NavGraphBuilder.textGraph(navController:NavController,
             val uiState by viewModel.uiState.collectAsState()
             if(uiState.isLoading && uiState.text==""){
                 ProgressIndicator(modifier = Modifier)
-                viewModel.convertToText(LocalContext.current)
             }else {
                 if(uiState.text!="") {
                     TextScreen(text = uiState.text) {
