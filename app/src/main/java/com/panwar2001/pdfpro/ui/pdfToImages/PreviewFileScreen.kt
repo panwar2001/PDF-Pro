@@ -40,8 +40,8 @@ fun PreviewFileScreen(onNavigationIconClick:()->Unit,
     Scaffold(
         floatingActionButton = {
             FloatingActionButton(onClick = {
-//               setLoading(true)
-//                navigateTo(Screens.PdfToText.TextScreen.route)
+               setLoading(true)
+                navigateTo(Screens.PdfToImage.ImageScreen.route)
             },
                 containerColor = Color.Red,
                 contentColor = Color.White,

@@ -49,6 +49,7 @@ sealed class Screens(val route: String) {
     data object PdfToImage: Screens("PdfToImage") {
         data object PreviewFile : Screens("imgPdfPreview")
         data object PdfDisplay: Screens("pdfDisplayImg")
+        data object ImageScreen:Screens("imageScreen")
     }
 }
 

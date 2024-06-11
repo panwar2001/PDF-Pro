@@ -65,9 +65,9 @@ class PdfToTextViewModel:ViewModel() {
      * @param context application context
      */
 //    @WorkerThread
-    fun generateThumbnailFromPDF(context: Context?){
+    fun generateThumbnailFromPDF(context: Context){
         Timer().schedule(1){
-            val inputStream= context?.contentResolver?.openInputStream(uiState.value.uri)
+            val inputStream= context.contentResolver.openInputStream(uiState.value.uri)
             inputStream.use {
                 val document= PDDocument.load(it)
                 val renderer= PDFRenderer(document)
@@ -78,7 +78,7 @@ class PdfToTextViewModel:ViewModel() {
                 document.close()
             }
             // Set File Name
-            val returnCursor = context?.contentResolver?.query(uiState.value.uri, null, null, null, null)
+            val returnCursor = context.contentResolver.query(uiState.value.uri, null, null, null, null)
             returnCursor.use {
                 if (it != null) {
                     val nameIndex = it.getColumnIndex(OpenableColumns.DISPLAY_NAME)
@@ -93,8 +93,8 @@ class PdfToTextViewModel:ViewModel() {
         }
     }
     @WorkerThread
-    fun convertToText(context:Context?){
-        val inputStream=context?.contentResolver?.openInputStream(uiState.value.uri)
+    fun convertToText(context:Context){
+        val inputStream=context.contentResolver.openInputStream(uiState.value.uri)
         Timer().schedule(1) {
             inputStream.use {
                 val document = PDDocument.load(it)

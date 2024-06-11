@@ -1,9 +1,7 @@
 package com.panwar2001.pdfpro.ui.view_models
 
 import android.content.Context
-import android.graphics.Bitmap
 import android.net.Uri
-import android.provider.MediaStore.Images
 import android.provider.OpenableColumns
 import androidx.annotation.WorkerThread
 import androidx.compose.ui.graphics.ImageBitmap
@@ -15,7 +13,6 @@ import com.panwar2001.pdfpro.R
 import com.tom_roush.pdfbox.pdmodel.PDDocument
 import com.tom_roush.pdfbox.rendering.ImageType
 import com.tom_roush.pdfbox.rendering.PDFRenderer
-import com.tom_roush.pdfbox.text.PDFTextStripper
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -32,13 +29,15 @@ data class PdfToImagesUiState(
     val thumbnail: ImageBitmap= R.drawable.default_photo.toDrawable().toBitmap(width =300, height = 300).asImageBitmap(),
     val fileName: String="file.pdf",
     val images:List<ImageBitmap> = listOf(),
-    val text:String=""
+    val progress:Float=0f
 )
 
 
 class PdfToImagesViewModel:ViewModel() {
     private val _uiState = MutableStateFlow(PdfToImagesUiState())
     val uiState: StateFlow<PdfToImagesUiState> = _uiState.asStateFlow()
+    private val _progress = MutableStateFlow(0.0f)
+    val progress: StateFlow<Float> = _progress
     /**
      * Set the [uri] of a file for the current ui state.
      */
@@ -46,7 +45,9 @@ class PdfToImagesViewModel:ViewModel() {
         _uiState.update {
             it.copy(uri = uri,
                 fileName = "",
-                text="")
+                images= listOf(),
+                progress=0f
+            )
         }
     }
 
@@ -67,9 +68,9 @@ class PdfToImagesViewModel:ViewModel() {
      * @param context application context
      */
 //    @WorkerThread
-    fun generateThumbnailFromPDF(context: Context?){
+    fun generateThumbnailFromPDF(context: Context){
         Timer().schedule(1){
-            val inputStream= context?.contentResolver?.openInputStream(uiState.value.uri)
+            val inputStream= context.contentResolver.openInputStream(uiState.value.uri)
             inputStream.use {
                 val document= PDDocument.load(it)
                 val renderer= PDFRenderer(document)
@@ -80,13 +81,12 @@ class PdfToImagesViewModel:ViewModel() {
                 document.close()
             }
             // Set File Name
-            val returnCursor = context?.contentResolver?.query(uiState.value.uri, null, null, null, null)
+            val returnCursor = context.contentResolver.query(uiState.value.uri, null, null, null, null)
             returnCursor.use {
                 if (it != null) {
                     val nameIndex = it.getColumnIndex(OpenableColumns.DISPLAY_NAME)
                     it.moveToFirst()
                     val fileName = it.getString(nameIndex)
-
                     it.close()
                     _uiState.update {state->
                         state.copy(fileName = fileName)
@@ -96,19 +96,27 @@ class PdfToImagesViewModel:ViewModel() {
         }
     }
     @WorkerThread
-    fun generateImages(context:Context?){
-        val inputStream=context?.contentResolver?.openInputStream(uiState.value.uri)
+    fun generateImages(context:Context){
+        val inputStream=context.contentResolver.openInputStream(uiState.value.uri)
+        val imagesList = mutableListOf<ImageBitmap>()
         Timer().schedule(1) {
             inputStream.use {
-                val document = PDDocument.load(it)
-                val textStripper = PDFTextStripper()
-                _uiState.update { state ->
-                    state.copy(text = textStripper.getText(document))
+                val document= PDDocument.load(it)
+                val renderer= PDFRenderer(document)
+                for(page in 0 until document.numberOfPages){
+                    val bitmap=renderer.renderImage(page)
+                    imagesList.add(bitmap.asImageBitmap())
+//                    _uiState.update {state->
+//                        state.copy(progress= page*1f/document.numberOfPages)
+//                    }
+                    _progress.value=page*1f/document.numberOfPages
                 }
-                document.close()
+                _uiState.update {state->
+                    state.copy(images = imagesList)
+                }
                 setLoading(false)
+                document.close()
             }
         }
     }
 }
-

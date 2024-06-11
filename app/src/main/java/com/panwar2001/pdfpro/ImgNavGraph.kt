@@ -12,9 +12,11 @@ import androidx.navigation.compose.composable
 import androidx.navigation.navigation
 import com.panwar2001.pdfpro.data.DataSource
 import com.panwar2001.pdfpro.data.Screens
+import com.panwar2001.pdfpro.ui.components.DeterminateIndicator
 import com.panwar2001.pdfpro.ui.components.FilePickerScreen
 import com.panwar2001.pdfpro.ui.components.PdfViewer
 import com.panwar2001.pdfpro.ui.components.ProgressIndicator
+import com.panwar2001.pdfpro.ui.pdfToImages.ImagesScreen
 import com.panwar2001.pdfpro.ui.pdfToImages.PreviewFileScreen
 import com.panwar2001.pdfpro.ui.view_models.PdfToImagesViewModel
 import kotlinx.coroutines.CoroutineScope
@@ -72,6 +74,25 @@ fun NavGraphBuilder.imgGraph(navController: NavController,
             PdfViewer(uri = uiState.uri,
                 navigateUp ={navController.navigateUp()},
                 uiState.fileName)
+        }
+        composable(route=Screens.PdfToImage.ImageScreen.route) { model ->
+            val viewModel = model.sharedViewModel<PdfToImagesViewModel>(navController)
+            val uiState by viewModel.uiState.collectAsState()
+            val progress by viewModel.progress.collectAsState()
+            if (uiState.isLoading) {
+                DeterminateIndicator(progress)
+                viewModel.generateImages(LocalContext.current)
+            } else {
+                if (uiState.images.isEmpty()) {
+                    DeterminateIndicator(progress)
+                } else {
+                    ImagesScreen(images = uiState.images,
+                        onNavigationIconClick = {
+                            scope.launch { drawerState.apply { if (isClosed) open() else close() } }
+                        }
+                    )
+                }
+            }
         }
     }
 }

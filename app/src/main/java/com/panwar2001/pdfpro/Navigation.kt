@@ -1,7 +1,6 @@
 package com.panwar2001.pdfpro
 
 import android.content.Context
-import android.net.Uri
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -16,13 +15,10 @@ import androidx.compose.material3.ModalNavigationDrawer
 import androidx.compose.material3.Surface
 import androidx.compose.material3.rememberDrawerState
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.ViewModel
 import com.panwar2001.pdfpro.ui.theme.PDFProTheme
@@ -34,20 +30,12 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
-import androidx.navigation.navigation
 import com.panwar2001.pdfpro.data.DataSource
 import com.panwar2001.pdfpro.data.Screens
 import com.panwar2001.pdfpro.ui.HomeScreen
 import com.panwar2001.pdfpro.ui.OnboardScreen
 import com.panwar2001.pdfpro.ui.components.DrawerBody
 import com.panwar2001.pdfpro.ui.components.DrawerHeader
-import com.panwar2001.pdfpro.ui.components.FilePickerScreen
-import com.panwar2001.pdfpro.ui.components.PdfViewer
-import com.panwar2001.pdfpro.ui.components.ProgressIndicator
-import com.panwar2001.pdfpro.ui.pdfToText.PreviewFileScreen
-import com.panwar2001.pdfpro.ui.pdfToText.TextScreen
-import com.panwar2001.pdfpro.ui.view_models.PdfToImagesViewModel
-import com.panwar2001.pdfpro.ui.view_models.PdfToTextViewModel
 import com.tom_roush.pdfbox.android.PDFBoxResourceLoader
 import kotlinx.coroutines.launch
 
