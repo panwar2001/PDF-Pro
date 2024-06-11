@@ -36,8 +36,6 @@ data class PdfToImagesUiState(
 class PdfToImagesViewModel:ViewModel() {
     private val _uiState = MutableStateFlow(PdfToImagesUiState())
     val uiState: StateFlow<PdfToImagesUiState> = _uiState.asStateFlow()
-    private val _progress = MutableStateFlow(0.0f)
-    val progress: StateFlow<Float> = _progress
     /**
      * Set the [uri] of a file for the current ui state.
      */
@@ -68,7 +66,7 @@ class PdfToImagesViewModel:ViewModel() {
      * @param context application context
      */
     @WorkerThread
-    suspend fun generateThumbnailFromPDF(context: Context){
+    fun generateThumbnailFromPDF(context: Context){
         Timer().schedule(1){
             val inputStream= context.contentResolver.openInputStream(uiState.value.uri)
             inputStream.use {
@@ -96,7 +94,7 @@ class PdfToImagesViewModel:ViewModel() {
         }
     }
     @WorkerThread
-    suspend fun generateImages(context:Context){
+    fun generateImages(context:Context){
         val inputStream=context.contentResolver.openInputStream(uiState.value.uri)
         val imagesList = mutableListOf<ImageBitmap>()
         Timer().schedule(1) {
@@ -106,10 +104,9 @@ class PdfToImagesViewModel:ViewModel() {
                 for(page in 0 until document.numberOfPages){
                     val bitmap=renderer.renderImage(page)
                     imagesList.add(bitmap.asImageBitmap())
-//                    _uiState.update {state->
-//                        state.copy(progress= page*1f/document.numberOfPages)
-//                    }
-                    _progress.value=page*1f/document.numberOfPages
+                    _uiState.update {state->
+                        state.copy(progress= page*1f/document.numberOfPages)
+                    }
                 }
                 _uiState.update {state->
                     state.copy(images = imagesList)

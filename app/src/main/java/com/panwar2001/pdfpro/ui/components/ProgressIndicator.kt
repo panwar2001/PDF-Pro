@@ -6,10 +6,14 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.size
 import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.ProgressIndicatorDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.font.FontFamily
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -35,11 +39,15 @@ fun DeterminateIndicator(progress:Float){
             CircularProgressIndicator(
                 progress = progress,
                 strokeWidth = 8.dp,
-                modifier = Modifier.fillMaxSize()
+                color = Color.Green,
+                modifier = Modifier.fillMaxSize(),
+                trackColor = ProgressIndicatorDefaults.linearTrackColor
             )
             Text(
                 text = "${(progress * 100).toInt()}%",
-                fontSize = 20.sp
+                fontSize = 26.sp,
+                fontWeight = FontWeight.SemiBold,
+                fontFamily = FontFamily.Monospace
             )
         }
     }
@@ -48,5 +56,5 @@ fun DeterminateIndicator(progress:Float){
 @Preview
 @Composable
 fun Preview(){
-    ProgressIndicator(Modifier)
+    DeterminateIndicator(.5f)
 }

@@ -64,8 +64,8 @@ class PdfToTextViewModel:ViewModel() {
      * using pdf-box to generate thumbnail of pdf (Bitmap of first page of pdf using it's uri)
      * @param context application context
      */
-//    @WorkerThread
-    suspend fun generateThumbnailFromPDF(context: Context){
+    @WorkerThread
+     fun generateThumbnailFromPDF(context: Context){
         Timer().schedule(1){
             val inputStream= context.contentResolver.openInputStream(uiState.value.uri)
             inputStream.use {
@@ -93,7 +93,7 @@ class PdfToTextViewModel:ViewModel() {
         }
     }
     @WorkerThread
-    suspend fun convertToText(context:Context){
+     fun convertToText(context:Context){
         val inputStream=context.contentResolver.openInputStream(uiState.value.uri)
         Timer().schedule(1) {
             inputStream.use {

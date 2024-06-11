@@ -89,12 +89,11 @@ fun NavGraphBuilder.imgGraph(navController: NavController,
         composable(route=Screens.PdfToImage.ImageScreen.route) { model ->
             val viewModel = model.sharedViewModel<PdfToImagesViewModel>(navController)
             val uiState by viewModel.uiState.collectAsState()
-            val progress by viewModel.progress.collectAsState()
             if (uiState.isLoading) {
-                DeterminateIndicator(progress)
+                DeterminateIndicator(uiState.progress)
             } else {
                 if (uiState.images.isEmpty()) {
-                    DeterminateIndicator(progress)
+                    DeterminateIndicator(uiState.progress)
                 } else {
                     ImagesScreen(images = uiState.images,
                         onNavigationIconClick = {
