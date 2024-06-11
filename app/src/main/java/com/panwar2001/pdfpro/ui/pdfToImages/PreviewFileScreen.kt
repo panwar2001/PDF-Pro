@@ -40,8 +40,8 @@ fun PreviewFileScreen(onNavigationIconClick:()->Unit,
     Scaffold(
         floatingActionButton = {
             FloatingActionButton(onClick = {
-               setLoading(true)
-                navigateTo(Screens.PdfToText.TextScreen.route)
+//               setLoading(true)
+//                navigateTo(Screens.PdfToText.TextScreen.route)
             },
                 containerColor = Color.Red,
                 contentColor = Color.White,
@@ -81,7 +81,7 @@ fun PreviewFileScreen(onNavigationIconClick:()->Unit,
                 Box(modifier= Modifier
                     .background(color = Color.LightGray)
                     .clickable {
-                        navigateTo(Screens.PdfToText.PdfDisplay.route)
+                        navigateTo(Screens.PdfToImage.PdfDisplay.route)
                     }){
                     Column(
                         horizontalAlignment = Alignment.CenterHorizontally,
@@ -101,6 +101,6 @@ fun PreviewFileScreen(onNavigationIconClick:()->Unit,
                 }
             }
         }
-} //Scaffold scope end
+}
 
 

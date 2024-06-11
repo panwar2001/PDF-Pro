@@ -179,113 +179,14 @@ fun NavigationController(
                         navigateTo(it)
                     }
                 }
-                navigation(route=Screens.PdfToText.route,startDestination=Screens.PdfToText.FilePicker.route){
-                    composable(route=Screens.PdfToText.FilePicker.route){ model->
-                            val viewModel = model.sharedViewModel<PdfToTextViewModel>(navController)
-                            FilePickerScreen(onNavigationIconClick = {
-                                scope.launch { drawerState.apply { if (isClosed) open() else close() } }
-                            },
-                                setUri = {uri:Uri-> viewModel.setUri(uri)},
-                                setLoading={loading:Boolean->viewModel.setLoading(loading)},
-                                navigate = {
-                                    navController.navigate(Screens.PdfToText.previewFile.route) {
-                                        if (drawerState.isOpen) {
-                                            scope.launch { drawerState.apply { close() } }
-                                        }
-                                    }
-                                },selectMultipleFile = false,
-                                mimeType = "application/pdf",
-                                tool=DataSource.getToolData(0))
-                    }
-                    composable(route=Screens.PdfToText.previewFile.route) {model->
-                        val viewModel = model.sharedViewModel<PdfToTextViewModel>(navController)
-                        val uiState by viewModel.uiState.collectAsState()
-                        if (uiState.isLoading) {
-                            ProgressIndicator(modifier = Modifier)
-                            viewModel.generateThumbnailFromPDF(LocalContext.current)
-                        } else {
-                            PreviewFileScreen(
-                                onNavigationIconClick = {
-                                    scope.launch { drawerState.apply { if (isClosed) open() else close() } }
-                                },
-                                navigateTo = { dest:String->
-                                    navController.navigate(dest) {
-                                        if (drawerState.isOpen) {
-                                            scope.launch { drawerState.apply { close() } }
-                                        }
-                                    }
-                                },
-                                thumbnail = uiState.thumbnail,
-                                fileName = uiState.fileName,
-                                setLoading={loading:Boolean->viewModel.setLoading(loading)}
-                            )
-                        }
-                    }
-                    composable(route=Screens.PdfToText.PdfDisplay.route){model->
-                        val viewModel = model.sharedViewModel<PdfToTextViewModel>(navController)
-                        val uiState by viewModel.uiState.collectAsState()
-                        PdfViewer(uri = uiState.uri, navigateUp ={navController.navigateUp()},uiState.fileName)
-                    }
-                    composable(route=Screens.PdfToText.TextScreen.route){model->
-                        val viewModel = model.sharedViewModel<PdfToTextViewModel>(navController)
-                        val uiState by viewModel.uiState.collectAsState()
-                        if(uiState.isLoading && uiState.text==""){
-                            ProgressIndicator(modifier = Modifier)
-                            viewModel.convertToText(LocalContext.current)
-                        }else {
-                            if(uiState.text!="") {
-                                TextScreen(text = uiState.text) {
-                                    scope.launch { drawerState.apply { if (isClosed) open() else close() } }
-                                }
-                            }else{
-                                ProgressIndicator(modifier = Modifier)
-                            }
-                        }
-                    }
-                }
-                navigation(route=Screens.PdfToImage.route,startDestination=Screens.PdfToImage.FilePicker.route){
-                    composable(route=Screens.PdfToImage.FilePicker.route){
-                        val viewModel = it.sharedViewModel<PdfToImagesViewModel>(navController)
-                        FilePickerScreen(onNavigationIconClick = {
-                            scope.launch { drawerState.apply { if (isClosed) open() else close() } }
-                        },
-                            setUri = {uri:Uri-> viewModel.setUri(uri)},
-                            setLoading={loading:Boolean->viewModel.setLoading(loading)},
-                            navigate = {
-                                navController.navigate(Screens.PdfToImage.PreviewFile.route) {
-                                    if (drawerState.isOpen) {
-                                        scope.launch { drawerState.apply { close() } }
-                                    }
-                                }
-                            },selectMultipleFile = false,
-                            mimeType = "application/pdf",
-                            tool=DataSource.getToolData(1))
-                    }
-                    composable(route=Screens.PdfToImage.PreviewFile.route) {model->
-                        val viewModel = model.sharedViewModel<PdfToImagesViewModel>(navController)
-                        val uiState by viewModel.uiState.collectAsState()
-                        if (uiState.isLoading) {
-                            ProgressIndicator(modifier = Modifier)
-                            viewModel.generateThumbnailFromPDF(LocalContext.current)
-                        } else {
-                            PreviewFileScreen(
-                                onNavigationIconClick = {
-                                    scope.launch { drawerState.apply { if (isClosed) open() else close() } }
-                                },
-                                navigateTo = { dest:String->
-                                    navController.navigate(dest) {
-                                        if (drawerState.isOpen) {
-                                            scope.launch { drawerState.apply { close() } }
-                                        }
-                                    }
-                                },
-                                thumbnail = uiState.thumbnail,
-                                fileName = uiState.fileName,
-                                setLoading={loading:Boolean->viewModel.setLoading(loading)}
-                            )
-                        }
-                    }
-                }
+                textGraph(navController=navController,
+                    scope=scope,
+                    drawerState=drawerState)
+
+                imgGraph(navController=navController,
+                    scope=scope,
+                    drawerState=drawerState)
+
             }
         }
     }
