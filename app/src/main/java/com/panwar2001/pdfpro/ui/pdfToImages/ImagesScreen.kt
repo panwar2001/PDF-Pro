@@ -1,6 +1,10 @@
 package com.panwar2001.pdfpro.ui.pdfToImages
 
 
+import android.content.Context
+import android.graphics.Bitmap
+import android.graphics.BitmapFactory
+import android.net.Uri
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.border
@@ -31,10 +35,28 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ImageBitmap
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import com.panwar2001.pdfpro.ui.AppBar
 
+
+fun saveImageToStorage(uri: Uri,context:Context) {
+    val contentResolver = context.contentResolver
+
+    try {
+        val bitmap = BitmapFactory.decodeStream(contentResolver.openInputStream(uri))
+        val fileName = "my_image.jpg" // Replace with desired filename and extension
+        val outputStream = context.openFileOutput(fileName, Context.MODE_PRIVATE)
+        bitmap.compress(Bitmap.CompressFormat.JPEG, 80, outputStream) // Adjust compression as needed
+        outputStream.flush()
+        outputStream.close()
+        // Show success message or perform other actions
+    } catch (e: Exception) {
+        // Handle errors during saving
+        e.printStackTrace()
+    }
+}
 @Composable
 fun ImagesScreen(images:List<ImageBitmap>,onNavigationIconClick:()->Unit){
     Scaffold(topBar = {

@@ -3,6 +3,7 @@ package com.panwar2001.pdfpro.ui.components
 import android.net.Uri
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.activity.result.contract.ActivityResultContracts.CreateDocument
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -80,6 +81,7 @@ fun FilePickerScreen(onNavigationIconClick:()->Unit,
                         navigate()
                 }
             })
+
     }
 
     Scaffold(
