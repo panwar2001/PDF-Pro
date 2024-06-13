@@ -1,13 +1,17 @@
 package com.panwar2001.pdfpro.ui
 
+import android.annotation.SuppressLint
 import android.os.Environment
 import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -18,22 +22,31 @@ import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
+import androidx.compose.foundation.pager.HorizontalPager
+import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Clear
+import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.Menu
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ElevatedCard
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Tab
+import androidx.compose.material3.TabRow
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -45,15 +58,29 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.panwar2001.pdfpro.R
 import com.panwar2001.pdfpro.data.DataSource
 import com.panwar2001.pdfpro.data.ToolsData
+import kotlin.math.absoluteValue
 
 
-
+@SuppressLint("RememberReturnType")
+@OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun HomeScreen(onNavigationIconClick:()->Unit,
     navigateTo: (String)->Unit) {
     val textState = remember { mutableStateOf(TextFieldValue("")) }
+    val pagerState= rememberPagerState(
+        initialPage = 0,
+        pageCount = {2}
+    )
+    var selectedTab by remember { mutableIntStateOf(pagerState.currentPage) }
+    LaunchedEffect(selectedTab) {
+        pagerState.scrollToPage(selectedTab)
+    }
+    LaunchedEffect(pagerState.currentPage) {
+        selectedTab=pagerState.currentPage
+    }
     Scaffold(
         topBar = {
             SearchView(
@@ -64,22 +91,44 @@ fun HomeScreen(onNavigationIconClick:()->Unit,
             )
         },
     ) { innerPadding ->
-        Box(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(innerPadding)
-        )
-        {
-            Column(Modifier.fillMaxSize()) {
-                Screen(
-                    searchedText = textState.value.text,
-                    list = DataSource.FeatureList,
-                    navigateTo
-                )
+            Column(
+                Modifier
+                    .fillMaxSize()
+                    .padding(innerPadding)) {
+                TabRow(selectedTabIndex = selectedTab ) {
+                   Tab(selected = selectedTab==0 , onClick = { selectedTab=0 }) {
+                       Row(verticalAlignment = Alignment.CenterVertically){
+                           Icon(imageVector = Icons.Default.Home, contentDescription = "Home screen")
+                           Text(text="Home", modifier = Modifier.padding(10.dp))
+                       }
+                   }
+                    Tab(selected = selectedTab==1 , onClick = { selectedTab=1 }) {
+                        Row(verticalAlignment = Alignment.CenterVertically){
+                            Icon(
+                                painter = painterResource(id = R.drawable.pdf_icon),
+                                modifier = Modifier.size(26.dp),
+                                contentDescription = "pdf",
+                            )
+
+                            Text(text="PDF Files", modifier = Modifier.padding(10.dp))
+                        }
+                    }
+                }
+                HorizontalPager(state = pagerState) {currentPage->
+                    if(currentPage==0) {
+                        Screen(
+                            searchedText = textState.value.text,
+                            list = DataSource.FeatureList,
+                            navigateTo
+                        )
+                    }else{
+                        Row {
+                            Text("pdf files")
+                        }
+                    }
+                }
             }
         }
-
-    }
     val storageDir = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES)
 
 }
@@ -160,7 +209,10 @@ fun SearchView(
             .fillMaxWidth()
             .background(color = Color.Red.copy(alpha = .0f))
             .padding(horizontal = 10.dp, vertical = 10.dp)
-            .border(border = BorderStroke(0.dp, Color.Transparent),shape= RoundedCornerShape(40.dp)),
+            .border(
+                border = BorderStroke(0.dp, Color.Transparent),
+                shape = RoundedCornerShape(40.dp)
+            ),
         shape = RoundedCornerShape(40.dp),
         placeholder = {
             Text(text = placeHolder)
