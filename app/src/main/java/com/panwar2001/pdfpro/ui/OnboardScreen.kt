@@ -137,7 +137,7 @@ fun NextButton(pagerState: PagerState,page:Int,navigateTo: (String) -> Unit){
     Button(
         onClick = {
           if(pagerState.currentPage+1==DataSource.OnBoardList.size){
-              navigateTo(Screens.home.route)
+              navigateTo(Screens.Home.route)
           }else {
               CoroutineScope(Dispatchers.Main).launch {
                   pagerState.scrollToPage(pagerState.currentPage + 1)
@@ -199,7 +199,7 @@ fun Skip(navigateTo: (String) -> Unit){
             fontSize = 20.sp,
             fontWeight = FontWeight.Bold,
             modifier = Modifier.clickable {
-                navigateTo(Screens.home.route)
+                navigateTo(Screens.Home.route)
             }
         )
     }

@@ -22,7 +22,7 @@ import com.panwar2001.pdfpro.ui.view_models.PdfToImagesViewModel
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 
-fun NavGraphBuilder.imgGraph(navController: NavController,
+fun NavGraphBuilder.pdf2ImgGraph(navController: NavController,
                              scope: CoroutineScope,
                              drawerState: DrawerState){
 
@@ -77,7 +77,7 @@ fun NavGraphBuilder.imgGraph(navController: NavController,
                 )
             }
         }
-        composable(route= Screens.PdfToImage.PdfDisplay.route){ model->
+        composable(route= Screens.PdfToImage.PdfViewer.route){ model->
             val viewModel = model.sharedViewModel<PdfToImagesViewModel>(navController)
             val uiState by viewModel.uiState.collectAsState()
             PdfViewer(uri = uiState.uri,

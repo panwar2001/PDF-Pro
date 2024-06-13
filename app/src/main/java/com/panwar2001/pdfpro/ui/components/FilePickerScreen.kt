@@ -2,6 +2,7 @@ package com.panwar2001.pdfpro.ui.components
 
 import android.net.Uri
 import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.PickVisualMediaRequest
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.Arrangement
@@ -54,7 +55,7 @@ fun FilePickerScreen(onNavigationIconClick:()->Unit,
             )
         }
     }
-    val resultLauncher= if(selectMultipleFile){
+    val pdfPickerLauncher= if(selectMultipleFile){
         rememberLauncherForActivityResult(
         contract = ActivityResultContracts.OpenMultipleDocuments() ,
         onResult = {
@@ -73,6 +74,13 @@ fun FilePickerScreen(onNavigationIconClick:()->Unit,
             })
 
     }
+    val imagesPickerLauncher= rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.PickMultipleVisualMedia() ,
+        onResult = {
+            if(it.isNotEmpty()) {
+                setUris(it)
+                navigate()
+            } })
 
     Scaffold(
         snackbarHost = {
@@ -96,10 +104,17 @@ fun FilePickerScreen(onNavigationIconClick:()->Unit,
             {
               Button(buttonText = tool.buttonDescription, onClick ={
                   try {
-                      resultLauncher.launch(arrayOf(mimeType))
+                      if(mimeType=="application/pdf") {
+                          pdfPickerLauncher.launch(arrayOf(mimeType))
+                      }else{
+                          imagesPickerLauncher.launch(
+                              PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly)
+                          )
+                      }
                       setLoading(true)
                   }
                   catch (e:Exception){
+                      tryAgain()
                       e.printStackTrace()
                   }
               })

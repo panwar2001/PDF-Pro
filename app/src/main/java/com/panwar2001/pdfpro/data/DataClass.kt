@@ -40,18 +40,22 @@ data class MenuItem(
  */
 
 sealed class Screens(val route: String) {
-    data object onBoard : Screens("onboard")
-    data object home: Screens("home")
+    data object OnBoard : Screens("onboard")
+    data object Home: Screens("home")
     data object  FilePicker: Screens("pick")
-    data object PdfToText: Screens("PdfToText") {
-        data object previewFile : Screens("txtPdfPreview")
+    data object PdfToText: Screens("Pdf2Txt") {
+        data object PreviewFile : Screens("Pdf2txt_Preview")
         data object TextScreen: Screens("textScreen")
-        data object PdfDisplay: Screens("PdfDisplayTxt")
+        data object PdfViewer: Screens("pdf2txt_pdfViewer")
     }
-    data object PdfToImage: Screens("PdfToImage") {
-        data object PreviewFile : Screens("imgPdfPreview")
-        data object PdfDisplay: Screens("pdfDisplayImg")
+    data object PdfToImage: Screens("Pdf2Img") {
+        data object PreviewFile : Screens("Pdf2img_Preview")
+        data object PdfViewer: Screens("pdf2img_pdfViewer")
         data object ImageScreen:Screens("imageScreen")
+    }
+    data object  Img2Pdf:Screens("Img2Pdf"){
+        data object PdfViewer: Screens("img2pdf_pdfViewer")
+        data object  ReorderScreen: Screens("reorder")
     }
 }
 

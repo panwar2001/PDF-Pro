@@ -79,6 +79,8 @@ dependencies {
     implementation(libs.androidx.fragment.ktx)
     implementation(libs.pdfbox.android)
     implementation(libs.android.pdf.viewer)
+    implementation(libs.coil.compose)
+    implementation(libs.reorderable)
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)

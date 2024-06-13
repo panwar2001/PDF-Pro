@@ -78,7 +78,7 @@ class Navigation : ComponentActivity() {
     private fun getStartDestination( ): String {
         val sharedPreferences = this.getSharedPreferences("onBoarding", Context.MODE_PRIVATE)
         val onBoardingIsFinished= sharedPreferences.getBoolean("isFinished", false)
-        return if(onBoardingIsFinished) Screens.home.route else Screens.onBoard.route
+        return if(onBoardingIsFinished) Screens.Home.route else Screens.OnBoard.route
     }
     private fun isDarkTheme():Boolean{
         val sharedPreferences = this.getSharedPreferences("Theme", Context.MODE_PRIVATE)
@@ -151,7 +151,7 @@ fun NavigationController(
             )
             {
 
-                composable(route = Screens.onBoard.route) {
+                composable(route = Screens.OnBoard.route) {
                     OnboardScreen {
                         // lambda function for navigation
                         setOnboardingFinished()
@@ -160,18 +160,22 @@ fun NavigationController(
                     }
                 }
 
-                composable(route = Screens.home.route) {
+                composable(route = Screens.Home.route) {
                     HomeScreen(onNavigationIconClick = {
                         scope.launch { drawerState.apply { if (isClosed) open() else close() } }
                     }) {    // lambda function for navigation
                         navigateTo(it)
                     }
                 }
-                textGraph(navController=navController,
+                pdf2txtGraph(navController=navController,
                     scope=scope,
                     drawerState=drawerState)
 
-                imgGraph(navController=navController,
+                pdf2ImgGraph(navController=navController,
+                    scope=scope,
+                    drawerState=drawerState)
+
+                img2PdfGraph(navController=navController,
                     scope=scope,
                     drawerState=drawerState)
 
@@ -188,6 +192,7 @@ fun NavigationController(
  */
 @Composable
 inline fun <reified T : ViewModel> NavBackStackEntry.sharedViewModel(navController:NavController): T {
+
     val navGraphRoute = destination.parent?.route ?: return viewModel()
     val parentEntry = remember(this) {
         navController.getBackStackEntry(navGraphRoute)

@@ -9,7 +9,7 @@ import com.panwar2001.pdfpro.R
 object DataSource {
     val MenuItems=listOf(
         MenuItem(
-            screen = Screens.home.route,
+            screen = Screens.Home.route,
             title = "Home",
             contentDescription = "Go to home screen",
             icon = R.drawable.home
@@ -25,16 +25,23 @@ object DataSource {
             title = "Pdf to Images",
             contentDescription = "Convert pdf to Images",
             icon = R.drawable.ion_images
+        ),
+        MenuItem(
+            screen= Screens.Img2Pdf.route,
+            title = "Images to pdf",
+            contentDescription = "Convert Images to pdf",
+            icon = R.drawable.pdf_icon
         )
+
     )
 
 
     val FeatureList = listOf(
         ToolsData(R.drawable.outline_text,"Pdf to text",0,Screens.PdfToText.route),
         ToolsData(R.drawable.ion_images,"Pdf to images",1,Screens.PdfToImage.route),
+        ToolsData(R.drawable.pdf_icon,"Images to pdf",2,Screens.Img2Pdf.route),
 //        ToolsData(R.drawable.compress,"Compress pdf",2),
 //        ToolsData(R.drawable.ocr,"Ocr pdf",3),
-//        ToolsData(R.drawable.pdf_icon,"Images to pdf",4),
 //        ToolsData(R.drawable.unlock_pdf,"lock pdf",5),
 //        ToolsData(R.drawable.summary_icon,"Summarize pdf",6),
 //        ToolsData(R.drawable.search_icon,"Searchable pdf",7),
@@ -50,6 +57,8 @@ object DataSource {
         return when(id){
             0-> Tool("Our advanced text extraction algorithm ensures high accuracy, preserving formatting and layout faithfully.","Select PDF file")
             1 -> Tool("Our cutting-edge PDF to images converter ensures high-quality image output, maintaining the integrity and clarity of your document.","Select PDF file")
+            2 -> Tool("Our cutting-edge images to PDF converter ensures high-quality PDF, maintaining the integrity and clarity of your document.","Select Images")
+
             else-> Tool("","upload")
         }
     }

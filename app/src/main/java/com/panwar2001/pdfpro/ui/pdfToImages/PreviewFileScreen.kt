@@ -83,7 +83,7 @@ fun PreviewFileScreen(onNavigationIconClick:()->Unit,
                 Box(modifier= Modifier
                     .background(color = Color.LightGray)
                     .clickable {
-                        navigateTo(Screens.PdfToImage.PdfDisplay.route)
+                        navigateTo(Screens.PdfToImage.PdfViewer.route)
                     }){
                     Column(
                         horizontalAlignment = Alignment.CenterHorizontally,

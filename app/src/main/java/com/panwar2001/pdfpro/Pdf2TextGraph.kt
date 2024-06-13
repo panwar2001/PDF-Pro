@@ -21,7 +21,7 @@ import com.panwar2001.pdfpro.ui.view_models.PdfToTextViewModel
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 
-fun NavGraphBuilder.textGraph(navController:NavController,
+fun NavGraphBuilder.pdf2txtGraph(navController:NavController,
                               scope:CoroutineScope,
                               drawerState:DrawerState){
     navigation(route= Screens.PdfToText.route,startDestination= Screens.FilePicker.route){
@@ -37,7 +37,7 @@ fun NavGraphBuilder.textGraph(navController:NavController,
                     scope.launch {
                         viewModel.generateThumbnailFromPDF(context)
                     }
-                    navController.navigate(Screens.PdfToText.previewFile.route) {
+                    navController.navigate(Screens.PdfToText.PreviewFile.route) {
                         if (drawerState.isOpen) {
                             scope.launch { drawerState.apply { close() } }
                         }
@@ -46,7 +46,7 @@ fun NavGraphBuilder.textGraph(navController:NavController,
                 mimeType = "application/pdf",
                 tool= DataSource.getToolData(0))
         }
-        composable(route= Screens.PdfToText.previewFile.route) { model->
+        composable(route= Screens.PdfToText.PreviewFile.route) { model->
             val viewModel = model.sharedViewModel<PdfToTextViewModel>(navController)
             val uiState by viewModel.uiState.collectAsState()
             val context= LocalContext.current
@@ -75,7 +75,7 @@ fun NavGraphBuilder.textGraph(navController:NavController,
                 )
             }
         }
-        composable(route= Screens.PdfToText.PdfDisplay.route){ model->
+        composable(route= Screens.PdfToText.PdfViewer.route){ model->
             val viewModel = model.sharedViewModel<PdfToTextViewModel>(navController)
             val uiState by viewModel.uiState.collectAsState()
             PdfViewer(uri = uiState.uri, navigateUp ={navController.navigateUp()},uiState.fileName)
