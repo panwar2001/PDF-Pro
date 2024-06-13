@@ -3,7 +3,6 @@ package com.panwar2001.pdfpro.ui.components
 import android.net.Uri
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
-import androidx.activity.result.contract.ActivityResultContracts.CreateDocument
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -20,24 +19,18 @@ import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.panwar2001.pdfpro.data.Tool
 import com.panwar2001.pdfpro.ui.AppBar
-import com.tom_roush.pdfbox.pdmodel.PDDocument
 import kotlinx.coroutines.launch
-import kotlin.reflect.typeOf
 
 
 @Composable
@@ -48,13 +41,11 @@ fun FilePickerScreen(onNavigationIconClick:()->Unit,
                      navigate: ()->Unit,
                      selectMultipleFile: Boolean=false,
                      mimeType:String,
-                     tool:Tool,
-                     generateThumbnail:()->Unit) {
+                     tool:Tool) {
     val snackBarHostState = remember { SnackbarHostState() }
     val scope = rememberCoroutineScope()
 
-    val context= LocalContext.current
-    val tryAgain:()->Unit={ ->
+    val tryAgain:()->Unit={
         scope.launch {
             snackBarHostState.showSnackbar(
                 message = "Something went wrong. Please try again.",
@@ -77,7 +68,6 @@ fun FilePickerScreen(onNavigationIconClick:()->Unit,
             onResult = {
                 if(it!=null){
                         setUri(it)
-                        generateThumbnail()
                         navigate()
                 }
             })

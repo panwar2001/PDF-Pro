@@ -36,6 +36,9 @@ fun NavGraphBuilder.imgGraph(navController: NavController,
                 setUri = {uri: Uri -> viewModel.setUri(uri)},
                 setLoading={loading:Boolean->viewModel.setLoading(loading)},
                 navigate = {
+                    scope.launch {
+                        viewModel.generateThumbnailFromPDF(context)
+                    }
                     navController.navigate(Screens.PdfToImage.PreviewFile.route) {
                         if (drawerState.isOpen) {
                             scope.launch { drawerState.apply { close() } }
@@ -43,12 +46,7 @@ fun NavGraphBuilder.imgGraph(navController: NavController,
                     }
                 },selectMultipleFile = false,
                 mimeType = "application/pdf",
-                tool= DataSource.getToolData(1),
-                generateThumbnail={
-                    scope.launch {
-                        viewModel.generateThumbnailFromPDF(context)
-                    }
-                })
+                tool= DataSource.getToolData(1))
         }
         composable(route= Screens.PdfToImage.PreviewFile.route) { model->
             val viewModel = model.sharedViewModel<PdfToImagesViewModel>(navController)

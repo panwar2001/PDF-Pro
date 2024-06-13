@@ -34,6 +34,9 @@ fun NavGraphBuilder.textGraph(navController:NavController,
                 setUri = {uri: Uri -> viewModel.setUri(uri)},
                 setLoading={loading:Boolean->viewModel.setLoading(loading)},
                 navigate = {
+                    scope.launch {
+                        viewModel.generateThumbnailFromPDF(context)
+                    }
                     navController.navigate(Screens.PdfToText.previewFile.route) {
                         if (drawerState.isOpen) {
                             scope.launch { drawerState.apply { close() } }
@@ -41,12 +44,7 @@ fun NavGraphBuilder.textGraph(navController:NavController,
                     }
                 },selectMultipleFile = false,
                 mimeType = "application/pdf",
-                tool= DataSource.getToolData(0),
-                generateThumbnail = {
-                    scope.launch {
-                        viewModel.generateThumbnailFromPDF(context)
-                    }
-                })
+                tool= DataSource.getToolData(0))
         }
         composable(route= Screens.PdfToText.previewFile.route) { model->
             val viewModel = model.sharedViewModel<PdfToTextViewModel>(navController)
