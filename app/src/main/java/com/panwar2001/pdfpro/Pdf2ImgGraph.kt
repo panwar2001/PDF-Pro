@@ -82,7 +82,8 @@ fun NavGraphBuilder.pdf2ImgGraph(navController: NavController,
             val uiState by viewModel.uiState.collectAsState()
             PdfViewer(uri = uiState.uri,
                 navigateUp ={navController.navigateUp()},
-                uiState.fileName)
+                uiState.fileName,
+                uiState.numPages)
         }
         composable(route=Screens.PdfToImage.ImageScreen.route) { model ->
             val viewModel = model.sharedViewModel<PdfToImagesViewModel>(navController)

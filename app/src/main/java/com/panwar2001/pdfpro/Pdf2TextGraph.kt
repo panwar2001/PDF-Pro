@@ -78,7 +78,10 @@ fun NavGraphBuilder.pdf2txtGraph(navController:NavController,
         composable(route= Screens.PdfToText.PdfViewer.route){ model->
             val viewModel = model.sharedViewModel<PdfToTextViewModel>(navController)
             val uiState by viewModel.uiState.collectAsState()
-            PdfViewer(uri = uiState.uri, navigateUp ={navController.navigateUp()},uiState.fileName)
+            PdfViewer(uri = uiState.uri,
+                navigateUp ={navController.navigateUp()},
+                uiState.fileName,
+                uiState.numPages)
         }
         composable(route= Screens.PdfToText.TextScreen.route){ model->
             val viewModel = model.sharedViewModel<PdfToTextViewModel>(navController)

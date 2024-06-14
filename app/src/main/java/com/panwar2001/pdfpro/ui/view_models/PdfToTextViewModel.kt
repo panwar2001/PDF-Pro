@@ -30,7 +30,8 @@ data class PdfToTextUiState(
     val isLoading:Boolean=false,
     val thumbnail: ImageBitmap= R.drawable.default_photo.toDrawable().toBitmap(width =300, height = 300).asImageBitmap(),
     val fileName: String="file.pdf",
-    val text: String = ""
+    val text: String = "",
+    val numPages:Int=0
 )
 
 
@@ -44,7 +45,8 @@ class PdfToTextViewModel:ViewModel() {
         _uiState.update {
             it.copy(uri = uri,
                 fileName = "",
-                text="")
+                text="",
+                numPages = 0)
         }
     }
 
@@ -73,7 +75,8 @@ class PdfToTextViewModel:ViewModel() {
                 val renderer= PDFRenderer(document)
                 val bitmap=renderer.renderImage(0,0.5F, ImageType.RGB)
                 _uiState.update {state->
-                    state.copy(thumbnail = bitmap.asImageBitmap()) }
+                    state.copy(thumbnail = bitmap.asImageBitmap(),
+                        numPages =document.numberOfPages) }
                 setLoading(false)
                 document.close()
             }
@@ -90,6 +93,7 @@ class PdfToTextViewModel:ViewModel() {
                     }
                 }
             }
+
         }
     }
     @WorkerThread

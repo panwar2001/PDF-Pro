@@ -29,7 +29,8 @@ data class PdfToImagesUiState(
     val thumbnail: ImageBitmap= R.drawable.default_photo.toDrawable().toBitmap(width =300, height = 300).asImageBitmap(),
     val fileName: String="file.pdf",
     val images:List<ImageBitmap> = listOf(),
-    val progress:Float=0f
+    val progress:Float=0f,
+    val numPages:Int=0
 )
 
 
@@ -44,7 +45,8 @@ class PdfToImagesViewModel:ViewModel() {
             it.copy(uri = uri,
                 fileName = "",
                 images= listOf(),
-                progress=0f
+                progress=0f,
+                numPages = 0
             )
         }
     }
@@ -74,7 +76,8 @@ class PdfToImagesViewModel:ViewModel() {
                 val renderer= PDFRenderer(document)
                 val bitmap=renderer.renderImage(0,0.5F, ImageType.RGB)
                 _uiState.update {state->
-                    state.copy(thumbnail = bitmap.asImageBitmap()) }
+                    state.copy(thumbnail = bitmap.asImageBitmap(),
+                        numPages = document.numberOfPages) }
                 setLoading(false)
                 document.close()
             }
