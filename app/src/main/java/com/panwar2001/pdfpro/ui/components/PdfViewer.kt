@@ -160,7 +160,6 @@ fun PdfView(uri: Uri,
         }
     )
 }
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun PageNumberInputDialog(onDismiss: () -> Unit,
                           onConfirm: (Int) -> Unit,

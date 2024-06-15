@@ -61,6 +61,7 @@ import androidx.compose.ui.unit.sp
 import com.panwar2001.pdfpro.R
 import com.panwar2001.pdfpro.data.DataSource
 import com.panwar2001.pdfpro.data.ToolsData
+import kotlin.coroutines.coroutineContext
 import kotlin.math.absoluteValue
 
 
@@ -123,7 +124,7 @@ fun HomeScreen(onNavigationIconClick:()->Unit,
                         )
                     }else{
                         Row {
-                            Text("pdf files")
+                            PDFfilesScreen()
                         }
                     }
                 }

@@ -1,9 +1,11 @@
 package com.panwar2001.pdfpro
 
 import android.content.Context
+import android.content.pm.PackageManager
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.appcompat.app.AppCompatDelegate
 import androidx.compose.animation.EnterTransition
 import androidx.compose.animation.ExitTransition
 import androidx.compose.foundation.layout.fillMaxSize
@@ -20,6 +22,9 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import androidx.core.app.ActivityCompat
+import androidx.core.content.ContextCompat
+import androidx.core.os.LocaleListCompat
 import androidx.lifecycle.ViewModel
 import com.panwar2001.pdfpro.ui.theme.PDFProTheme
 import androidx.lifecycle.viewmodel.compose.viewModel
@@ -44,6 +49,7 @@ class Navigation : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         PDFBoxResourceLoader.init(applicationContext)
+        AppCompatDelegate.setApplicationLocales(LocaleListCompat.forLanguageTags("en"))
         setContent{
             val theme= remember {
                 mutableStateOf(isDarkTheme())

@@ -52,6 +52,7 @@ fun NavGraphBuilder.pdf2ImgGraph(navController: NavController,
             val viewModel = model.sharedViewModel<PdfToImagesViewModel>(navController)
             val uiState by viewModel.uiState.collectAsState()
             val context= LocalContext.current
+            
             if (uiState.isLoading) {
                 ProgressIndicator(modifier = Modifier)
             } else {
