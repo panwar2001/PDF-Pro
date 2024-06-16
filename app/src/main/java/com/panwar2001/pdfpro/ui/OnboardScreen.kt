@@ -177,10 +177,11 @@ fun NextButton(pagerState: PagerState,page:Int,navigateTo: (String) -> Unit){
 fun Title(page:Int){
     Text(
         text = stringResource(id = OnBoardList[page].title),
-        fontSize = 44.sp,
+        fontSize = 30.sp,
         fontWeight = FontWeight.Bold,
+        overflow= TextOverflow.Clip,
         textAlign = TextAlign.Center,
-        modifier=Modifier.wrapContentSize()
+        modifier=Modifier.padding(top=25.dp).wrapContentSize()
     )
 }
 @Composable

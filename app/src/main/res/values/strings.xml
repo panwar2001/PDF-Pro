@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">PDF Pro</string>
+    <string name="app_name" translatable="false">PDF Pro</string>
     <string name="banner_test" translatable="false">ca-app-pub-3940256099942544/9214589741</string>
     <string name="onboard_title" >Experience the ultimate free PDF service.</string>
     <string name="title_activity_main_screen" >MainScreen</string>
@@ -20,7 +20,7 @@
     <string name="ocr_pdf">Ocr PDF</string>
     <string name="compress_pdf">Compress PDF</string>
     <string name="lock_pdf">Lock PDF</string>
-    <string name="pdf_files_tab">PDF Files</string>
+    <string name="pdf_files_tab" >PDF Files</string>
     <string name="convert_to_text">Convert To Text</string>
     <string name="convert_to_images">Convert To Images</string>
     <string name="close">Close</string>
@@ -35,6 +35,34 @@
     <string name="select_pdf">Select PDF File</string>
     <string name="select_images">Select Images</string>
     <string name="page_number">Page Number</string>
+<!--***********Languages ***********************-->
+    <string name="language">Language</string>
+    <string-array name="english" translatable="false">
+        <item>en</item>
+        <item>English</item>
+        <item> </item>
+    </string-array>
+    <string-array name="hindi" translatable="false">
+        <item>hi</item>
+        <item>Hindi</item>
+        <item>हिंदी</item>
+    </string-array>
+    <string-array name="French" translatable="false">
+        <item>fr</item>
+        <item>French</item>
+        <item>Français</item>
+    </string-array>
+    <string-array name="Japanese" translatable="false">
+        <item>ja</item>
+        <item>Japanese</item>
+        <item>日本語</item>
+    </string-array>
+    <string-array name="Russian" translatable="false">
+        <item>ru</item>
+        <item>Russian</item>
+        <item>русский</item>
+    </string-array>
+    <!--******************************************-->
     <string name="ocr_description">Unlock the potential of Optical Character Recognition for streamlined text extraction.</string>
     <string name="compress_pdf_description">Effortlessly compress PDF files while preserving quality and reducing file size with our intuitive compression tool</string>
     <string name="lock_description">Secure your PDF with password protection to safeguard sensitive information.</string>

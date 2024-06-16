@@ -29,6 +29,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.panwar2001.pdfpro.R
+import com.panwar2001.pdfpro.data.Screens
 import com.panwar2001.pdfpro.data.ToolsData
 
 
@@ -71,9 +72,9 @@ fun DrawerHeader() {
 @Composable
 fun DrawerBody(
     items: List<ToolsData>,
-    itemTextStyle: TextStyle = TextStyle(fontSize = 18.sp),
     setTheme:(Boolean)->Unit,
     currentTheme:Boolean,
+    itemTextStyle: TextStyle = TextStyle(fontSize = 18.sp),
     navigateTo: (String) -> Unit
 ) {
     var checked by remember { mutableStateOf(currentTheme)}
@@ -104,28 +105,45 @@ fun DrawerBody(
         )
     }
     LazyColumn() {
-        items(items) { item ->
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .clickable {
-                        navigateTo(item.route)
-                    }
-                    .padding(16.dp),
-                verticalAlignment = Alignment.CenterVertically
-                ) {
-                Icon(
-                    painter = painterResource(id = item.iconId),
-                    contentDescription = stringResource(id = item.title),
-                    modifier=Modifier.size(30.dp)
-                )
-                Spacer(modifier = Modifier.width(16.dp))
-                Text(
-                    text = stringResource(id = item.title),
-                    style = itemTextStyle,
-                    modifier = Modifier.weight(1f)
-                )
-            }
+
+        item{
+            NavItem(navigateTo = navigateTo, item = ToolsData(
+                R.drawable.language,
+                R.string.language,
+                Screens.LanguagePickerScreen.route))
+            NavItem(navigateTo = navigateTo, item = ToolsData(
+                iconId=R.drawable.home,
+                title = R.string.home,
+                route= Screens.Home.route))
         }
+        items(items) { item ->
+           NavItem(navigateTo = navigateTo, item =item )
+        }
+    }
+}
+@Composable
+fun NavItem(navigateTo: (String) -> Unit,
+            item:ToolsData,
+            itemTextStyle: TextStyle = TextStyle(fontSize = 18.sp)){
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .clickable {
+                navigateTo(item.route)
+            }
+            .padding(16.dp),
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        Icon(
+            painter = painterResource(id = item.iconId),
+            contentDescription = stringResource(id = item.title),
+            modifier=Modifier.size(30.dp)
+        )
+        Spacer(modifier = Modifier.width(16.dp))
+        Text(
+            text = stringResource(id = item.title),
+            style = itemTextStyle,
+            modifier = Modifier.weight(1f)
+        )
     }
 }

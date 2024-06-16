@@ -20,7 +20,6 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.core.os.LocaleListCompat
 import androidx.lifecycle.ViewModel
@@ -36,6 +35,7 @@ import androidx.navigation.compose.rememberNavController
 import com.panwar2001.pdfpro.data.DataSource
 import com.panwar2001.pdfpro.data.Screens
 import com.panwar2001.pdfpro.ui.HomeScreen
+import com.panwar2001.pdfpro.ui.LanguagePickerScreen
 import com.panwar2001.pdfpro.ui.OnboardScreen
 import com.panwar2001.pdfpro.ui.components.DrawerBody
 import com.panwar2001.pdfpro.ui.components.DrawerHeader
@@ -47,8 +47,6 @@ class Navigation : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         PDFBoxResourceLoader.init(applicationContext)
-//        AppCompatDelegate.setApplicationLocales(LocaleListCompat.forLanguageTags("fr"))
-
         setContent{
             val theme= remember {
                 mutableStateOf(isDarkTheme())
@@ -173,6 +171,12 @@ fun NavigationController(
                     }) {    // lambda function for navigation
                         navigateTo(it)
                     }
+                }
+                composable(route= Screens.LanguagePickerScreen.route){
+                    LanguagePickerScreen(navigateUp={
+                        navController.navigateUp()
+                    })
+
                 }
                 pdf2txtGraph(navController=navController,
                     scope=scope,

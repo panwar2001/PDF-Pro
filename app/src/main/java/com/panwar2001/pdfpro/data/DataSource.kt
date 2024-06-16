@@ -4,9 +4,6 @@ import com.panwar2001.pdfpro.R
 
 object DataSource {
     val ToolsList = listOf(
-        ToolsData(iconId=R.drawable.home,
-                  title = R.string.home,
-                  route= Screens.Home.route),
         ToolsData(iconId=R.drawable.outline_text,
                   title = R.string.pdf2text,
                   route= Screens.PdfToText.route),

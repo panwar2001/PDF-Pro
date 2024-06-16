@@ -1,0 +1,43 @@
+<resources>
+    <string name="onboard_title">अल्टीमेट मुफ्त पीडीएफ सेवा का अनुभव करें।</string>
+    <string name="title_activity_main_screen">मुख्य स्क्रीन</string>
+    <string name="title_activity_test">परीक्षण</string>
+    <string name="pick">चुनें</string>
+    <string name="splash">स्प्लैश</string>
+    <string name="menu">मेन्यू</string>
+    <string name="onBoard">मार्गदर्शन</string>
+    <string name="home">होम</string>
+    <string name="search_placeholder">यहाँ खोजें</string>
+    <string name="next">अगला</string>
+    <string name="started">शुरू करें</string>
+    <string name="skip">छोड़ें</string>
+    <string name="pdf2text">पीडीएफ से टेक्स्ट</string>
+    <string name="pdf2img">पीडीएफ से चित्र</string>
+    <string name="img2pdf">चित्र से पीडीएफ</string>
+    <string name="error_message">कुछ गलत हो गया। कृपया पुनः प्रयास करें।</string>
+    <string name="ocr_pdf">ओसीआर पीडीएफ</string>
+    <string name="compress_pdf">पीडीएफ संकुचित करें</string>
+    <string name="lock_pdf">पीडीएफ लॉक करें</string>
+    <string name="pdf_files_tab" translatable="false">पीडीएफ फाइलें</string>
+    <string name="convert_to_text">टेक्स्ट में बदलें</string>
+    <string name="convert_to_images">चित्र में बदलें</string>
+    <string name="close">बंद करें</string>
+    <string name="reorder">पुनः क्रमित करें</string>
+    <string name="light_mode">लाइट मोड</string>
+    <string name="dark_mode">डार्क मोड</string>
+    <string name="vertical">वर्टिकल</string>
+    <string name="horizontal">हॉरिज़ॉन्टल</string>
+    <string name="jump_to_page">पेज पर जाएं</string>
+    <string name="confirm">पुष्टि करें</string>
+    <string name="enter_valid_no">कृपया एक मान्य पेज नंबर दर्ज करें</string>
+    <string name="select_pdf">पीडीएफ फ़ाइल चुनें</string>
+    <string name="select_images">चित्र चुनें</string>
+    <string name="page_number">पेज नंबर</string>
+    <string name="language">भाषा</string>
+    <string name="ocr_description">स्ट्रीमलाइन टेक्स्ट एक्सट्रैक्शन के लिए ऑप्टिकल कैरेक्टर रिकॉग्निशन की संभावनाओं को अनलॉक करें।</string>
+    <string name="compress_pdf_description">गुणवत्ता को बनाए रखते हुए और फ़ाइल आकार को कम करते हुए हमारे सहज संपीड़न उपकरण के साथ आसानी से पीडीएफ फाइलें संकुचित करें</string>
+    <string name="lock_description">संवेदनशील जानकारी की सुरक्षा के लिए अपने पीडीएफ को पासवर्ड सुरक्षा के साथ सुरक्षित करें।</string>
+    <string name="pdf2txt_description">हमारा उन्नत टेक्स्ट एक्सट्रैक्शन एल्गोरिदम उच्च सटीकता सुनिश्चित करता है, स्वरूपण और लेआउट को वफादारी से बनाए रखता है।</string>
+    <string name="pdf2img_description">हमारा अत्याधुनिक पीडीएफ से चित्र कनवर्टर उच्च गुणवत्ता वाली छवि आउटपुट सुनिश्चित करता है, आपके दस्तावेज़ की अखंडता और स्पष्टता को बनाए रखता है।</string>
+    <string name="img2pdf_description">हमारा अत्याधुनिक चित्र से पीडीएफ कनवर्टर उच्च गुणवत्ता वाली पीडीएफ सुनिश्चित करता है, आपके दस्तावेज़ की अखंडता और स्पष्टता को बनाए रखता है।</string>
+</resources>
