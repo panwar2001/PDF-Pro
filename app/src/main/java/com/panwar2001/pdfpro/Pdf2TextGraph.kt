@@ -44,7 +44,7 @@ fun NavGraphBuilder.pdf2txtGraph(navController:NavController,
                     }
                 },selectMultipleFile = false,
                 mimeType = "application/pdf",
-                tool= DataSource.getToolData(0))
+                tool= DataSource.getToolData(R.string.pdf2text))
         }
         composable(route= Screens.PdfToText.PreviewFile.route) { model->
             val viewModel = model.sharedViewModel<PdfToTextViewModel>(navController)
@@ -71,7 +71,8 @@ fun NavGraphBuilder.pdf2txtGraph(navController:NavController,
                         scope.launch {
                             viewModel.convertToText(context)
                         }
-                    }
+                    },
+                    tool = DataSource.getToolData(R.string.pdf2text)
                 )
             }
         }

@@ -21,13 +21,15 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ImageBitmap
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.panwar2001.pdfpro.data.DataSource
+import com.panwar2001.pdfpro.R
 import com.panwar2001.pdfpro.data.Screens
+import com.panwar2001.pdfpro.data.Tool
 import com.panwar2001.pdfpro.ui.AppBar
 
 @Composable
@@ -36,8 +38,8 @@ fun PreviewFileScreen(onNavigationIconClick:()->Unit,
                   thumbnail:ImageBitmap,
                       fileName:String,
                       setLoading:(Boolean)->Unit,
-                      convertToText:()->Unit) {
-    val tool = DataSource.getToolData(0)
+                      convertToText:()->Unit,
+                      tool: Tool) {
     Scaffold(
         floatingActionButton = {
             FloatingActionButton(onClick = {
@@ -51,9 +53,10 @@ fun PreviewFileScreen(onNavigationIconClick:()->Unit,
                 Row(verticalAlignment = Alignment.CenterVertically,
                     modifier = Modifier.padding(5.dp)
                 ){
-                    Text(text = "Convert To Text",
+                    Text(text = stringResource(id =  R.string.convert_to_text),
                         fontSize = 20.sp)
-                    Icon(Icons.Filled.ArrowForward, "Next")
+                    Icon(Icons.Filled.ArrowForward,
+                         stringResource(id = R.string.next))
                 }
             }
         },
@@ -65,7 +68,7 @@ fun PreviewFileScreen(onNavigationIconClick:()->Unit,
             .fillMaxHeight(),
             horizontalAlignment = Alignment.CenterHorizontally
         ){
-            ToolDescription(description = tool.toolDescription)
+            ToolDescription(description = stringResource(id = tool.toolDescription))
             Row(
                 modifier = Modifier.padding(100.dp),
                 horizontalArrangement = Arrangement.Center
@@ -80,7 +83,7 @@ fun PreviewFileScreen(onNavigationIconClick:()->Unit,
                     ){
                         Image(
                             bitmap = thumbnail,
-                            contentDescription = "image preview of pdf first page",
+                            contentDescription = stringResource(id = R.string.pdf2text),
                             modifier=Modifier.padding(5.dp)
                         )
                         Text(text = fileName,

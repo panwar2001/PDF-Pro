@@ -25,10 +25,12 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.panwar2001.pdfpro.R
 import com.panwar2001.pdfpro.data.Tool
 import com.panwar2001.pdfpro.ui.AppBar
 import kotlinx.coroutines.launch
@@ -45,11 +47,12 @@ fun FilePickerScreen(onNavigationIconClick:()->Unit,
                      tool:Tool) {
     val snackBarHostState = remember { SnackbarHostState() }
     val scope = rememberCoroutineScope()
-
+    val errorMessage= stringResource(id = R.string.error_message)
     val tryAgain:()->Unit={
+
         scope.launch {
             snackBarHostState.showSnackbar(
-                message = "Something went wrong. Please try again.",
+                message = errorMessage,
                 // Defaults to SnackbarDuration.Short
                 duration = SnackbarDuration.Short
             )
@@ -96,13 +99,13 @@ fun FilePickerScreen(onNavigationIconClick:()->Unit,
             verticalArrangement = Arrangement.SpaceBetween
         )
         {
-            ToolDescription(tool.toolDescription)
+            ToolDescription(stringResource(id = tool.toolDescription))
             Row(
                 modifier = Modifier.fillMaxSize(),
                 horizontalArrangement = Arrangement.Center
             )
             {
-              Button(buttonText = tool.buttonDescription, onClick ={
+              Button(buttonText = stringResource(id = tool.buttonDescription), onClick ={
                   try {
                       if(mimeType=="application/pdf") {
                           pdfPickerLauncher.launch(arrayOf(mimeType))

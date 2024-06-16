@@ -1,17 +1,14 @@
 package com.panwar2001.pdfpro.ui
 
 import android.annotation.SuppressLint
-import android.os.Environment
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -50,7 +47,9 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.TextFieldValue
@@ -61,9 +60,6 @@ import androidx.compose.ui.unit.sp
 import com.panwar2001.pdfpro.R
 import com.panwar2001.pdfpro.data.DataSource
 import com.panwar2001.pdfpro.data.ToolsData
-import kotlin.coroutines.coroutineContext
-import kotlin.math.absoluteValue
-
 
 @SuppressLint("RememberReturnType")
 @OptIn(ExperimentalFoundationApi::class)
@@ -86,7 +82,7 @@ fun HomeScreen(onNavigationIconClick:()->Unit,
         topBar = {
             SearchView(
                 state = textState,
-                placeHolder = "Search here...",
+                placeHolder = "${stringResource(id = R.string.search_placeholder)}...",
                 modifier = Modifier,
                 onNavigationIconClick = onNavigationIconClick
             )
@@ -99,8 +95,10 @@ fun HomeScreen(onNavigationIconClick:()->Unit,
                 TabRow(selectedTabIndex = selectedTab ) {
                    Tab(selected = selectedTab==0 , onClick = { selectedTab=0 }) {
                        Row(verticalAlignment = Alignment.CenterVertically){
-                           Icon(imageVector = Icons.Default.Home, contentDescription = "Home screen")
-                           Text(text="Home", modifier = Modifier.padding(10.dp))
+                           Icon(imageVector = Icons.Default.Home,
+                               contentDescription = stringResource(id = R.string.home))
+                           Text(text= stringResource(id = R.string.home),
+                               modifier = Modifier.padding(10.dp))
                        }
                    }
                     Tab(selected = selectedTab==1 , onClick = { selectedTab=1 }) {
@@ -108,10 +106,10 @@ fun HomeScreen(onNavigationIconClick:()->Unit,
                             Icon(
                                 painter = painterResource(id = R.drawable.pdf_icon),
                                 modifier = Modifier.size(26.dp),
-                                contentDescription = "pdf",
+                                contentDescription = stringResource(id = R.string.pdf_files_tab),
                             )
-
-                            Text(text="PDF Files", modifier = Modifier.padding(10.dp))
+                            Text(text= stringResource(id = R.string.pdf_files_tab),
+                                 modifier = Modifier.padding(10.dp))
                         }
                     }
                 }
@@ -119,34 +117,34 @@ fun HomeScreen(onNavigationIconClick:()->Unit,
                     if(currentPage==0) {
                         Screen(
                             searchedText = textState.value.text,
-                            list = DataSource.FeatureList,
                             navigateTo
                         )
                     }else{
                         Row {
-                            PDFfilesScreen()
+                            PdfFilesScreen()
                         }
                     }
                 }
             }
         }
-    val storageDir = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES)
-
 }
 /**
  *  Composable that iterates through various tools and display them on a card
  *
  *  @param searchedText the tool  searched via SearchView by the user
- *  @param list the list of tools which match with the [searchedText]
+ *  the list of tools which match with the [searchedText]
  */
 @Composable
-fun Screen(searchedText:String, list: List<ToolsData>,navigateTo: (String)->Unit) {
+fun Screen(searchedText:String,
+           navigateTo: (String)->Unit) {
+    val list=DataSource.ToolsList
+    val context= LocalContext.current
     LazyVerticalGrid(columns = GridCells.Fixed(2),
         contentPadding = PaddingValues(20.dp)
     ) {
         items(items = list.filter {
-            it.description.contains(searchedText, ignoreCase = true)
-        }, key = {it.key}) {item ->
+            context.getString(it.title).contains(searchedText, ignoreCase = true)
+        }, key = {it.title}) {item ->
             Card(item =item,navigateTo=navigateTo)
         }
     }
@@ -158,7 +156,9 @@ fun Screen(searchedText:String, list: List<ToolsData>,navigateTo: (String)->Unit
  * @param item contains data of a tool
  */
 @Composable
-fun Card(item: ToolsData, modifier:Modifier=Modifier,navigateTo: (String)->Unit){
+fun Card(item: ToolsData,
+         modifier:Modifier=Modifier,
+         navigateTo: (String)->Unit){
     ElevatedCard(
         elevation = CardDefaults.cardElevation(
             defaultElevation = 15.dp
@@ -166,13 +166,13 @@ fun Card(item: ToolsData, modifier:Modifier=Modifier,navigateTo: (String)->Unit)
         modifier = Modifier
             .size(width = 10.dp, height = 130.dp)
             .padding(10.dp)
-            .clickable { navigateTo(item.screen) }
+            .clickable { navigateTo(item.route) }
         ,colors = CardDefaults.cardColors(
             containerColor =Color.White,
         )
     ) {
         Text(
-            text = item.description,
+            text = stringResource(id = item.title),
             textAlign = TextAlign.Center, // make text center horizontal
             modifier = modifier
                 .width(150.dp)
@@ -184,7 +184,7 @@ fun Card(item: ToolsData, modifier:Modifier=Modifier,navigateTo: (String)->Unit)
         )
         Icon(
             painter = painterResource(id = item.iconId),
-            contentDescription = "text icon",
+            contentDescription = stringResource(id = item.title),
             modifier= modifier
                 .size(width = 40.dp, height = 40.dp)
                 .padding(vertical = 1.dp)
@@ -222,7 +222,7 @@ fun SearchView(
             IconButton(onClick = {onNavigationIconClick() }) {
                 Icon(
                     imageVector = Icons.Filled.Menu,
-                    contentDescription = "Navigation Menu"
+                    contentDescription = stringResource(id = R.string.menu)
                 )
             }
         },
@@ -233,7 +233,7 @@ fun SearchView(
                 }
             },
                 imageVector = Icons.Default.Clear,
-                contentDescription = "Clear")
+                contentDescription = stringResource(id = R.string.close))
         },
         colors = TextFieldDefaults.colors(
             disabledTextColor = Color.Transparent,

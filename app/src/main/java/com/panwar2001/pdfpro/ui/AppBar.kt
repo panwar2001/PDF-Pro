@@ -20,13 +20,7 @@ import androidx.compose.ui.unit.dp
 @Composable
 fun AppBar( onNavigationIconClick: () -> Unit){
     TopAppBar(
-        title = { Text(
-            "",
-            maxLines = 1,
-            overflow = TextOverflow.Ellipsis,
-            fontWeight = FontWeight.Bold
-        )
-        },
+        title = {},
         navigationIcon = {
             IconButton(onClick = {onNavigationIconClick() }) {
                 Icon(

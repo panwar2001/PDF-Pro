@@ -1,10 +1,9 @@
 package com.panwar2001.pdfpro
 
 import android.content.Context
-import android.content.pm.PackageManager
 import android.os.Bundle
-import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.compose.animation.EnterTransition
 import androidx.compose.animation.ExitTransition
@@ -21,9 +20,8 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
-import androidx.core.app.ActivityCompat
-import androidx.core.content.ContextCompat
 import androidx.core.os.LocaleListCompat
 import androidx.lifecycle.ViewModel
 import com.panwar2001.pdfpro.ui.theme.PDFProTheme
@@ -45,11 +43,12 @@ import com.tom_roush.pdfbox.android.PDFBoxResourceLoader
 import kotlinx.coroutines.launch
 
 
-class Navigation : ComponentActivity() {
+class Navigation : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         PDFBoxResourceLoader.init(applicationContext)
-        AppCompatDelegate.setApplicationLocales(LocaleListCompat.forLanguageTags("en"))
+//        AppCompatDelegate.setApplicationLocales(LocaleListCompat.forLanguageTags("fr"))
+
         setContent{
             val theme= remember {
                 mutableStateOf(isDarkTheme())
@@ -65,7 +64,6 @@ class Navigation : ComponentActivity() {
                         setOnboardingFinished = {
                             val sharedPreferences = this.getSharedPreferences("onBoarding", Context.MODE_PRIVATE)
                             val editor = sharedPreferences.edit()
-
                             editor.putBoolean("isFinished", true)
                             editor.apply()
                         },
@@ -81,6 +79,10 @@ class Navigation : ComponentActivity() {
             }
         }
     }
+    /**
+     * If onboarding is done once when app is run for first time then always
+     * home screen is opened after splash screen.
+     */
     private fun getStartDestination( ): String {
         val sharedPreferences = this.getSharedPreferences("onBoarding", Context.MODE_PRIVATE)
         val onBoardingIsFinished= sharedPreferences.getBoolean("isFinished", false)
@@ -108,9 +110,9 @@ fun NavigationController(
     currentTheme:Boolean
 )
 {
+
     val scope = rememberCoroutineScope()
     val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
-
     // used for navigation through navigation drawer
     val navigateTo:(String)->Unit={
     navController.navigate(it){
@@ -135,10 +137,10 @@ fun NavigationController(
         drawerContent = {
             ModalDrawerSheet(Modifier.padding(0.dp,0.dp,60.dp,0.dp)) {
                 DrawerHeader()
-                DrawerBody(items = DataSource.MenuItems,setTheme=setTheme,currentTheme=currentTheme){
-                    navigateTo(it)
-                }
-            }
+                DrawerBody(items = DataSource.ToolsList,
+                           setTheme=setTheme,
+                           currentTheme=currentTheme){ navigateTo(it)}
+              }
         },
         gesturesEnabled = drawerState.isOpen)
     {
@@ -146,7 +148,6 @@ fun NavigationController(
         Surface(
             modifier = Modifier.fillMaxSize(),
         ) {
-
             NavHost(
                 navController = navController,
                 startDestination = startDestination,
@@ -184,7 +185,6 @@ fun NavigationController(
                 img2PdfGraph(navController=navController,
                     scope=scope,
                     drawerState=drawerState)
-
             }
         }
     }

@@ -1,0 +1,44 @@
+<resources>
+    <string name="app_name">PDF Pro</string>
+    <string name="banner_test" translatable="false">ca-app-pub-3940256099942544/9214589741</string>
+    <string name="onboard_title" >Experience the ultimate free PDF service.</string>
+    <string name="title_activity_main_screen" >MainScreen</string>
+    <string name="title_activity_test">Test</string>
+    <string name="pick">pick</string>
+    <string name="splash">splash</string>
+    <string name="menu">Menu</string>
+    <string name="onBoard">walk through</string>
+    <string name="home">Home</string>
+    <string name="search_placeholder">Search here</string>
+    <string name="next">Next</string>
+    <string name="started">Get Started</string>
+    <string name="skip">Skip</string>
+    <string name="pdf2text">Pdf to text</string>
+    <string name="pdf2img">Pdf to images</string>
+    <string name="img2pdf">Images to pdf</string>
+    <string name="error_message">Something went wrong. Please try again.</string>
+    <string name="ocr_pdf">Ocr PDF</string>
+    <string name="compress_pdf">Compress PDF</string>
+    <string name="lock_pdf">Lock PDF</string>
+    <string name="pdf_files_tab">PDF Files</string>
+    <string name="convert_to_text">Convert To Text</string>
+    <string name="convert_to_images">Convert To Images</string>
+    <string name="close">Close</string>
+    <string name="reorder">Reorder</string>
+    <string name="light_mode">Light Mode</string>
+    <string name="dark_mode">Dark Mode</string>
+    <string name="vertical">vertical</string>
+    <string name="horizontal">horizontal</string>
+    <string name="jump_to_page">Jump To Page</string>
+    <string name="confirm">Confirm</string>
+    <string name="enter_valid_no">Please enter a valid page number</string>
+    <string name="select_pdf">Select PDF File</string>
+    <string name="select_images">Select Images</string>
+    <string name="page_number">Page Number</string>
+    <string name="ocr_description">Unlock the potential of Optical Character Recognition for streamlined text extraction.</string>
+    <string name="compress_pdf_description">Effortlessly compress PDF files while preserving quality and reducing file size with our intuitive compression tool</string>
+    <string name="lock_description">Secure your PDF with password protection to safeguard sensitive information.</string>
+    <string name="pdf2txt_description">Our advanced text extraction algorithm ensures high accuracy, preserving formatting and layout faithfully.</string>
+    <string name="pdf2img_description">Our cutting-edge PDF to images converter ensures high-quality image output, maintaining the integrity and clarity of your document.</string>
+    <string name="img2pdf_description">Our cutting-edge images to PDF converter ensures high-quality PDF, maintaining the integrity and clarity of your document.</string>
+</resources>

@@ -1,12 +1,8 @@
 package com.panwar2001.pdfpro.ui.components
 
-import android.content.Context
-import android.content.res.Configuration
-import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -26,7 +22,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
@@ -34,35 +29,33 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.panwar2001.pdfpro.R
-import com.panwar2001.pdfpro.data.MenuItem
-import org.bouncycastle.crypto.agreement.kdf.ConcatenationKDFGenerator
-import java.security.AccessController.getContext
+import com.panwar2001.pdfpro.data.ToolsData
 
 
 @Composable
-fun DrawerHeader(modifier: Modifier=Modifier) {
+fun DrawerHeader() {
         Box(
-            modifier = modifier
+            modifier = Modifier
                 .fillMaxWidth()
                 .height(200.dp),
             contentAlignment = Alignment.Center
         ) {
             Column(
-                modifier.wrapContentSize(),
+                Modifier.wrapContentSize(),
                 verticalArrangement = Arrangement.SpaceAround,
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
                 Image(
                     painter = painterResource(id = R.mipmap.launcher_icon_foreground),
-                    contentDescription = "profile pic",
-                    modifier = modifier
+                    contentDescription = stringResource(id = R.string.app_name),
+                    modifier = Modifier
                         .size(130.dp)
                         .clip(CircleShape)
                         .background(Color.White)
                 )
                 Text(
                     text = stringResource(id = R.string.app_name),
-                    modifier
+                    Modifier
                         .fillMaxWidth()
                         .padding(top = 16.dp),
                     fontSize = 22.sp,
@@ -70,15 +63,14 @@ fun DrawerHeader(modifier: Modifier=Modifier) {
                 )
             }
             Divider(
-                modifier.align(Alignment.BottomCenter), thickness = 1.dp,
+                Modifier.align(Alignment.BottomCenter), thickness = 1.dp,
                 Color.DarkGray
             )
         }
 }
 @Composable
 fun DrawerBody(
-    items: List<MenuItem>,
-    modifier: Modifier=Modifier ,
+    items: List<ToolsData>,
     itemTextStyle: TextStyle = TextStyle(fontSize = 18.sp),
     setTheme:(Boolean)->Unit,
     currentTheme:Boolean,
@@ -86,7 +78,7 @@ fun DrawerBody(
 ) {
     var checked by remember { mutableStateOf(currentTheme)}
     Row(
-        modifier = modifier
+        modifier = Modifier
             .fillMaxWidth()
             .padding(16.dp),
         verticalAlignment = Alignment.CenterVertically,
@@ -104,34 +96,34 @@ fun DrawerBody(
                 uncheckedTrackColor = MaterialTheme.colorScheme.secondaryContainer,
             )
         )
-        Spacer(modifier = modifier.width(16.dp))
+        Spacer(modifier = Modifier.width(16.dp))
         Text(
-            text = if(checked) "Dark Theme" else "Light Theme",
+            text = stringResource(id =if(checked) R.string.dark_mode else R.string.light_mode),
             style = itemTextStyle,
-            modifier = modifier.weight(1f)
+            modifier = Modifier.weight(1f)
         )
     }
-    LazyColumn(modifier) {
+    LazyColumn() {
         items(items) { item ->
             Row(
-                modifier = modifier
+                modifier = Modifier
                     .fillMaxWidth()
                     .clickable {
-                        navigateTo(item.screen)
+                        navigateTo(item.route)
                     }
                     .padding(16.dp),
                 verticalAlignment = Alignment.CenterVertically
                 ) {
                 Icon(
-                    painter = painterResource(id = item.icon),
-                    contentDescription = item.contentDescription,
-                    modifier=modifier.size(30.dp)
+                    painter = painterResource(id = item.iconId),
+                    contentDescription = stringResource(id = item.title),
+                    modifier=Modifier.size(30.dp)
                 )
-                Spacer(modifier = modifier.width(16.dp))
+                Spacer(modifier = Modifier.width(16.dp))
                 Text(
-                    text = item.title,
+                    text = stringResource(id = item.title),
                     style = itemTextStyle,
-                    modifier = modifier.weight(1f)
+                    modifier = Modifier.weight(1f)
                 )
             }
         }

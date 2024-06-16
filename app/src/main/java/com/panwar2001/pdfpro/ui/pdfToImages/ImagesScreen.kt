@@ -36,9 +36,11 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ImageBitmap
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import com.panwar2001.pdfpro.ui.AppBar
+import com.panwar2001.pdfpro.R
 
 
 fun saveImageToStorage(uri: Uri,context:Context) {
@@ -79,7 +81,9 @@ fun ImageRow(image:ImageBitmap,index:Int){
 
     Row(
         verticalAlignment = Alignment.CenterVertically,
-        modifier = Modifier.padding(top=14.dp).fillMaxWidth()
+        modifier = Modifier
+            .padding(top = 14.dp)
+            .fillMaxWidth()
     ) {
         Checkbox(
             checked = true,
@@ -97,7 +101,7 @@ fun ImageRow(image:ImageBitmap,index:Int){
         ) {
             Image(
                 bitmap = image,
-                contentDescription = "image",
+                contentDescription = stringResource(id = R.string.pdf2img),
                 modifier= Modifier
                     .size(100.dp)
                     .border(
@@ -136,7 +140,8 @@ fun DialogWithImage(
         ) {
             Column(
                 modifier = Modifier
-                    .fillMaxSize().padding(top = 14.dp),
+                    .fillMaxSize()
+                    .padding(top = 14.dp),
                 verticalArrangement = Arrangement.Center,
                 horizontalAlignment = Alignment.CenterHorizontally,
             ) {
@@ -165,7 +170,7 @@ fun DialogWithImage(
                         onClick = { onDismissRequest() },
                         modifier = Modifier.padding(8.dp),
                     ) {
-                        Text("Close")
+                        Text(stringResource(id = R.string.close))
                     }
                 }
             }

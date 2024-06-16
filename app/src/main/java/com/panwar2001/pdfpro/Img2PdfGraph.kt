@@ -1,5 +1,6 @@
 package com.panwar2001.pdfpro
 
+import android.content.Context
 import android.net.Uri
 import androidx.compose.material3.DrawerState
 import androidx.compose.runtime.collectAsState
@@ -22,7 +23,8 @@ fun NavGraphBuilder.img2PdfGraph(navController: NavController,
                                  scope: CoroutineScope,
                                  drawerState: DrawerState){
 
-    navigation(route= Screens.Img2Pdf.route,startDestination= Screens.FilePicker.route){
+    navigation(route= Screens.Img2Pdf.route,
+               startDestination= Screens.FilePicker.route){
         composable(route= Screens.FilePicker.route){
             val viewModel = it.sharedViewModel<Img2pdfViewModel>(navController)
             FilePickerScreen(onNavigationIconClick = {
@@ -38,7 +40,7 @@ fun NavGraphBuilder.img2PdfGraph(navController: NavController,
                     }
                 },selectMultipleFile = true,
                 mimeType = "image/*",
-                tool= DataSource.getToolData(2))
+                tool= DataSource.getToolData(R.string.img2pdf))
         }
         composable(route= Screens.Img2Pdf.ReorderScreen.route) { model->
             val viewModel = model.sharedViewModel<Img2pdfViewModel>(navController)

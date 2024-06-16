@@ -11,7 +11,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.platform.LocalContext
 
 @Composable
-fun PDFfilesScreen() {
+fun PdfFilesScreen() {
     val context = LocalContext.current
     Environment.getRootDirectory()
     val projection = arrayOf(

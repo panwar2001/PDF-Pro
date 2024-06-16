@@ -41,8 +41,8 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.LocalContentColor
 import androidx.compose.material3.OutlinedButton
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.tooling.preview.Preview
 import com.github.barteksc.pdfviewer.PDFView
 import com.panwar2001.pdfpro.R
 /**
@@ -84,17 +84,17 @@ fun PdfViewer( uri: Uri,
                     modifier = Modifier.fillMaxWidth()){
                     BottomIconButton(onToggle = {nightMode=!nightMode},
                         icon = if(nightMode) R.drawable.light else R.drawable.night_moon ,
-                        text = if(nightMode) "Light Mode" else "Dark Mode",
+                        text = stringResource(id =if(!nightMode) R.string.dark_mode else R.string.light_mode),
                         tint=Color.Unspecified)
 
                     BottomIconButton(onToggle = {horizontal=!horizontal},
                         icon = R.drawable.file,
-                        text = if(horizontal) "vertical" else "horizontal",
+                        text = stringResource(id = if(horizontal) R.string.vertical else R.string.horizontal),
                         tint= LocalContentColor.current)
 
                     BottomIconButton(onToggle = {showDialog=!showDialog},
                         icon = R.drawable.pagefile,
-                        text = "Jump To",
+                        text = stringResource(id = R.string.jump_to_page),
                         tint= LocalContentColor.current)
                 }
             }
@@ -168,7 +168,7 @@ fun PageNumberInputDialog(onDismiss: () -> Unit,
     var isError by remember { mutableStateOf(false) }
     AlertDialog(
         title = {
-                Text(text = "Jump To Page",
+                Text(text = stringResource(id = R.string.jump_to_page),
                     fontWeight = FontWeight.Bold
                 )
         },
@@ -182,9 +182,9 @@ fun PageNumberInputDialog(onDismiss: () -> Unit,
                         isError = text.toIntOrNull() == null
                     },
                     placeholder = {
-                        Text(text = "Page 1 to $numPages")
+                        Text(text = "1 - $numPages")
                     },
-                    label = { Text("Page Number") },
+                    label = { Text(stringResource(id = R.string.page_number))},
                     keyboardOptions = KeyboardOptions.Default.copy(
                         keyboardType = KeyboardType.Number,
                         imeAction = ImeAction.Done
@@ -193,7 +193,7 @@ fun PageNumberInputDialog(onDismiss: () -> Unit,
                 )
                 if (isError) {
                     Text(
-                        text = "Please enter a valid page number( 1 to $numPages ) ",
+                        text = "${stringResource(id = R.string.enter_valid_no)}( 1 - $numPages ) ",
                         color = MaterialTheme.colorScheme.error,
                         style = MaterialTheme.typography.labelSmall,
                         modifier = Modifier.padding(start = 16.dp)
@@ -214,12 +214,12 @@ fun PageNumberInputDialog(onDismiss: () -> Unit,
                 colors=ButtonDefaults.buttonColors(containerColor = Color.Red,
                     contentColor = Color.White)
             ) {
-                Text("Confirm")
+                Text(stringResource(id = R.string.confirm))
             }
         },
         dismissButton = {
             OutlinedButton(onClick = onDismiss) {
-                   Text(text = "Cancel")
+                   Text(text = stringResource(id = R.string.close))
                 }
         })
 }
@@ -242,9 +242,4 @@ fun BottomIconButton(onToggle:()->Unit,
         }
         Text(text = text)
     }
-}
-@Preview
-@Composable
-fun Display() {
-    PdfViewer(uri = Uri.EMPTY, navigateUp = { /*TODO*/ }, fileName ="dfk" , numPages =4 )
 }

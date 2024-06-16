@@ -5,7 +5,6 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -29,18 +28,19 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
-
+import com.panwar2001.pdfpro.R
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ImagesDisplay(navigateUp:()->Unit,
                   imgUris:List<Uri>){
     Scaffold(topBar = {
         TopAppBar(
-            title = { Text(text = "Reorder",
+            title = { Text(text = stringResource(id = R.string.reorder),
                 overflow = TextOverflow.Ellipsis,
                 maxLines = 1)
             },
@@ -80,7 +80,7 @@ fun Card(){
             defaultElevation = 15.dp
         ),
         modifier = Modifier
-            .size(160.dp,160.dp)
+            .size(160.dp, 160.dp)
             .padding(5.dp)
             .clickable {
 

@@ -25,8 +25,8 @@ import kotlinx.coroutines.launch
 fun NavGraphBuilder.pdf2ImgGraph(navController: NavController,
                              scope: CoroutineScope,
                              drawerState: DrawerState){
-
-    navigation(route= Screens.PdfToImage.route,startDestination= Screens.FilePicker.route){
+    navigation(route= Screens.PdfToImage.route,
+               startDestination= Screens.FilePicker.route){
         composable(route= Screens.FilePicker.route){
             val viewModel = it.sharedViewModel<PdfToImagesViewModel>(navController)
             val context= LocalContext.current
@@ -44,15 +44,15 @@ fun NavGraphBuilder.pdf2ImgGraph(navController: NavController,
                             scope.launch { drawerState.apply { close() } }
                         }
                     }
-                },selectMultipleFile = false,
+                },
                 mimeType = "application/pdf",
-                tool= DataSource.getToolData(1))
+                tool= DataSource.getToolData(R.string.pdf2img))
         }
         composable(route= Screens.PdfToImage.PreviewFile.route) { model->
             val viewModel = model.sharedViewModel<PdfToImagesViewModel>(navController)
             val uiState by viewModel.uiState.collectAsState()
             val context= LocalContext.current
-            
+
             if (uiState.isLoading) {
                 ProgressIndicator(modifier = Modifier)
             } else {
@@ -74,7 +74,8 @@ fun NavGraphBuilder.pdf2ImgGraph(navController: NavController,
                         scope.launch {
                             viewModel.generateImages(context)
                         }
-                    }
+                    },
+                    tool= DataSource.getToolData(R.string.pdf2img)
                 )
             }
         }

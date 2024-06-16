@@ -7,6 +7,9 @@ android {
     namespace = "com.panwar2001.pdfpro"
     compileSdk = 34
 
+    androidResources{
+        generateLocaleConfig = true
+    }
     defaultConfig {
         applicationId = "com.panwar2001.pdfpro"
         minSdk = 24
