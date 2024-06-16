@@ -35,6 +35,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
@@ -42,11 +43,27 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.panwar2001.pdfpro.R
-import com.panwar2001.pdfpro.data.DataSource
 import com.panwar2001.pdfpro.data.Screens
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+
+data class OnBoardData(
+    val icon: Int,
+    val title:Int,
+    val description:Int
+)
+val OnBoardList= listOf(
+    OnBoardData(icon=R.drawable.ocr,
+                title=R.string.ocr_pdf,
+                description = R.string.ocr_description),
+    OnBoardData(icon=R.drawable.pdf_compresser,
+                title=R.string.compress_pdf,
+                description = R.string.compress_pdf_description),
+    OnBoardData(icon=R.drawable.lock_pdf,
+                title=R.string.lock_pdf,
+                description = R.string.lock_description)
+)
 
 /**
  * @param navigateTo function that helps to navigate to a screen
@@ -54,7 +71,7 @@ import kotlinx.coroutines.launch
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun OnboardScreen( navigateTo:(String)->Unit) {
-    val pagerState = rememberPagerState( pageCount = {DataSource.OnBoardList.size})
+    val pagerState = rememberPagerState( pageCount = {OnBoardList.size})
     val configuration = LocalConfiguration.current
     if (configuration.orientation==Configuration.ORIENTATION_LANDSCAPE) {
         LandscapeLayout(pagerState = pagerState, navigateTo=navigateTo)
@@ -87,7 +104,7 @@ fun PortraitLayout( modifier: Modifier = Modifier,
              Title(page = page)
              Description(page = page)
              PageIndicator(
-                 pageCount = DataSource.OnBoardList.size,
+                 pageCount = OnBoardList.size,
                  currentPage = pagerState.currentPage,
                  modifier = Modifier.padding(0.dp,0.dp,0.dp,30.dp)
              )
@@ -112,7 +129,7 @@ fun LandscapeLayout(modifier: Modifier=Modifier,
             horizontalAlignment = Alignment.CenterHorizontally) {
             DisplayImage(page = page)
             PageIndicator(
-                pageCount = DataSource.OnBoardList.size,
+                pageCount = OnBoardList.size,
                 currentPage = pagerState.currentPage,
                 modifier = Modifier.padding(0.dp, 0.dp, 0.dp, 30.dp)
             )
@@ -136,7 +153,7 @@ fun LandscapeLayout(modifier: Modifier=Modifier,
 fun NextButton(pagerState: PagerState,page:Int,navigateTo: (String) -> Unit){
     Button(
         onClick = {
-          if(pagerState.currentPage+1==DataSource.OnBoardList.size){
+          if(pagerState.currentPage+1==OnBoardList.size){
               navigateTo(Screens.Home.route)
           }else {
               CoroutineScope(Dispatchers.Main).launch {
@@ -149,7 +166,7 @@ fun NextButton(pagerState: PagerState,page:Int,navigateTo: (String) -> Unit){
         colors=ButtonDefaults.buttonColors(colorResource(id = R.color.primary))
     ) {
         Text(
-            text = if(DataSource.OnBoardList.size!=page+1) "Next" else "Get Started",
+            text = stringResource(id =if(OnBoardList.size!=page+1) R.string.next else R.string.started),
             fontSize = 20.sp,
             color = Color.White
         )
@@ -159,7 +176,7 @@ fun NextButton(pagerState: PagerState,page:Int,navigateTo: (String) -> Unit){
 @Composable
 fun Title(page:Int){
     Text(
-        text = DataSource.OnBoardList[page].title,
+        text = stringResource(id = OnBoardList[page].title),
         fontSize = 44.sp,
         fontWeight = FontWeight.Bold,
         textAlign = TextAlign.Center,
@@ -169,8 +186,8 @@ fun Title(page:Int){
 @Composable
 fun DisplayImage(page:Int){
     Image(
-        painter = painterResource(id = DataSource.OnBoardList[page].icon),
-        contentDescription = DataSource.OnBoardList[page].title,
+        painter = painterResource(id = OnBoardList[page].icon),
+        contentDescription = stringResource(id = OnBoardList[page].title),
         modifier = Modifier
             .wrapContentSize()
             .padding(40.dp)
@@ -181,7 +198,7 @@ fun DisplayImage(page:Int){
 @Composable
 fun Description(page:Int){
     Text(
-        text = DataSource.OnBoardList[page].description,
+        text = stringResource(id = OnBoardList[page].description),
         modifier = Modifier.padding(top = 45.dp),
         overflow= TextOverflow.Clip,
         textAlign = TextAlign.Center,
@@ -194,7 +211,7 @@ fun Skip(navigateTo: (String) -> Unit){
     Row(horizontalArrangement = Arrangement.End,
         modifier = Modifier.fillMaxWidth()) {
         Text(
-            text = "Skip→",
+            text = "${stringResource(id = R.string.skip)}→",
             textAlign = TextAlign.End,
             fontSize = 20.sp,
             fontWeight = FontWeight.Bold,
@@ -231,7 +248,7 @@ fun PageIndicator(pageCount: Int, currentPage: Int, modifier: Modifier) {
 @Preview(showSystemUi = true, device = "id:pixel_5")
 @Composable
 fun OnBoardingScreenPreview(){
-    val pagerState = rememberPagerState( pageCount = {DataSource.OnBoardList.size})
+    val pagerState = rememberPagerState( pageCount = {OnBoardList.size})
     PortraitLayout(pagerState=pagerState){
 
     }
