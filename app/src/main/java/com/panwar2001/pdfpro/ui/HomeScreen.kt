@@ -30,6 +30,7 @@ import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ElevatedCard
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Tab
 import androidx.compose.material3.TabRow
@@ -43,10 +44,12 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -60,6 +63,9 @@ import androidx.compose.ui.unit.sp
 import com.panwar2001.pdfpro.R
 import com.panwar2001.pdfpro.data.DataSource
 import com.panwar2001.pdfpro.data.ToolsData
+import kotlinx.coroutines.launch
+import java.util.Timer
+import kotlin.concurrent.schedule
 
 @SuppressLint("RememberReturnType")
 @OptIn(ExperimentalFoundationApi::class)
@@ -72,20 +78,34 @@ fun HomeScreen(onNavigationIconClick:()->Unit,
         pageCount = {2}
     )
     var selectedTab by remember { mutableIntStateOf(pagerState.currentPage) }
+    val scope= rememberCoroutineScope()
+    var loading by remember {mutableStateOf(false) }
     LaunchedEffect(selectedTab) {
         pagerState.scrollToPage(selectedTab)
     }
     LaunchedEffect(pagerState.currentPage) {
-        selectedTab=pagerState.currentPage
+            selectedTab=pagerState.currentPage
+    }
+    LaunchedEffect(loading) {
+       scope.launch {
+           Timer().schedule(10000) {
+               loading = false
+           }
+       }
     }
     Scaffold(
         topBar = {
-            SearchView(
-                state = textState,
-                placeHolder = "${stringResource(id = R.string.search_placeholder)}...",
-                modifier = Modifier,
-                onNavigationIconClick = onNavigationIconClick
-            )
+            Column {
+                if(loading) {
+                    LinearProgressIndicator(modifier=Modifier.fillMaxWidth())
+                }
+                SearchView(
+                    state = textState,
+                    placeHolder = "${stringResource(id = R.string.search_placeholder)}...",
+                    modifier = Modifier,
+                    onNavigationIconClick = onNavigationIconClick
+                )
+            }
         },
     ) { innerPadding ->
             Column(
@@ -93,33 +113,30 @@ fun HomeScreen(onNavigationIconClick:()->Unit,
                     .fillMaxSize()
                     .padding(innerPadding)) {
                 TabRow(selectedTabIndex = selectedTab ) {
-                   Tab(selected = selectedTab==0 , onClick = { selectedTab=0 }) {
-                       Row(verticalAlignment = Alignment.CenterVertically){
-                           Icon(imageVector = Icons.Default.Home,
-                               contentDescription = stringResource(id = R.string.home))
-                           Text(text= stringResource(id = R.string.home),
-                               modifier = Modifier.padding(10.dp))
-                       }
-                   }
-                    Tab(selected = selectedTab==1 , onClick = { selectedTab=1 }) {
-                        Row(verticalAlignment = Alignment.CenterVertically){
-                            Icon(
-                                painter = painterResource(id = R.drawable.pdf_icon),
-                                modifier = Modifier.size(26.dp),
-                                contentDescription = stringResource(id = R.string.pdf_files_tab),
-                            )
-                            Text(text= stringResource(id = R.string.pdf_files_tab),
-                                 modifier = Modifier.padding(10.dp))
-                        }
-                    }
+                    TabComponent(
+                        isSelected = selectedTab==0,
+                        onClick = { selectedTab=0
+                                    loading=true },
+                        enabled = selectedTab!=0,
+                        titleId = R.string.home,
+                        icon =  Icons.Default.Home
+                    )
+                    TabComponent(
+                        isSelected = selectedTab==1,
+                        onClick = { selectedTab=1
+                            loading=true },
+                        enabled = selectedTab!=1,
+                        titleId = R.string.pdf_files_tab,
+                        iconId =  R.drawable.pdf_icon
+                    )
                 }
                 HorizontalPager(state = pagerState) {currentPage->
-                    if(currentPage==0) {
+                    if(currentPage==0 ) {
                         Screen(
                             searchedText = textState.value.text,
                             navigateTo
                         )
-                    }else{
+                    }else {
                             PdfFilesScreen(navigateTo)
                     }
                 }
@@ -138,7 +155,8 @@ fun Screen(searchedText:String,
     val list=DataSource.ToolsList
     val context= LocalContext.current
     LazyVerticalGrid(columns = GridCells.Fixed(2),
-        contentPadding = PaddingValues(20.dp)
+        contentPadding = PaddingValues(20.dp),
+        modifier = Modifier.fillMaxSize()
     ) {
         items(items = list.filter {
             context.getString(it.title).contains(searchedText, ignoreCase = true)
@@ -246,7 +264,34 @@ fun SearchView(
         )
     )
 }
-
+@Composable
+fun TabComponent(isSelected:Boolean,
+                 onClick:()->Unit,
+                 enabled:Boolean,
+                 titleId:Int,
+                 icon:ImageVector?=null,
+                 iconId:Int?=null){
+    Tab(selected = isSelected ,
+        onClick = onClick,
+        enabled = enabled) {
+        Row(verticalAlignment = Alignment.CenterVertically){
+            if(icon!=null) {
+                Icon(
+                    imageVector = icon,
+                    contentDescription = stringResource(id = titleId)
+                )
+            }else if(iconId!=null){
+                Icon(
+                    painter = painterResource(id = iconId),
+                    modifier = Modifier.size(26.dp),
+                    contentDescription = stringResource(id = titleId),
+                )
+            }
+            Text(text= stringResource(id = titleId),
+                modifier = Modifier.padding(10.dp))
+        }
+    }
+}
 @Preview
 @Composable
 fun Preview(){
