@@ -1,5 +1,6 @@
 package com.panwar2001.pdfpro.ui
-
+import android.content.ContentUris
+import com.panwar2001.pdfpro.R
 import android.content.Context
 import android.database.Cursor
 import android.graphics.Bitmap
@@ -16,6 +17,7 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material3.CardDefaults
@@ -24,21 +26,20 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
+import com.panwar2001.pdfpro.data.Screens
 import java.io.IOException
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
-import kotlin.math.round
 
-
+@WorkerThread
 @Composable
-fun PdfFilesScreen() {
+fun PdfFilesScreen(navigateTo:(String)->Unit) {
     val context = LocalContext.current
     Environment.getRootDirectory()
     val projection = arrayOf(
@@ -62,32 +63,32 @@ fun PdfFilesScreen() {
 
     cursor?.use {
         if (it.moveToFirst()) {
-            LazyColumn{
                 val idCol = it.getColumnIndexOrThrow(MediaStore.Files.FileColumns._ID)
                 val modifiedCol = it.getColumnIndexOrThrow(MediaStore.Files.FileColumns.DATE_MODIFIED)
                 val nameCol = it.getColumnIndexOrThrow(MediaStore.Files.FileColumns.DISPLAY_NAME)
                 val sizeCol = it.getColumnIndexOrThrow(MediaStore.Files.FileColumns.SIZE)
 
+            LazyColumn {
                 do {
                     val dateModified = it.getLong(modifiedCol).toTimeDateString()
                     val name = it.getString(nameCol)
                     val size = it.getLong(sizeCol).toMB()
-                    val uri = Uri.withAppendedPath(
-                        MediaStore.Files.getContentUri("external"),
-                        it.getString(idCol)
-                    )
-                    item {
+                    val id = cursor.getLong(idCol)
+
+                   item{
                         PDF(
                             dateModified = dateModified,
                             name = name,
                             size = size,
-                            uri = uri)
+                            id = id,
+                            navigateTo = navigateTo)
                     }
-                } while (it.moveToNext())
+
+            } while (it.moveToNext())
             }
+
         }
     }
-    cursor?.close()
 }
 fun Long.toTimeDateString(): String {
     val dateTime = Date(this)
@@ -101,11 +102,8 @@ fun Long.toMB():Float{
 fun PDF(dateModified:String,
         size:Float,
         name: String,
-        uri:Uri) {
-    val thumbnail= generatePdfThumbnail(pdfUri = uri,
-                                        context = LocalContext.current,
-                                        width = 150,
-                                        height = 150)!!.asImageBitmap()
+        id:Long,
+        navigateTo: (String) -> Unit) {
     ElevatedCard(
         elevation = CardDefaults.cardElevation(
             defaultElevation = 15.dp
@@ -114,17 +112,16 @@ fun PDF(dateModified:String,
             .fillMaxWidth()
             .padding(10.dp)
             .clickable {
-
+                       navigateTo("${Screens.PdfViewer.route}/${id}")
             },
         colors = CardDefaults.cardColors(
             containerColor = Color.White,
         )
     ) {
         Row(Modifier.padding(10.dp)){
-            Image(
-                bitmap = thumbnail,
-                contentDescription = "some useful description",
-            )
+            Image(painter = painterResource(id = R.drawable.pdf_svg),
+                contentDescription = null,
+                modifier = Modifier.size(50.dp))
             Column {
                 Text(text = name,
                     overflow = TextOverflow.Ellipsis,
@@ -141,14 +138,14 @@ fun PDF(dateModified:String,
 @Composable
 @Preview
 fun PreviewPdf(){
-    PDF(dateModified = "sdfjsdfj",
+    PDF(dateModified = "18/03/2002",
         size = 34.0f,
         name ="file.pdf",
-        Uri.EMPTY
+        id=1,
+        navigateTo = {}
     )
 }
 
-@WorkerThread
 fun generatePdfThumbnail(
     context: Context,
     pdfUri: Uri?,

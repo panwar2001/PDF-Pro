@@ -1,5 +1,6 @@
 package com.panwar2001.pdfpro
 import android.Manifest
+import android.content.ContentUris
 import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
@@ -7,6 +8,7 @@ import android.net.Uri
 import android.os.Build
 import android.os.Bundle
 import android.os.Environment
+import android.provider.MediaStore
 import android.provider.Settings
 import androidx.activity.compose.setContent
 import androidx.appcompat.app.AppCompatActivity
@@ -34,9 +36,11 @@ import androidx.navigation.NavBackStackEntry
 import androidx.navigation.NavController
 import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.NavHostController
+import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import androidx.navigation.navArgument
 import com.panwar2001.pdfpro.data.DataSource
 import com.panwar2001.pdfpro.data.Screens
 import com.panwar2001.pdfpro.ui.HomeScreen
@@ -44,6 +48,7 @@ import com.panwar2001.pdfpro.ui.LanguagePickerScreen
 import com.panwar2001.pdfpro.ui.OnboardScreen
 import com.panwar2001.pdfpro.ui.components.DrawerBody
 import com.panwar2001.pdfpro.ui.components.DrawerHeader
+import com.panwar2001.pdfpro.ui.components.PdfViewer
 import com.panwar2001.pdfpro.ui.theme.PDFProTheme
 import com.tom_roush.pdfbox.android.PDFBoxResourceLoader
 import kotlinx.coroutines.launch
@@ -238,6 +243,21 @@ fun NavigationController(
                     LanguagePickerScreen(navigateUp={
                         navController.navigateUp()
                     })
+                }
+                composable(route=Screens.PdfViewer.route+"/{uriID}",
+                    arguments = listOf(navArgument("uriID") { type = NavType.LongType })){backStackEntry ->
+                    val id=backStackEntry.arguments?.getLong("uriID")
+                    if(id!=null) {
+                        val baseUri = MediaStore.Files.getContentUri("external")
+                        val uri = ContentUris.withAppendedId(baseUri, id)
+                        PdfViewer(uri = uri,
+                            navigateUp ={navController.navigateUp()},
+                            "",
+                            20)
+
+                    }else{
+                        navController.navigateUp()
+                    }
                 }
                 pdf2txtGraph(navController=navController,
                     scope=scope,

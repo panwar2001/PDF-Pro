@@ -120,9 +120,7 @@ fun HomeScreen(onNavigationIconClick:()->Unit,
                             navigateTo
                         )
                     }else{
-                        Row {
-                            PdfFilesScreen()
-                        }
+                            PdfFilesScreen(navigateTo)
                     }
                 }
             }
