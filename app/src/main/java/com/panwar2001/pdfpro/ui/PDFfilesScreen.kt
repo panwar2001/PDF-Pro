@@ -51,7 +51,7 @@ fun PdfFilesScreen(navigateTo:(String)->Unit) {
 
     val mimeType = "application/pdf"
     val whereClause = "${MediaStore.Files.FileColumns.MIME_TYPE} IN ('$mimeType')"
-    val orderBy = "${MediaStore.Files.FileColumns.SIZE} DESC"
+    val orderBy = "${MediaStore.Files.FileColumns.DATE_MODIFIED} DESC"
 
     val cursor: Cursor? = context.contentResolver.query(
         MediaStore.Files.getContentUri("external"),
@@ -91,7 +91,7 @@ fun PdfFilesScreen(navigateTo:(String)->Unit) {
     }
 }
 fun Long.toTimeDateString(): String {
-    val dateTime = Date(this)
+    val dateTime = Date(this*1000)
     val format = SimpleDateFormat("dd/MM/yyyy HH:mm:ss", Locale.US)
     return format.format(dateTime)
 }
