@@ -6,9 +6,12 @@ import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -16,9 +19,11 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentHeight
+import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -26,17 +31,25 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Clear
 import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.Menu
+import androidx.compose.material3.AssistChip
+import androidx.compose.material3.AssistChipDefaults
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.Divider
 import androidx.compose.material3.ElevatedCard
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.LinearProgressIndicator
+import androidx.compose.material3.ModalBottomSheet
+import androidx.compose.material3.RadioButton
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Tab
 import androidx.compose.material3.TabRow
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
+import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.MutableState
@@ -66,38 +79,49 @@ import com.panwar2001.pdfpro.data.ToolsData
 import kotlinx.coroutines.launch
 import java.util.Timer
 import kotlin.concurrent.schedule
+data object TAB{
+    const val HOME_TAB:Int=0
+    const val FILES_TAB:Int=1
+}
 
 @SuppressLint("RememberReturnType")
-@OptIn(ExperimentalFoundationApi::class)
+@OptIn(ExperimentalFoundationApi::class, ExperimentalMaterial3Api::class)
 @Composable
 fun HomeScreen(onNavigationIconClick:()->Unit,
     navigateTo: (String)->Unit) {
     val textState = remember { mutableStateOf(TextFieldValue("")) }
-    val pagerState= rememberPagerState(
+    val pagerState = rememberPagerState(
         initialPage = 0,
-        pageCount = {2}
+        pageCount = { 2 }
     )
     var selectedTab by remember { mutableIntStateOf(pagerState.currentPage) }
-    val scope= rememberCoroutineScope()
-    var loading by remember {mutableStateOf(false) }
+    val scope = rememberCoroutineScope()
+    var loading by remember { mutableStateOf(false) }
+    var showBottomSheet by remember { mutableStateOf(false) }
+    var sortFile by remember { mutableStateOf("") }
+    var ascendingOrder by remember {mutableStateOf(false)}
+
+    val sheetState = rememberModalBottomSheetState(
+        skipPartiallyExpanded = false,
+    )
     LaunchedEffect(selectedTab) {
         pagerState.scrollToPage(selectedTab)
     }
     LaunchedEffect(pagerState.currentPage) {
-            selectedTab=pagerState.currentPage
+        selectedTab = pagerState.currentPage
     }
     LaunchedEffect(loading) {
-       scope.launch {
-           Timer().schedule(10000) {
-               loading = false
-           }
-       }
+        scope.launch {
+            Timer().schedule(10000) {
+                loading = false
+            }
+        }
     }
     Scaffold(
         topBar = {
             Column {
-                if(loading) {
-                    LinearProgressIndicator(modifier=Modifier.fillMaxWidth())
+                if (loading) {
+                    LinearProgressIndicator(modifier = Modifier.fillMaxWidth())
                 }
                 SearchView(
                     state = textState,
@@ -107,41 +131,119 @@ fun HomeScreen(onNavigationIconClick:()->Unit,
                 )
             }
         },
-    ) { innerPadding ->
-            Column(
-                Modifier
-                    .fillMaxSize()
-                    .padding(innerPadding)) {
-                TabRow(selectedTabIndex = selectedTab ) {
-                    TabComponent(
-                        isSelected = selectedTab==0,
-                        onClick = { selectedTab=0
-                                    loading=true },
-                        enabled = selectedTab!=0,
-                        titleId = R.string.home,
-                        icon =  Icons.Default.Home
-                    )
-                    TabComponent(
-                        isSelected = selectedTab==1,
-                        onClick = { selectedTab=1
-                            loading=true },
-                        enabled = selectedTab!=1,
-                        titleId = R.string.pdf_files_tab,
-                        iconId =  R.drawable.pdf_icon
+        floatingActionButton = {
+            if (selectedTab == TAB.FILES_TAB && selectedTab == pagerState.currentPage) {
+                FloatingActionButton(
+                    onClick = { showBottomSheet = true },
+                    containerColor = Color.White,
+                ) {
+                    Icon(
+                        painter = painterResource(id = R.drawable.baseline_sort_24),
+                        contentDescription = null,
+                        tint = Color.Black,
+                        modifier = Modifier.size(32.dp)
                     )
                 }
-                HorizontalPager(state = pagerState) {currentPage->
-                    if(currentPage==0 ) {
-                        Screen(
-                            searchedText = textState.value.text,
-                            navigateTo
+
+            }
+        },
+    ) { innerPadding ->
+        Column(
+            Modifier
+                .fillMaxSize()
+                .padding(innerPadding)
+        ) {
+            TabRow(selectedTabIndex = selectedTab) {
+                TabComponent(
+                    isSelected = selectedTab == TAB.HOME_TAB,
+                    onClick = {
+                        selectedTab = TAB.HOME_TAB
+                        loading = true
+                    },
+                    titleId = R.string.home,
+                    icon = Icons.Default.Home
+                )
+                TabComponent(
+                    isSelected = selectedTab == TAB.FILES_TAB,
+                    onClick = {
+                        selectedTab = TAB.FILES_TAB
+                        loading = true
+                    },
+                    titleId = R.string.pdf_files_tab,
+                    iconId = R.drawable.pdf_icon
+                )
+            }
+            HorizontalPager(state = pagerState) { currentPage ->
+                if (currentPage == 0) {
+                    Screen(
+                        searchedText = textState.value.text,
+                        navigateTo
+                    )
+                } else {
+                    PdfFilesScreen(navigateTo,
+                                  sortFile,
+                                  ascendingOrder)
+                }
+            }
+
+            if (showBottomSheet) {
+                val options = listOf(
+                    stringResource(id = R.string.sort_by_date),
+                    stringResource(id = R.string.sort_by_size),
+                    stringResource(id = R.string.sort_by_name)
+                )
+                if(sortFile==""){
+                    sortFile= stringResource(id = R.string.sort_by_date)
+                }
+                ModalBottomSheet(
+                    modifier = Modifier.fillMaxHeight(),
+                    sheetState = sheetState,
+                    onDismissRequest = { showBottomSheet = false }
+                ) {
+                    Row {
+                        Text(
+                        stringResource(id = R.string.sort_options),
+                        modifier = Modifier.padding(16.dp),
+                        fontWeight = FontWeight.Bold
+                    )
+                        AssistChip(
+                            onClick = {ascendingOrder = !ascendingOrder},
+                            label = {Text(
+                                text= stringResource(id = R.string.change_order),
+                                fontWeight = FontWeight.Bold
+                            )},
+                            leadingIcon = {
+                                Icon(
+                                    painter = painterResource(id = R.drawable.arrow_sort),
+                                    contentDescription =null,
+                                    modifier= Modifier.size(AssistChipDefaults.IconSize)
+                                )
+                            }
                         )
-                    }else {
-                            PdfFilesScreen(navigateTo)
+                    }
+                    LazyColumn {
+                        items(options) { option ->
+                            Column {
+                                Divider(thickness = 2.dp)
+                                Row(
+                                horizontalArrangement = Arrangement.SpaceBetween,
+                                verticalAlignment = Alignment.CenterVertically,
+                                modifier = Modifier
+                                    .padding(horizontal = 20.dp)
+                            ) {
+                                    RadioButton(selected = option == sortFile,
+                                    enabled = option != sortFile,
+                                    onClick = {sortFile=option})
+                                    Text(text = option)
+                                    Spacer(modifier=Modifier.width(20.dp))
+                                }
+                            }
+                        }
                     }
                 }
             }
         }
+    }
 }
 /**
  *  Composable that iterates through various tools and display them on a card
@@ -267,13 +369,12 @@ fun SearchView(
 @Composable
 fun TabComponent(isSelected:Boolean,
                  onClick:()->Unit,
-                 enabled:Boolean,
                  titleId:Int,
                  icon:ImageVector?=null,
                  iconId:Int?=null){
     Tab(selected = isSelected ,
         onClick = onClick,
-        enabled = enabled) {
+        enabled = !isSelected) {
         Row(verticalAlignment = Alignment.CenterVertically){
             if(icon!=null) {
                 Icon(
