@@ -3,15 +3,12 @@ import android.content.ContentUris
 import com.panwar2001.pdfpro.R
 import android.content.Context
 import android.database.Cursor
-import android.graphics.Bitmap
-import android.graphics.pdf.PdfRenderer
-import android.net.Uri
 import android.os.Environment
-import android.os.ParcelFileDescriptor
 import android.provider.MediaStore
 import androidx.annotation.WorkerThread
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -20,10 +17,14 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Share
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ElevatedCard
+import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
@@ -33,7 +34,7 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.panwar2001.pdfpro.data.Screens
-import java.io.IOException
+import com.panwar2001.pdfpro.ui.components.sharePdfFile
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
@@ -91,7 +92,8 @@ fun PdfFilesScreen(navigateTo:(String)->Unit,
                             name = name,
                             size = size,
                             id = id,
-                            navigateTo = navigateTo)
+                            navigateTo = navigateTo,
+                            context=context)
                     }
 
             } while (it.moveToNext())
@@ -113,7 +115,8 @@ fun PDF(dateModified:String,
         size:Float,
         name: String,
         id:Long,
-        navigateTo: (String) -> Unit) {
+        navigateTo: (String) -> Unit,
+        context: Context) {
     ElevatedCard(
         elevation = CardDefaults.cardElevation(
             defaultElevation = 15.dp
@@ -128,20 +131,41 @@ fun PDF(dateModified:String,
             containerColor = Color.White,
         )
     ) {
-        Row(Modifier.padding(10.dp)){
+        Row(Modifier.padding(10.dp),
+            horizontalArrangement = Arrangement.SpaceBetween,
+            verticalAlignment = Alignment.CenterVertically){
             Image(painter = painterResource(id = R.drawable.pdf_svg),
                 contentDescription = null,
                 modifier = Modifier.size(50.dp))
             Column {
-                Text(text = name,
-                    overflow = TextOverflow.Ellipsis,
-                    maxLines = 1)
+                Row(Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.SpaceBetween){
+                    Text(
+                        text = name,
+                        overflow = TextOverflow.Ellipsis,
+                        maxLines = 1,
+                        modifier=Modifier.weight(1f)
+                    )
+                    Icon(
+                        imageVector = Icons.Default.Share,
+                        modifier = Modifier.clickable {
+                            val baseUri = MediaStore.Files.getContentUri("external")
+                            sharePdfFile(
+                                context = context,
+                                fileMimeType = "application/pdf",
+                                fileURI = ContentUris.withAppendedId(baseUri, id)
+                            )
+                        },
+                        contentDescription = null
+                    )
+                }
                 Row{
                     Text("$size MB")
                     Spacer(modifier = Modifier.width(20.dp))
                     Text("$dateModified ")
                 }
             }
+
         }
       }
  }
@@ -152,51 +176,8 @@ fun PreviewPdf(){
         size = 34.0f,
         name ="file.pdf",
         id=1,
-        navigateTo = {}
+        navigateTo = {},
+        context= LocalContext.current
     )
 }
 
-fun generatePdfThumbnail(
-    context: Context,
-    pdfUri: Uri?,
-    width: Int,
-    height: Int
-): Bitmap? {
-    var fileDescriptor: ParcelFileDescriptor? = null
-    var pdfRenderer: PdfRenderer? = null
-    var page: PdfRenderer.Page? = null
-    var bitmap: Bitmap? = null
-    try {
-        // Get the content resolver instance
-        val contentResolver = context.contentResolver
-        // Open the PDF file
-        fileDescriptor = contentResolver.openFileDescriptor(pdfUri!!, "r")
-        if (fileDescriptor != null) {
-            // Create PdfRenderer instance
-            pdfRenderer = PdfRenderer(fileDescriptor)
-
-            // Open the specified page
-            page = pdfRenderer.openPage(0)
-            // Create a bitmap to render the page
-            bitmap = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888)
-
-            // Render the page to the bitmap
-            page.render(bitmap, null, null, PdfRenderer.Page.RENDER_MODE_FOR_DISPLAY)
-
-            // Close the page
-            page.close()
-        }
-    } catch (e: IOException) {
-        e.printStackTrace()
-    } finally {
-        pdfRenderer?.close()
-        if (fileDescriptor != null) {
-            try {
-                fileDescriptor.close()
-            } catch (e: IOException) {
-                e.printStackTrace()
-            }
-        }
-    }
-    return bitmap
-}
