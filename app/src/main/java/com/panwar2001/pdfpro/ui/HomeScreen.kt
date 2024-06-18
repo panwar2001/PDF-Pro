@@ -182,7 +182,8 @@ fun HomeScreen(onNavigationIconClick:()->Unit,
                 } else {
                     PdfFilesScreen(navigateTo,
                                   sortFile,
-                                  ascendingOrder)
+                                  ascendingOrder,
+                                  searchedFileName = textState.value.text)
                 }
             }
 

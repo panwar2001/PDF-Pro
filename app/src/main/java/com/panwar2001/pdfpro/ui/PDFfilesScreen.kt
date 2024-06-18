@@ -42,7 +42,8 @@ import java.util.Locale
 @Composable
 fun PdfFilesScreen(navigateTo:(String)->Unit,
                    sortFile:String,
-                   ascendingOrder:Boolean) {
+                   ascendingOrder:Boolean,
+                   searchedFileName:String) {
     val sortOption=when(sortFile){
         stringResource(id = R.string.sort_by_name)-> MediaStore.Files.FileColumns.DISPLAY_NAME
         stringResource(id = R.string.sort_by_size)-> MediaStore.Files.FileColumns.SIZE
@@ -57,8 +58,9 @@ fun PdfFilesScreen(navigateTo:(String)->Unit,
         MediaStore.Files.FileColumns.DISPLAY_NAME,
         MediaStore.Files.FileColumns.SIZE
     )
+
     val mimeType = "application/pdf"
-    val whereClause = "${MediaStore.Files.FileColumns.MIME_TYPE} IN ('$mimeType')"
+    val whereClause = "${MediaStore.Files.FileColumns.MIME_TYPE} IN ('$mimeType') AND ${MediaStore.Files.FileColumns.DISPLAY_NAME} LIKE '%$searchedFileName%'"
     val orderBy = "$sortOption $sortOrder"
 
     val cursor: Cursor? = context.contentResolver.query(
