@@ -40,6 +40,7 @@
     <string name="sort_by_name">Sort by name</string>
     <string name="change_order">change order of files</string>
     <string name="sort_options">Sorting Options</string>
+    <string name="share">Share</string>
     <!--***********Languages ***********************-->
     <string name="language">Language</string>
     <string-array name="english" translatable="false">

@@ -12,6 +12,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
+import androidx.compose.material.icons.filled.Share
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.BottomAppBar
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -41,6 +42,8 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.LocalContentColor
 import androidx.compose.material3.OutlinedButton
+import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import com.github.barteksc.pdfviewer.PDFView
@@ -63,6 +66,7 @@ fun PdfViewer( uri: Uri,
     var jumpToPage by remember { mutableIntStateOf(1) }
     var showDialog by remember { mutableStateOf(false) }
     var horizontal by remember { mutableStateOf(false) }
+    val context= LocalContext.current
     Scaffold(topBar = {
         TopAppBar(
             title = { Text(text = fileName,
@@ -96,6 +100,15 @@ fun PdfViewer( uri: Uri,
                         icon = R.drawable.pagefile,
                         text = stringResource(id = R.string.jump_to_page),
                         tint= LocalContentColor.current)
+
+                    BottomIconButton(onToggle = {
+                        sharePdfFile(
+                            context = context,
+                            fileMimeType = "application/pdf",
+                            fileURI = uri)},
+                        icon = Icons.Default.Share,
+                        text = stringResource(id = R.string.share),
+                        tint= Color.Black)
                 }
             }
         )
@@ -226,19 +239,30 @@ fun PageNumberInputDialog(onDismiss: () -> Unit,
 
 @Composable
 fun BottomIconButton(onToggle:()->Unit,
-                     icon:Int,
+                     icon:Any,
                      text:String,
-                     tint:Color){
+                     tint:Color,
+                     ){
     Column(verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally,
-        modifier = Modifier.padding(horizontal = 5.dp)){
+        modifier = Modifier.padding(horizontal = 1.dp)){
         IconButton(onClick = onToggle) {
-            Icon(
-                painter = painterResource(id = icon ),
-                modifier=Modifier.size(30.dp),
-                contentDescription = text,
-                tint = tint
-            )
+            if(icon is Int) {
+                Icon(
+                    painter = painterResource(id = icon),
+                    modifier = Modifier.size(25.dp),
+                    contentDescription = text,
+                    tint = tint
+                )
+            }
+            else if(icon is ImageVector) {
+                Icon(
+                    imageVector = Icons.Default.Share,
+                    modifier = Modifier.size(25.dp),
+                    contentDescription = text,
+                    tint = tint
+                )
+            }
         }
         Text(text = text)
     }
