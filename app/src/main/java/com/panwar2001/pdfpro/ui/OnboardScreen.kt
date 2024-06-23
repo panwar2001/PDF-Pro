@@ -25,6 +25,8 @@ import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -39,12 +41,12 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.panwar2001.pdfpro.R
 import com.panwar2001.pdfpro.data.Screens
 import com.panwar2001.pdfpro.ui.components.DevicePreviews
+import com.panwar2001.pdfpro.ui.theme.PDFProTheme
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -182,7 +184,9 @@ fun Title(page:Int){
         fontWeight = FontWeight.Bold,
         overflow= TextOverflow.Clip,
         textAlign = TextAlign.Center,
-        modifier=Modifier.padding(top=25.dp).wrapContentSize()
+        modifier= Modifier
+            .padding(top = 25.dp)
+            .wrapContentSize()
     )
 }
 @Composable
@@ -246,12 +250,29 @@ fun PageIndicator(pageCount: Int, currentPage: Int, modifier: Modifier) {
     }
 }
 
-@OptIn(ExperimentalFoundationApi::class)
 @DevicePreviews
 @Composable
-fun OnBoardingScreenPreview(){
-    val pagerState = rememberPagerState( pageCount = {OnBoardList.size})
-    PortraitLayout(pagerState=pagerState){
-
+fun LightModeOnBoardingScreenPreview(){
+    PDFProTheme(darkTheme =false) {
+        Surface(
+            modifier = Modifier.fillMaxSize(),
+            color = MaterialTheme.colorScheme.background
+        ) {
+            OnboardScreen {}
+        }
     }
 }
+
+@DevicePreviews
+@Composable
+fun DarkModeOnBoardingScreenPreview(){
+    PDFProTheme(darkTheme =true) {
+        Surface(
+            modifier = Modifier.fillMaxSize(),
+            color = MaterialTheme.colorScheme.background
+        ) {
+            OnboardScreen {}
+        }
+    }
+}
+

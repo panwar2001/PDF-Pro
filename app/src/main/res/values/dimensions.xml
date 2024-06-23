@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <!-- Spacing -->
+    <dimen name="spacing_none">0dp</dimen>
+    <dimen name="spacing_tiny">2dp</dimen>
+    <dimen name="spacing_small">4dp</dimen>
+    <dimen name="spacing_medium">8dp</dimen>
+    <dimen name="spacing_large">16dp</dimen>
+    <dimen name="spacing_xlarge">24dp</dimen>
+    <dimen name="spacing_xxlarge">32dp</dimen>
+
+    <!-- Typography -->
+    <dimen name="text_size_small">12sp</dimen>
+    <dimen name="text_size_medium">14sp</dimen>
+    <dimen name="text_size_large">16sp</dimen>
+    <dimen name="text_size_xlarge">18sp</dimen>
+    <dimen name="text_size_xxlarge">20sp</dimen>
+    <dimen name="text_size_extraLarge">30sp</dimen>
+
+    <!-- Icons -->
+    <dimen name="icon_size_small">24dp</dimen>
+    <dimen name="icon_size_medium">32dp</dimen>
+    <dimen name="icon_size_large">48dp</dimen>
+
+    <!-- Button Dimensions -->
+    <dimen name="button_height">48dp</dimen>
+    <dimen name="button_width">120dp</dimen>
+    <dimen name="button_corner_radius">4dp</dimen>
+
+    <!-- Card Dimensions -->
+    <dimen name="card_elevation">4dp</dimen>
+    <dimen name="card_corner_radius">8dp</dimen>
+
+    <!-- Toolbar Dimensions -->
+    <dimen name="toolbar_height">56dp</dimen>
+    <dimen name="toolbar_icon_size">24dp</dimen>
+
+    <!-- Dialog Dimensions -->
+    <dimen name="dialog_width">280dp</dimen>
+    <dimen name="dialog_height">40dp</dimen>
+
+    <!-- Divider Dimensions -->
+    <dimen name="divider_height">1dp</dimen>
+    <dimen name="divider_inset">16dp</dimen>
+
+    <!-- Input Field Dimensions -->
+    <dimen name="textfield_height">56dp</dimen>
+    <dimen name="textfield_padding">16dp</dimen>
+
+    <!-- List Item Dimensions -->
+    <dimen name="list_item_height">56dp</dimen>
+    <dimen name="list_item_padding_horizontal">16dp</dimen>
+    <dimen name="list_item_padding_vertical">8dp</dimen>
+
+    <!-- SnackBar Dimensions -->
+    <dimen name="snackbar_height">48dp</dimen>
+    <dimen name="snackbar_icon_size">24dp</dimen>
+
+    <!-- App Bar Dimensions -->
+    <dimen name="app_bar_height">56dp</dimen>
+
+    <!-- Navigation Drawer Dimensions -->
+    <dimen name="drawer_width">240dp</dimen>
+
+    <!-- Grid Layout Dimensions -->
+    <dimen name="grid_item_height">120dp</dimen>
+    <dimen name="grid_spacing">8dp</dimen>
+
+    <!-- Bottom Sheet Dimensions -->
+    <dimen name="bottom_sheet_height">320dp</dimen>
+
+    <!-- Avatar Dimensions -->
+    <dimen name="avatar_size_small">32dp</dimen>
+    <dimen name="avatar_size_medium">48dp</dimen>
+    <dimen name="avatar_size_large">72dp</dimen>
+
+</resources>

@@ -34,10 +34,10 @@ import androidx.compose.material.icons.filled.Menu
 import androidx.compose.material3.AssistChip
 import androidx.compose.material3.AssistChipDefaults
 import androidx.compose.material3.CardDefaults
-import androidx.compose.material3.Divider
 import androidx.compose.material3.ElevatedCard
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FloatingActionButton
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.LinearProgressIndicator
@@ -94,6 +94,7 @@ fun HomeScreen(onNavigationIconClick:()->Unit,
         initialPage = 0,
         pageCount = { 2 }
     )
+
     var selectedTab by remember { mutableIntStateOf(pagerState.currentPage) }
     val scope = rememberCoroutineScope()
     var loading by remember { mutableStateOf(false) }
@@ -225,7 +226,7 @@ fun HomeScreen(onNavigationIconClick:()->Unit,
                     LazyColumn {
                         items(options) { option ->
                             Column {
-                                Divider(thickness = 2.dp)
+                                HorizontalDivider(thickness = 2.dp)
                                 Row(
                                 horizontalArrangement = Arrangement.SpaceBetween,
                                 verticalAlignment = Alignment.CenterVertically,
