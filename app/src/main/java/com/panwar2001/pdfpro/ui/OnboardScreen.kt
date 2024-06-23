@@ -44,6 +44,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.panwar2001.pdfpro.R
 import com.panwar2001.pdfpro.data.Screens
+import com.panwar2001.pdfpro.ui.components.DevicePreviews
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -246,7 +247,7 @@ fun PageIndicator(pageCount: Int, currentPage: Int, modifier: Modifier) {
 }
 
 @OptIn(ExperimentalFoundationApi::class)
-@Preview(showSystemUi = true, device = "id:pixel_5")
+@DevicePreviews
 @Composable
 fun OnBoardingScreenPreview(){
     val pagerState = rememberPagerState( pageCount = {OnBoardList.size})
