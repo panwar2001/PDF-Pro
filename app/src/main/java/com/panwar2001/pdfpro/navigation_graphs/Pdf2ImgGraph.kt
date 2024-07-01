@@ -1,33 +1,37 @@
-package com.panwar2001.pdfpro
+package com.panwar2001.pdfpro.navigation_graphs
 
+import android.content.Context
 import android.net.Uri
 import androidx.compose.material3.DrawerState
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalContext
 import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.composable
 import androidx.navigation.navigation
+import com.panwar2001.pdfpro.R
 import com.panwar2001.pdfpro.data.DataSource
 import com.panwar2001.pdfpro.data.Screens
+import com.panwar2001.pdfpro.sharedViewModel
+import com.panwar2001.pdfpro.ui.components.DeterminateIndicator
 import com.panwar2001.pdfpro.ui.components.FilePickerScreen
 import com.panwar2001.pdfpro.ui.components.PdfViewer
 import com.panwar2001.pdfpro.ui.components.ProgressIndicator
-import com.panwar2001.pdfpro.ui.pdfToText.PreviewFileScreen
-import com.panwar2001.pdfpro.ui.pdfToText.TextScreen
-import com.panwar2001.pdfpro.ui.view_models.PdfToTextViewModel
+import com.panwar2001.pdfpro.ui.pdfToImages.ImagesScreen
+import com.panwar2001.pdfpro.ui.pdfToImages.PreviewFileScreen
+import com.panwar2001.pdfpro.ui.view_models.PdfToImagesViewModel
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 
-fun NavGraphBuilder.pdf2txtGraph(navController:NavController,
-                              scope:CoroutineScope,
-                              drawerState:DrawerState){
-    navigation(route= Screens.PdfToText.route,startDestination= Screens.FilePicker.route){
-        composable(route= Screens.FilePicker.route){ model->
-            val viewModel = model.sharedViewModel<PdfToTextViewModel>(navController)
-            val context= LocalContext.current
+fun NavGraphBuilder.pdf2ImgGraph(navController: NavController,
+                                 scope: CoroutineScope,
+                                 drawerState: DrawerState,
+                                 context: Context){
+    navigation(route= Screens.PdfToImage.route,
+               startDestination= Screens.FilePicker.route){
+        composable(route= Screens.FilePicker.route){
+            val viewModel = it.sharedViewModel<PdfToImagesViewModel>(navController)
             FilePickerScreen(onNavigationIconClick = {
                 scope.launch { drawerState.apply { if (isClosed) open() else close() } }
             },
@@ -37,19 +41,19 @@ fun NavGraphBuilder.pdf2txtGraph(navController:NavController,
                     scope.launch {
                         viewModel.generateThumbnailFromPDF(context)
                     }
-                    navController.navigate(Screens.PdfToText.PreviewFile.route) {
+                    navController.navigate(Screens.PdfToImage.PreviewFile.route) {
                         if (drawerState.isOpen) {
                             scope.launch { drawerState.apply { close() } }
                         }
                     }
-                },selectMultipleFile = false,
+                },
                 mimeType = "application/pdf",
-                tool= DataSource.getToolData(R.string.pdf2text))
+                tool= DataSource.getToolData(R.string.pdf2img))
         }
-        composable(route= Screens.PdfToText.PreviewFile.route) { model->
-            val viewModel = model.sharedViewModel<PdfToTextViewModel>(navController)
+        composable(route= Screens.PdfToImage.PreviewFile.route) { model->
+            val viewModel = model.sharedViewModel<PdfToImagesViewModel>(navController)
             val uiState by viewModel.uiState.collectAsState()
-            val context= LocalContext.current
+
             if (uiState.isLoading) {
                 ProgressIndicator(modifier = Modifier)
             } else {
@@ -67,35 +71,37 @@ fun NavGraphBuilder.pdf2txtGraph(navController:NavController,
                     thumbnail = uiState.thumbnail,
                     fileName = uiState.fileName,
                     setLoading={loading:Boolean->viewModel.setLoading(loading)},
-                    convertToText={
+                    convertToImages={
                         scope.launch {
-                            viewModel.convertToText(context)
+                            viewModel.generateImages(context)
                         }
                     },
-                    tool = DataSource.getToolData(R.string.pdf2text)
+                    tool= DataSource.getToolData(R.string.pdf2img)
                 )
             }
         }
-        composable(route= Screens.PdfToText.PdfViewer.route){ model->
-            val viewModel = model.sharedViewModel<PdfToTextViewModel>(navController)
+        composable(route= Screens.PdfToImage.PdfViewer.route){ model->
+            val viewModel = model.sharedViewModel<PdfToImagesViewModel>(navController)
             val uiState by viewModel.uiState.collectAsState()
             PdfViewer(uri = uiState.uri,
                 navigateUp ={navController.navigateUp()},
                 uiState.fileName,
                 uiState.numPages)
         }
-        composable(route= Screens.PdfToText.TextScreen.route){ model->
-            val viewModel = model.sharedViewModel<PdfToTextViewModel>(navController)
+        composable(route=Screens.PdfToImage.ImageScreen.route) { model ->
+            val viewModel = model.sharedViewModel<PdfToImagesViewModel>(navController)
             val uiState by viewModel.uiState.collectAsState()
-            if(uiState.isLoading && uiState.text==""){
-                ProgressIndicator(modifier = Modifier)
-            }else {
-                if(uiState.text!="") {
-                    TextScreen(text = uiState.text) {
-                        scope.launch { drawerState.apply { if (isClosed) open() else close() } }
-                    }
-                }else{
-                    ProgressIndicator(modifier = Modifier)
+            if (uiState.isLoading) {
+                DeterminateIndicator(uiState.progress)
+            } else {
+                if (uiState.images.isEmpty()) {
+                    DeterminateIndicator(uiState.progress)
+                } else {
+                    ImagesScreen(images = uiState.images,
+                        onNavigationIconClick = {
+                            scope.launch { drawerState.apply { if (isClosed) open() else close() } }
+                        }
+                    )
                 }
             }
         }

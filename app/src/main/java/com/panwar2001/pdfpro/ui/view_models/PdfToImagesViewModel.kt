@@ -1,6 +1,8 @@
 package com.panwar2001.pdfpro.ui.view_models
 
 import android.content.Context
+import android.graphics.Bitmap
+import android.graphics.pdf.PdfRenderer
 import android.net.Uri
 import android.provider.OpenableColumns
 import androidx.annotation.WorkerThread
@@ -10,9 +12,6 @@ import androidx.core.graphics.drawable.toBitmap
 import androidx.core.graphics.drawable.toDrawable
 import androidx.lifecycle.ViewModel
 import com.panwar2001.pdfpro.R
-import com.tom_roush.pdfbox.pdmodel.PDDocument
-import com.tom_roush.pdfbox.rendering.ImageType
-import com.tom_roush.pdfbox.rendering.PDFRenderer
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -67,56 +66,89 @@ class PdfToImagesViewModel:ViewModel() {
      * using pdf-box to generate thumbnail of pdf (Bitmap of first page of pdf using it's uri)
      * @param context application context
      */
+
     @WorkerThread
     fun generateThumbnailFromPDF(context: Context){
-        Timer().schedule(1){
-            val inputStream= context.contentResolver.openInputStream(uiState.value.uri)
-            inputStream.use {
-                val document= PDDocument.load(it)
-                val renderer= PDFRenderer(document)
-                val bitmap=renderer.renderImage(0,0.5F, ImageType.RGB)
-                _uiState.update {state->
-                    state.copy(thumbnail = bitmap.asImageBitmap(),
-                        numPages = document.numberOfPages) }
-                setLoading(false)
-                document.close()
-            }
-            // Set File Name
-            val returnCursor = context.contentResolver.query(uiState.value.uri, null, null, null, null)
-            returnCursor.use {
-                if (it != null) {
-                    val nameIndex = it.getColumnIndex(OpenableColumns.DISPLAY_NAME)
-                    it.moveToFirst()
-                    val fileName = it.getString(nameIndex)
-                    it.close()
-                    _uiState.update {state->
-                        state.copy(fileName = fileName)
+        try {
+            Timer().schedule(1) {
+                val contentResolver = context.contentResolver
+                val fileDescriptor = contentResolver.openFileDescriptor(uiState.value.uri, "r")
+                fileDescriptor.use { descriptor ->
+                    val pdfRenderer = PdfRenderer(descriptor!!)
+                    pdfRenderer.use { renderer ->
+                        val page = renderer.openPage(0)
+                        val bitmap = Bitmap.createBitmap(
+                            page.width,
+                            page.height,
+                            Bitmap.Config.ARGB_8888
+                        )
+                        page.render(bitmap, null, null, PdfRenderer.Page.RENDER_MODE_FOR_DISPLAY)
+                        _uiState.update { state ->
+                            state.copy(
+                                thumbnail = bitmap.asImageBitmap(),
+                                numPages = pdfRenderer.pageCount
+                            )
+                        }
+                        setLoading(false)
+                        page.close()
+                    }
+                //set file name
+                val returnCursor =
+                    context.contentResolver.query(uiState.value.uri, null, null, null, null)
+                returnCursor.use {
+                    if (it != null) {
+                        val nameIndex = it.getColumnIndex(OpenableColumns.DISPLAY_NAME)
+                        it.moveToFirst()
+                        val fileName = it.getString(nameIndex)
+                        it.close()
+                        _uiState.update { state ->
+                            state.copy(fileName = fileName)
+                        }
                     }
                 }
             }
+            }
+        } catch (e: Exception) {
+            e.printStackTrace()
         }
+
     }
     @WorkerThread
     fun generateImages(context:Context){
-        val inputStream=context.contentResolver.openInputStream(uiState.value.uri)
         val imagesList = mutableListOf<ImageBitmap>()
-        Timer().schedule(1) {
-            inputStream.use {
-                val document= PDDocument.load(it)
-                val renderer= PDFRenderer(document)
-                for(page in 0 until document.numberOfPages){
-                    val bitmap=renderer.renderImage(page)
-                    imagesList.add(bitmap.asImageBitmap())
-                    _uiState.update {state->
-                        state.copy(progress= page*1f/document.numberOfPages)
+        try {
+            Timer().schedule(1) {
+                val contentResolver = context.contentResolver
+                val fileDescriptor = contentResolver.openFileDescriptor(uiState.value.uri, "r")
+                fileDescriptor.use { descriptor ->
+                    val pdfRenderer = PdfRenderer(descriptor!!)
+                    pdfRenderer.use { renderer ->
+                        for (pageNum in 0 until renderer.pageCount) {
+                            val page = renderer.openPage(pageNum)
+                            val bitmap = Bitmap.createBitmap(
+                                page.width,
+                                page.height,
+                                Bitmap.Config.ARGB_8888
+                            )
+                            page.render(
+                                bitmap,
+                                null,
+                                null,
+                                PdfRenderer.Page.RENDER_MODE_FOR_DISPLAY
+                            )
+                            imagesList.add(bitmap.asImageBitmap())
+                            _uiState.update { state ->
+                                state.copy(progress = pageNum * 1f / uiState.value.numPages)
+                            }
+                            page.close()
+                        }
+                        _uiState.update { state ->
+                            state.copy(images = imagesList)
+                        }
+                        setLoading(false)
                     }
                 }
-                _uiState.update {state->
-                    state.copy(images = imagesList)
-                }
-                setLoading(false)
-                document.close()
             }
-        }
+        }catch (e:Exception){e.printStackTrace() }
     }
 }

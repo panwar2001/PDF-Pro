@@ -1,6 +1,5 @@
-package com.panwar2001.pdfpro
+package com.panwar2001.pdfpro.navigation_graphs
 
-import android.content.Context
 import android.net.Uri
 import androidx.compose.material3.DrawerState
 import androidx.compose.runtime.collectAsState
@@ -9,10 +8,11 @@ import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.composable
 import androidx.navigation.navigation
+import com.panwar2001.pdfpro.R
 import com.panwar2001.pdfpro.data.DataSource
 import com.panwar2001.pdfpro.data.Screens
+import com.panwar2001.pdfpro.sharedViewModel
 import com.panwar2001.pdfpro.ui.components.FilePickerScreen
-import com.panwar2001.pdfpro.ui.components.PdfViewer
 import com.panwar2001.pdfpro.ui.images2pdf.ImagesDisplay
 import com.panwar2001.pdfpro.ui.view_models.Img2pdfViewModel
 import com.panwar2001.pdfpro.ui.view_models.PdfToImagesViewModel
