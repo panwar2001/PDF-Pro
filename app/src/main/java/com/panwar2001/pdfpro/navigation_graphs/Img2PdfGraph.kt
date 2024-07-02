@@ -47,7 +47,8 @@ fun NavGraphBuilder.img2PdfGraph(navController: NavController,
             val uiState by viewModel.uiState.collectAsState()
             ImagesDisplay(
                     imgUris = uiState.Uris,
-                    navigateUp ={navController.navigateUp()}
+                    navigateUp ={navController.navigateUp()},
+                    onMove = viewModel::move
                 )
         }
         composable(route= Screens.Img2Pdf.PdfViewer.route){ model->

@@ -74,6 +74,7 @@ class Navigation : AppCompatActivity() {
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background
                 ) {
+
                     NavigationController(
                         startDestination = getStartDestination(),
                         setOnboardingFinished = {
@@ -123,7 +124,7 @@ class Navigation : AppCompatActivity() {
 
             if (ContextCompat.checkSelfPermission(this, Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
                 permissionsNeeded.add(Manifest.permission.READ_EXTERNAL_STORAGE)
-            }
+           }
             if (permissionsNeeded.isNotEmpty()) {
                 ActivityCompat.requestPermissions(this, permissionsNeeded.toTypedArray(), permissionRequestCode)
             }
@@ -133,12 +134,15 @@ class Navigation : AppCompatActivity() {
         return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
             Environment.isExternalStorageManager()
         } else {
-//            val hasReadPermission = ContextCompat.checkSelfPermission(this, Manifest.permission.READ_EXTERNAL_STORAGE)==PackageManager.PERMISSION_GRANTED
+              val hasReadPermission = ContextCompat.checkSelfPermission(this, Manifest.permission.READ_EXTERNAL_STORAGE)==PackageManager.PERMISSION_GRANTED
               val hasWritePermission = ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE)==PackageManager.PERMISSION_GRANTED
-             hasWritePermission
+              hasWritePermission and hasReadPermission
         }
     }
 
+    /**
+     * requested permission check for sdk less than android 11
+     */
     override fun onRequestPermissionsResult(
         requestCode: Int,
         permissions: Array<out String>,
@@ -149,10 +153,17 @@ class Navigation : AppCompatActivity() {
         if (requestCode == permissionRequestCode) {
             if (grantResults.isNotEmpty() && grantResults.all { it == PackageManager.PERMISSION_GRANTED }) {
                 pdfProContent()
-            } else {
-                // Permissions are denied
-                requestPermission()
             }
+        }
+    }
+
+    override fun onResume() {
+        super.onResume()
+        if(hasExternalStoragePermission()){
+            pdfProContent()
+        }else{
+            // permission not yet approved. Display user notice and gracefully degrade
+            requestPermission()
         }
     }
 }

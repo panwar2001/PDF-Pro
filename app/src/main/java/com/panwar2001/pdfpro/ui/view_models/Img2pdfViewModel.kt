@@ -44,5 +44,10 @@ class Img2pdfViewModel:ViewModel() {
     fun resetState() {
         _uiState.value = Img2PdfUiState()
     }
+    fun move(fromIndex: Int, toIndex: Int) {
+        val imgUriList = _uiState.value.Uris.toMutableList()
+        imgUriList.add(toIndex, imgUriList.removeAt(fromIndex))
+        _uiState.update { it.copy(Uris = imgUriList) }
+    }
 
 }
