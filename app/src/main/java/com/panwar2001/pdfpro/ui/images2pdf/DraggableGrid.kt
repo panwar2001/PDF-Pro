@@ -5,7 +5,7 @@ package com.panwar2001.pdfpro.ui.images2pdf
 
 
 import androidx.compose.foundation.ExperimentalFoundationApi
-import androidx.compose.foundation.gestures.detectDragGesturesAfterLongPress
+import androidx.compose.foundation.gestures.detectDragGestures
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
@@ -31,11 +31,10 @@ fun <T : Any> DraggableGrid(
 
     val gridState = rememberLazyGridState()
     val dragDropState = rememberGridDragDropState(gridState, onMove)
-
     LazyVerticalGrid(
         columns = GridCells.Fixed(3),
         modifier = Modifier.pointerInput(dragDropState) {
-        detectDragGesturesAfterLongPress(
+            detectDragGestures(
             onDrag = { change, offset ->
                 change.consume()
                 dragDropState.onDrag(offset = offset)

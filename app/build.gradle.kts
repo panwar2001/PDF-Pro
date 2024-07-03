@@ -1,6 +1,8 @@
 plugins {
     alias(libs.plugins.androidApplication)
     alias(libs.plugins.jetbrainsKotlinAndroid)
+    id("kotlin-kapt")
+    id("com.google.dagger.hilt.android")
 }
 
 android {
@@ -25,17 +27,23 @@ android {
 
     buildTypes {
         release {
-            // Enables code shrinking, obfuscation, and optimization for only
-            // your project's release build type. Make sure to use a build
-            // variant with `isDebuggable=false`.
+            /**
+             *  Enables code shrinking, obfuscation, and optimization for only
+             *  your project's release build type. Make sure to use a build
+             *  variant with `isDebuggable=false`.
+             */
             isMinifyEnabled = true
-            // Enables resource shrinking, which is performed by the
-            // Android Gradle plugin.
+            /**
+             * Enables resource shrinking, which is performed by the
+             * Android Gradle plugin.
+             */
             isShrinkResources = true
             proguardFiles(
-                // Includes the default ProGuard rules files that are packaged with
-                // the Android Gradle plugin. To learn more, go to the section about
-                // R8 configuration files.
+                /**
+                 *  Includes the default ProGuard rules files that are packaged with
+                 *  the Android Gradle plugin. To learn more, go to the section about
+                 *  R8 configuration files.
+                 */
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 // Includes a local, custom Proguard rules file
                 "proguard-rules.pro"
@@ -43,6 +51,7 @@ android {
         }
     }
     compileOptions {
+        // enable java 8 in the project
         sourceCompatibility = JavaVersion.VERSION_1_8
         targetCompatibility = JavaVersion.VERSION_1_8
     }
@@ -61,7 +70,6 @@ android {
         }
     }
 }
-
 dependencies {
 
     implementation(libs.androidx.core.ktx)
@@ -85,6 +93,8 @@ dependencies {
     implementation(libs.coil.compose)
     implementation(libs.reorderable)
     testImplementation(libs.junit)
+    implementation(libs.hilt.android)
+    kapt(libs.hilt.android.compiler)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
     androidTestImplementation(platform(libs.androidx.compose.bom))
@@ -92,3 +102,8 @@ dependencies {
     debugImplementation(libs.androidx.ui.tooling)
     debugImplementation(libs.androidx.ui.test.manifest)
 }
+// Allow references to generated code
+kapt {
+    correctErrorTypes = true
+}
+

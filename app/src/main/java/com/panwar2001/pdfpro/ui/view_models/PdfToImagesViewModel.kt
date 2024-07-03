@@ -5,6 +5,7 @@ import android.graphics.Bitmap
 import android.graphics.pdf.PdfRenderer
 import android.net.Uri
 import android.provider.OpenableColumns
+import android.provider.SyncStateContract.Columns
 import androidx.annotation.WorkerThread
 import androidx.compose.ui.graphics.ImageBitmap
 import androidx.compose.ui.graphics.asImageBitmap
@@ -111,7 +112,6 @@ class PdfToImagesViewModel:ViewModel() {
         } catch (e: Exception) {
             e.printStackTrace()
         }
-
     }
     @WorkerThread
     fun generateImages(context:Context){

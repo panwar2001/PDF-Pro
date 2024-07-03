@@ -244,21 +244,20 @@ fun BottomIconButton(onToggle:()->Unit,
                      tint:Color,
                      ){
     Column(verticalArrangement = Arrangement.Center,
-        horizontalAlignment = Alignment.CenterHorizontally,
-        modifier = Modifier.padding(horizontal = 1.dp)){
+        horizontalAlignment = Alignment.CenterHorizontally){
         IconButton(onClick = onToggle) {
             if(icon is Int) {
                 Icon(
                     painter = painterResource(id = icon),
-                    modifier = Modifier.size(25.dp),
+                    modifier = Modifier.size(32.dp),
                     contentDescription = text,
                     tint = tint
                 )
             }
             else if(icon is ImageVector) {
                 Icon(
-                    imageVector = Icons.Default.Share,
-                    modifier = Modifier.size(25.dp),
+                    imageVector =icon,
+                    modifier = Modifier.size(32.dp),
                     contentDescription = text,
                     tint = tint
                 )

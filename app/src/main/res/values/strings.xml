@@ -35,6 +35,9 @@
     <string name="select_pdf">Select PDF File</string>
     <string name="select_images">Select Images</string>
     <string name="page_number">Page Number</string>
+    <string name="delete">Delete</string>
+    <string name="add_more">Add more</string>
+    <string name="capture">Capture</string>
     <string name="sort_by_date">Sort by date</string>
     <string name="sort_by_size">Sort by size</string>
     <string name="sort_by_name">Sort by name</string>

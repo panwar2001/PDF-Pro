@@ -1,5 +1,6 @@
 package com.panwar2001.pdfpro.data
 
+import android.net.Uri
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 
@@ -40,6 +41,7 @@ sealed class Screens(val route:String) {
     }
     data object  Img2Pdf:Screens("Img2Pdf"){
         data object PdfViewer: Screens("img2pdf_pdfViewer")
+        data object ImagesViewScreen: Screens("images")
         data object  ReorderScreen: Screens("reorder")
     }
 }
@@ -60,4 +62,11 @@ data class Spacing(
     val medium: Dp=16.dp,
     val large: Dp=32.dp,
     val extraLarge: Dp=64.dp
+)
+
+data class ImageInfo(
+    val uri: Uri = Uri.EMPTY,
+    val type:String="",
+    val size:Float=0f,
+    val checked:Boolean=false
 )
