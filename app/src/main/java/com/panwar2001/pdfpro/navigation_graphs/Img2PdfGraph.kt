@@ -48,7 +48,7 @@ fun NavGraphBuilder.img2PdfGraph(navController: NavController,
             val viewModel = model.sharedViewModel<Img2pdfViewModel>(navController)
             val uiState by viewModel.uiState.collectAsState()
             ReorderScreen(navigateUp = { navController.navigateUp() },
-                          imageList =  uiState.imageList,
+                          imageList =  uiState.imageList.map{it.uri},
                           onMove = viewModel::move)
         }
         composable(route= Screens.Img2Pdf.ImagesViewScreen.route) { model->

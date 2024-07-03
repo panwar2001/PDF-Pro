@@ -50,7 +50,7 @@ fun <T : Any> DraggableGrid(
         verticalArrangement = Arrangement.spacedBy(16.dp),
         horizontalArrangement = Arrangement.spacedBy(16.dp),
     ) {
-        itemsIndexed(items, key = { _, item -> item }) { index, item ->
+        itemsIndexed(items, key = { index , _ -> index }) { index, item ->
             DraggableItem(dragDropState, index) { isDragging ->
                 content(item, isDragging,index+1)
             }

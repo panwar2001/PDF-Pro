@@ -32,11 +32,14 @@ import coil.compose.AsyncImage
 import com.panwar2001.pdfpro.R
 import com.panwar2001.pdfpro.data.ImageInfo
 
-
+/**
+ * @param imageList
+ * Cannot pass data class to imageList (On Android you can only use types which can be stored inside the Bundle.)
+ */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ReorderScreen(navigateUp:()->Unit,
-                  imageList:List<ImageInfo>,
+                  imageList:List<Uri>,
                   onMove: (Int, Int) -> Unit){
     Scaffold(topBar = {
         TopAppBar(
@@ -56,7 +59,7 @@ fun ReorderScreen(navigateUp:()->Unit,
         Column(modifier=Modifier.padding(innerPadding)) {
             DraggableGrid(items = imageList, onMove =onMove) { item, isDragging, index->
                 val elevation by animateDpAsState(if (isDragging) 4.dp else 1.dp, label = "elevation")
-                Image(uri = item.uri,elevation=elevation,index=index)
+                Image(uri = item,elevation=elevation,index=index)
             }
         }
     }

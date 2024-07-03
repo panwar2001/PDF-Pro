@@ -146,7 +146,7 @@ fun ImagesDisplay(navigateUp:()->Unit,
                             index+1,
                             elevation = 0.dp)
                         Text(text = imageList[index].type)
-                        Text(text = "${imageList[index].size}")
+                        Text(text = "${imageList[index].size} MB")
                     }
                     HorizontalDivider()
                 }
