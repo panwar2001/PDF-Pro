@@ -1,17 +1,16 @@
 package com.panwar2001.pdfpro.ui.view_models
 
-import android.content.Context
+import android.app.Application
 import android.graphics.Bitmap
 import android.graphics.pdf.PdfRenderer
 import android.net.Uri
 import android.provider.OpenableColumns
-import android.provider.SyncStateContract.Columns
 import androidx.annotation.WorkerThread
 import androidx.compose.ui.graphics.ImageBitmap
 import androidx.compose.ui.graphics.asImageBitmap
 import androidx.core.graphics.drawable.toBitmap
 import androidx.core.graphics.drawable.toDrawable
-import androidx.lifecycle.ViewModel
+import androidx.lifecycle.AndroidViewModel
 import com.panwar2001.pdfpro.R
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -34,7 +33,7 @@ data class PdfToImagesUiState(
 )
 
 
-class PdfToImagesViewModel:ViewModel() {
+class PdfToImagesViewModel(application: Application): AndroidViewModel(application )  {
     private val _uiState = MutableStateFlow(PdfToImagesUiState())
     val uiState: StateFlow<PdfToImagesUiState> = _uiState.asStateFlow()
     /**
@@ -69,7 +68,8 @@ class PdfToImagesViewModel:ViewModel() {
      */
 
     @WorkerThread
-    fun generateThumbnailFromPDF(context: Context){
+    fun generateThumbnailFromPDF(){
+        val context = getApplication<Application>().applicationContext
         try {
             Timer().schedule(1) {
                 val contentResolver = context.contentResolver
@@ -114,7 +114,8 @@ class PdfToImagesViewModel:ViewModel() {
         }
     }
     @WorkerThread
-    fun generateImages(context:Context){
+    fun generateImages(){
+        val context = getApplication<Application>().applicationContext
         val imagesList = mutableListOf<ImageBitmap>()
         try {
             Timer().schedule(1) {

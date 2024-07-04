@@ -1,6 +1,5 @@
 package com.panwar2001.pdfpro.navigation_graphs
 
-import android.content.Context
 import android.net.Uri
 import androidx.compose.material3.DrawerState
 import androidx.compose.runtime.collectAsState
@@ -25,8 +24,7 @@ import kotlinx.coroutines.launch
 
 fun NavGraphBuilder.pdf2txtGraph(navController:NavController,
                                  scope:CoroutineScope,
-                                 drawerState:DrawerState,
-                                 context:Context){
+                                 drawerState:DrawerState){
     navigation(route= Screens.PdfToText.route,startDestination= Screens.FilePicker.route){
         composable(route= Screens.FilePicker.route){ model->
             val viewModel = model.sharedViewModel<PdfToTextViewModel>(navController)
@@ -37,7 +35,7 @@ fun NavGraphBuilder.pdf2txtGraph(navController:NavController,
                 setLoading={loading:Boolean->viewModel.setLoading(loading)},
                 navigate = {
                     scope.launch {
-                        viewModel.generateThumbnailFromPDF(context)
+                        viewModel.generateThumbnailFromPDF()
                     }
                     navController.navigate(Screens.PdfToText.PreviewFile.route) {
                         if (drawerState.isOpen) {
@@ -70,7 +68,7 @@ fun NavGraphBuilder.pdf2txtGraph(navController:NavController,
                     setLoading={loading:Boolean->viewModel.setLoading(loading)},
                     convertToText={
                         scope.launch {
-                            viewModel.convertToText(context)
+                            viewModel.convertToText()
                         }
                     },
                     tool = DataSource.getToolData(R.string.pdf2text)

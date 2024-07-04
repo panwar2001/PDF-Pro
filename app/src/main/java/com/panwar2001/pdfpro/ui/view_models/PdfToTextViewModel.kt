@@ -1,6 +1,6 @@
 package com.panwar2001.pdfpro.ui.view_models
 
-import android.content.Context
+import android.app.Application
 import android.graphics.Bitmap
 import android.graphics.pdf.PdfRenderer
 import android.net.Uri
@@ -10,7 +10,7 @@ import androidx.compose.ui.graphics.ImageBitmap
 import androidx.compose.ui.graphics.asImageBitmap
 import androidx.core.graphics.drawable.toBitmap
 import androidx.core.graphics.drawable.toDrawable
-import androidx.lifecycle.ViewModel
+import androidx.lifecycle.AndroidViewModel
 import com.panwar2001.pdfpro.R
 import com.tom_roush.pdfbox.pdmodel.PDDocument
 import com.tom_roush.pdfbox.text.PDFTextStripper
@@ -34,7 +34,7 @@ data class PdfToTextUiState(
 )
 
 
-class PdfToTextViewModel:ViewModel() {
+class PdfToTextViewModel(application: Application): AndroidViewModel(application ) {
     private val _uiState = MutableStateFlow(PdfToTextUiState())
     val uiState: StateFlow<PdfToTextUiState> = _uiState.asStateFlow()
     /**
@@ -63,10 +63,10 @@ class PdfToTextViewModel:ViewModel() {
 
     /**
      * using pdf-box to generate thumbnail of pdf (Bitmap of first page of pdf using it's uri)
-     * @param context application context
      */
     @WorkerThread
-    fun generateThumbnailFromPDF(context: Context){
+    fun generateThumbnailFromPDF(){
+        val context = getApplication<Application>().applicationContext
         try {
             Timer().schedule(1) {
                 val contentResolver = context.contentResolver
@@ -112,7 +112,8 @@ class PdfToTextViewModel:ViewModel() {
 
     }
     @WorkerThread
-     fun convertToText(context:Context){
+     fun convertToText(){
+        val context = getApplication<Application>().applicationContext
         val inputStream=context.contentResolver.openInputStream(uiState.value.uri)
         Timer().schedule(1) {
             inputStream.use {

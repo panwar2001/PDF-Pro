@@ -13,8 +13,6 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.grid.GridCells
-import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
@@ -54,17 +52,19 @@ fun ImagesDisplay(navigateUp:()->Unit,
                   navigateToReorder:()->Unit,
                   addImgUris:(List<Uri>)->Unit,
                   toggleCheckBox:(Int,Boolean)->Unit,
-                  deleteImages:()->Unit){
+                  deleteImages:()->Unit,
+                  convertToPdf:()->Unit){
     val imagesPickerLauncher= rememberLauncherForActivityResult(
         contract = ActivityResultContracts.PickMultipleVisualMedia() ,
         onResult = {
             if(it.isNotEmpty()) {
                 addImgUris(it)
             } })
+
     Scaffold(
         floatingActionButton = {
-            FloatingActionButton(onClick = {
-            }, containerColor = Color.White,
+            FloatingActionButton(onClick = convertToPdf,
+                containerColor = Color.White,
                 shape = CircleShape) {
                 Icon(
                     imageVector = Icons.Default.CheckCircle,

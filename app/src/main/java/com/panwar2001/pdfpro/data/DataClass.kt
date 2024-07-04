@@ -43,6 +43,7 @@ sealed class Screens(val route:String) {
         data object PdfViewer: Screens("img2pdf_pdfViewer")
         data object ImagesViewScreen: Screens("images")
         data object  ReorderScreen: Screens("reorder")
+        data object SavePdfScreen: Screens("save_pdf")
     }
 }
 

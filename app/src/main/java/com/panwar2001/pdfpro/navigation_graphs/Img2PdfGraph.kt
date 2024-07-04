@@ -12,10 +12,12 @@ import com.panwar2001.pdfpro.R
 import com.panwar2001.pdfpro.data.DataSource
 import com.panwar2001.pdfpro.data.Screens
 import com.panwar2001.pdfpro.sharedViewModel
+import com.panwar2001.pdfpro.ui.components.DeterminateIndicator
 import com.panwar2001.pdfpro.ui.components.FilePickerScreen
 import com.panwar2001.pdfpro.ui.components.PdfViewer
 import com.panwar2001.pdfpro.ui.images2pdf.ImagesDisplay
 import com.panwar2001.pdfpro.ui.images2pdf.ReorderScreen
+import com.panwar2001.pdfpro.ui.images2pdf.SavePdfScreen
 import com.panwar2001.pdfpro.ui.view_models.Img2pdfViewModel
 import com.panwar2001.pdfpro.ui.view_models.PdfToImagesViewModel
 import kotlinx.coroutines.CoroutineScope
@@ -66,17 +68,48 @@ fun NavGraphBuilder.img2PdfGraph(navController: NavController,
                     }
                 },
                 toggleCheckBox = viewModel::toggleCheckBox,
-                deleteImages =viewModel::deleteImages
+                deleteImages =viewModel::deleteImages,
+                convertToPdf = {
+                    viewModel.setLoading(true)
+                    scope.launch {
+                        navController.navigate(Screens.Img2Pdf.SavePdfScreen.route) {
+                            if (drawerState.isOpen) {
+                                scope.launch { drawerState.apply { close() } }
+                            }
+                        }
+                        viewModel.convert2Pdf()
+                    }
+                }
             )
         }
 
         composable(route= Screens.Img2Pdf.PdfViewer.route){ model->
-            val viewModel = model.sharedViewModel<PdfToImagesViewModel>(navController)
+            val viewModel = model.sharedViewModel<Img2pdfViewModel>(navController)
             val uiState by viewModel.uiState.collectAsState()
-            PdfViewer(uri = uiState.uri,
+            PdfViewer(uri = uiState.fileUri,
                 navigateUp ={navController.navigateUp()},
                 fileName = uiState.fileName,
                 numPages = uiState.numPages)
         }
+        composable(route= Screens.Img2Pdf.SavePdfScreen.route){ model->
+            val viewModel = model.sharedViewModel<Img2pdfViewModel>(navController)
+            val uiState by viewModel.uiState.collectAsState()
+            if (uiState.isLoading) {
+                DeterminateIndicator(uiState.progress)
+            } else {
+                    SavePdfScreen(
+                backNavigate = { navController.navigateUp()},
+                navigateToPdfViewer = {
+                    navController.navigate(Screens.Img2Pdf.PdfViewer.route) {
+                        if (drawerState.isOpen) {
+                            scope.launch { drawerState.apply { close() } }
+                        }
+                    }
+                },
+                fileName = uiState.fileName,
+                uri = uiState.imageList.first().uri
+            )
+        }
+    }
     }
 }

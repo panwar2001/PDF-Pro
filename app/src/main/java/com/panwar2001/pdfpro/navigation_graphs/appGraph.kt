@@ -1,7 +1,6 @@
 package com.panwar2001.pdfpro.navigation_graphs
 
 import android.content.ContentUris
-import android.content.Context
 import android.provider.MediaStore
 import androidx.compose.material3.DrawerState
 import androidx.compose.ui.res.stringArrayResource
@@ -23,8 +22,7 @@ import kotlinx.coroutines.launch
 
 fun NavGraphBuilder.appGraph(navController: NavController,
                              scope:CoroutineScope,
-                             drawerState: DrawerState,
-                             context: Context){
+                             drawerState: DrawerState){
 
     composable(route = Screens.Home.route) {
         HomeScreen(onNavigationIconClick = {
@@ -52,12 +50,12 @@ fun NavGraphBuilder.appGraph(navController: NavController,
             stringArrayResource(id = R.array.Russian),
             stringArrayResource(id = R.array.hindi)
         )
-        val currentLocale=viewModel.getCurrentLocale(context)
+        val currentLocale=viewModel.getCurrentLocale()
         LanguagePickerScreen(navigateUp={navController.navigateUp()},
             languages,
             currentLocale =currentLocale,
             setLocale = {
-              viewModel.setLocale(it,context)
+              viewModel.setLocale(it)
             })
     }
     composable(route=Screens.PdfViewer.route+"/{uriID}",

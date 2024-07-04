@@ -1,9 +1,17 @@
 package com.panwar2001.pdfpro.ui
+import android.app.DownloadManager
 import android.content.ContentUris
 import com.panwar2001.pdfpro.R
 import android.content.Context
+import android.content.Intent
 import android.database.Cursor
+import android.net.Uri
+import android.os.Environment
+import android.provider.DocumentsContract
 import android.provider.MediaStore
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.PickVisualMediaRequest
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.annotation.WorkerThread
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.BorderStroke
@@ -264,3 +272,13 @@ fun PreviewPdf(){
     )
 }
 
+const val CREATE_FILE = 1
+
+@Composable
+private fun createFile(pickerInitialUri: Uri) {
+    val launcher = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.CreateDocument("application/pdf"),
+        onResult = { uri: Uri? -> })
+    launcher.launch("application/pdf")
+
+}

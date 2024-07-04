@@ -1,6 +1,5 @@
 package com.panwar2001.pdfpro.navigation_graphs
 
-import android.content.Context
 import android.net.Uri
 import androidx.compose.material3.DrawerState
 import androidx.compose.runtime.collectAsState
@@ -26,8 +25,7 @@ import kotlinx.coroutines.launch
 
 fun NavGraphBuilder.pdf2ImgGraph(navController: NavController,
                                  scope: CoroutineScope,
-                                 drawerState: DrawerState,
-                                 context: Context){
+                                 drawerState: DrawerState){
     navigation(route= Screens.PdfToImage.route,
                startDestination= Screens.FilePicker.route){
         composable(route= Screens.FilePicker.route){
@@ -39,7 +37,7 @@ fun NavGraphBuilder.pdf2ImgGraph(navController: NavController,
                 setLoading={loading:Boolean->viewModel.setLoading(loading)},
                 navigate = {
                     scope.launch {
-                        viewModel.generateThumbnailFromPDF(context)
+                        viewModel.generateThumbnailFromPDF()
                     }
                     navController.navigate(Screens.PdfToImage.PreviewFile.route) {
                         if (drawerState.isOpen) {
@@ -73,7 +71,7 @@ fun NavGraphBuilder.pdf2ImgGraph(navController: NavController,
                     setLoading={loading:Boolean->viewModel.setLoading(loading)},
                     convertToImages={
                         scope.launch {
-                            viewModel.generateImages(context)
+                            viewModel.generateImages()
                         }
                     },
                     tool= DataSource.getToolData(R.string.pdf2img)
