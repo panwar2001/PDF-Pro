@@ -19,7 +19,6 @@ import com.panwar2001.pdfpro.ui.images2pdf.ImagesDisplay
 import com.panwar2001.pdfpro.ui.images2pdf.ReorderScreen
 import com.panwar2001.pdfpro.ui.images2pdf.SavePdfScreen
 import com.panwar2001.pdfpro.ui.view_models.Img2pdfViewModel
-import com.panwar2001.pdfpro.ui.view_models.PdfToImagesViewModel
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 
@@ -67,7 +66,7 @@ fun NavGraphBuilder.img2PdfGraph(navController: NavController,
                         }
                     }
                 },
-                toggleCheckBox = viewModel::toggleCheckBox,
+                toggleCheckBox = viewModel::setCheckBoxState,
                 deleteImages =viewModel::deleteImages,
                 convertToPdf = {
                     viewModel.setLoading(true)
