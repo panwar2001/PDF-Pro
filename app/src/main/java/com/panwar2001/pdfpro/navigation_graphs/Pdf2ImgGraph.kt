@@ -1,6 +1,7 @@
 package com.panwar2001.pdfpro.navigation_graphs
 
-import android.net.Uri
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.material3.DrawerState
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -28,28 +29,36 @@ fun NavGraphBuilder.pdf2ImgGraph(navController: NavController,
                                  drawerState: DrawerState){
     navigation(route= Screens.PdfToImage.route,
                startDestination= Screens.FilePicker.route){
-        composable(route= Screens.FilePicker.route){
-            val viewModel = it.sharedViewModel<PdfToImagesViewModel>(navController)
+        composable(route= Screens.FilePicker.route){backStackEntry->
+            val viewModel = backStackEntry.sharedViewModel<PdfToImagesViewModel>(navController)
+            val pdfPickerLauncher=rememberLauncherForActivityResult(
+                contract = ActivityResultContracts.OpenDocument(),
+                onResult = {uri->
+                    if(uri!=null){
+                        viewModel.setLoading(true)
+                        viewModel.setUri(uri)
+                        scope.launch {
+                            viewModel.generateThumbnailFromPDF()
+                        }
+                        navController.navigate(Screens.PdfToImage.PreviewFile.route) {
+                            if (drawerState.isOpen) {
+                                scope.launch { drawerState.apply { close() } }
+                            }
+                        }
+                    }
+                })
+
+
             FilePickerScreen(onNavigationIconClick = {
                 scope.launch { drawerState.apply { if (isClosed) open() else close() } }
             },
-                setUri = {uri: Uri -> viewModel.setUri(uri)},
-                setLoading={loading:Boolean->viewModel.setLoading(loading)},
-                navigate = {
-                    scope.launch {
-                        viewModel.generateThumbnailFromPDF()
-                    }
-                    navController.navigate(Screens.PdfToImage.PreviewFile.route) {
-                        if (drawerState.isOpen) {
-                            scope.launch { drawerState.apply { close() } }
-                        }
-                    }
+                onClick = {
+                    pdfPickerLauncher.launch(arrayOf("application/pdf"))
                 },
-                mimeType = "application/pdf",
                 tool= DataSource.getToolData(R.string.pdf2img))
         }
-        composable(route= Screens.PdfToImage.PreviewFile.route) { model->
-            val viewModel = model.sharedViewModel<PdfToImagesViewModel>(navController)
+        composable(route= Screens.PdfToImage.PreviewFile.route) { backStackEntry->
+            val viewModel = backStackEntry.sharedViewModel<PdfToImagesViewModel>(navController)
             val uiState by viewModel.uiState.collectAsState()
 
             if (uiState.isLoading) {
@@ -78,16 +87,16 @@ fun NavGraphBuilder.pdf2ImgGraph(navController: NavController,
                 )
             }
         }
-        composable(route= Screens.PdfToImage.PdfViewer.route){ model->
-            val viewModel = model.sharedViewModel<PdfToImagesViewModel>(navController)
+        composable(route= Screens.PdfToImage.PdfViewer.route){ backStackEntry->
+            val viewModel = backStackEntry.sharedViewModel<PdfToImagesViewModel>(navController)
             val uiState by viewModel.uiState.collectAsState()
             PdfViewer(uri = uiState.uri,
                 navigateUp ={navController.navigateUp()},
                 uiState.fileName,
                 uiState.numPages)
         }
-        composable(route=Screens.PdfToImage.ImageScreen.route) { model ->
-            val viewModel = model.sharedViewModel<PdfToImagesViewModel>(navController)
+        composable(route=Screens.PdfToImage.ImageScreen.route) { backStackEntry->
+            val viewModel = backStackEntry.sharedViewModel<PdfToImagesViewModel>(navController)
             val uiState by viewModel.uiState.collectAsState()
             if (uiState.isLoading) {
                 DeterminateIndicator(uiState.progress)

@@ -37,11 +37,11 @@ fun DeterminateIndicator(progress:Float){
             modifier = Modifier.size(100.dp)  // Adjust size as needed
         ) {
             CircularProgressIndicator(
-                progress = progress,
-                strokeWidth = 8.dp,
-                color = Color.Green,
+                progress = { progress },
                 modifier = Modifier.fillMaxSize(),
-                trackColor = ProgressIndicatorDefaults.linearTrackColor
+                color = Color.Green,
+                strokeWidth = 8.dp,
+                trackColor = ProgressIndicatorDefaults.linearTrackColor,
             )
             Text(
                 text = "${(progress * 100).toInt()}%",

@@ -41,8 +41,9 @@ fun NavGraphBuilder.appGraph(navController: NavController,
             }
         }
     }
-    composable(route= Screens.LanguagePickerScreen.route){model->
-        val viewModel = model.sharedViewModel<AppViewModel>(navController)
+    composable(route= Screens.LanguagePickerScreen.route){backStackEntry->
+        val viewModel = backStackEntry.sharedViewModel<AppViewModel>(navController)
+        val currentLocale=viewModel.getCurrentLocale()
         val languages= listOf(
             stringArrayResource(id = R.array.english),
             stringArrayResource(id = R.array.French),
@@ -50,7 +51,6 @@ fun NavGraphBuilder.appGraph(navController: NavController,
             stringArrayResource(id = R.array.Russian),
             stringArrayResource(id = R.array.hindi)
         )
-        val currentLocale=viewModel.getCurrentLocale()
         LanguagePickerScreen(navigateUp={navController.navigateUp()},
             languages,
             currentLocale =currentLocale,

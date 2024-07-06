@@ -29,8 +29,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavBackStackEntry
 import androidx.navigation.NavController
 import androidx.navigation.NavGraph.Companion.findStartDestination
@@ -49,9 +49,10 @@ import com.panwar2001.pdfpro.ui.components.DrawerBody
 import com.panwar2001.pdfpro.ui.components.DrawerHeader
 import com.panwar2001.pdfpro.ui.theme.PDFProTheme
 import com.tom_roush.pdfbox.android.PDFBoxResourceLoader
+import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 
-
+@AndroidEntryPoint
 class Navigation : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -265,11 +266,10 @@ fun NavigationController(
  *  Extend the nav back stack entry function to create sharedViewModel Instance with it.
  */
 @Composable
-inline fun <reified T : ViewModel> NavBackStackEntry.sharedViewModel(navController:NavController): T {
-
-    val navGraphRoute = destination.parent?.route ?: return viewModel()
+inline fun <reified T:ViewModel> NavBackStackEntry.sharedViewModel(navController:NavController): T {
+    val navGraphRoute = destination.parent?.route ?: return hiltViewModel()
     val parentEntry = remember(this) {
         navController.getBackStackEntry(navGraphRoute)
     }
-    return viewModel(parentEntry)
+    return hiltViewModel(parentEntry)
 }

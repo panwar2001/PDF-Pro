@@ -1,6 +1,7 @@
 package com.panwar2001.pdfpro.navigation_graphs
 
-import android.net.Uri
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.material3.DrawerState
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -26,28 +27,33 @@ fun NavGraphBuilder.pdf2txtGraph(navController:NavController,
                                  scope:CoroutineScope,
                                  drawerState:DrawerState){
     navigation(route= Screens.PdfToText.route,startDestination= Screens.FilePicker.route){
-        composable(route= Screens.FilePicker.route){ model->
-            val viewModel = model.sharedViewModel<PdfToTextViewModel>(navController)
-            FilePickerScreen(onNavigationIconClick = {
-                scope.launch { drawerState.apply { if (isClosed) open() else close() } }
-            },
-                setUri = {uri: Uri -> viewModel.setUri(uri)},
-                setLoading={loading:Boolean->viewModel.setLoading(loading)},
-                navigate = {
-                    scope.launch {
-                        viewModel.generateThumbnailFromPDF()
-                    }
-                    navController.navigate(Screens.PdfToText.PreviewFile.route) {
-                        if (drawerState.isOpen) {
-                            scope.launch { drawerState.apply { close() } }
+        composable(route= Screens.FilePicker.route){ backStackEntry->
+            val viewModel = backStackEntry.sharedViewModel<PdfToTextViewModel>(navController)
+            val pdfPickerLauncher= rememberLauncherForActivityResult(
+                contract = ActivityResultContracts.OpenDocument(),
+                onResult = {uri->
+                    if(uri!=null){
+                        viewModel.setLoading(true)
+                        viewModel.setUri(uri)
+                        scope.launch {
+                            viewModel.generateThumbnailFromPDF()
+                        }
+                        navController.navigate(Screens.PdfToText.PreviewFile.route) {
+                            if (drawerState.isOpen) {
+                                scope.launch { drawerState.apply { close() } }
+                            }
                         }
                     }
-                },selectMultipleFile = false,
-                mimeType = "application/pdf",
+                })
+            FilePickerScreen(onNavigationIconClick = {
+                scope.launch { drawerState.apply { if (isClosed) open() else close() } }
+            }, onClick = {
+                pdfPickerLauncher.launch(arrayOf("application/pdf"))
+            },
                 tool= DataSource.getToolData(R.string.pdf2text))
         }
-        composable(route= Screens.PdfToText.PreviewFile.route) { model->
-            val viewModel = model.sharedViewModel<PdfToTextViewModel>(navController)
+        composable(route= Screens.PdfToText.PreviewFile.route) { backStackEntry->
+            val viewModel = backStackEntry.sharedViewModel<PdfToTextViewModel>(navController)
             val uiState by viewModel.uiState.collectAsState()
             if (uiState.isLoading) {
                 ProgressIndicator(modifier = Modifier)
@@ -75,16 +81,16 @@ fun NavGraphBuilder.pdf2txtGraph(navController:NavController,
                 )
             }
         }
-        composable(route= Screens.PdfToText.PdfViewer.route){ model->
-            val viewModel = model.sharedViewModel<PdfToTextViewModel>(navController)
+        composable(route= Screens.PdfToText.PdfViewer.route){ backStackEntry->
+            val viewModel = backStackEntry.sharedViewModel<PdfToTextViewModel>(navController)
             val uiState by viewModel.uiState.collectAsState()
             PdfViewer(uri = uiState.uri,
                 navigateUp ={navController.navigateUp()},
                 uiState.fileName,
                 uiState.numPages)
         }
-        composable(route= Screens.PdfToText.TextScreen.route){ model->
-            val viewModel = model.sharedViewModel<PdfToTextViewModel>(navController)
+        composable(route= Screens.PdfToText.TextScreen.route){ backStackEntry->
+            val viewModel = backStackEntry.sharedViewModel<PdfToTextViewModel>(navController)
             val uiState by viewModel.uiState.collectAsState()
             if(uiState.isLoading && uiState.text==""){
                 ProgressIndicator(modifier = Modifier)

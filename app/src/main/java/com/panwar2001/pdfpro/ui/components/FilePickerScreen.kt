@@ -1,9 +1,5 @@
 package com.panwar2001.pdfpro.ui.components
 
-import android.net.Uri
-import androidx.activity.compose.rememberLauncherForActivityResult
-import androidx.activity.result.PickVisualMediaRequest
-import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -15,13 +11,8 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.ElevatedButton
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.SnackbarDuration
-import androidx.compose.material3.SnackbarHost
-import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -30,66 +21,15 @@ import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.panwar2001.pdfpro.R
 import com.panwar2001.pdfpro.data.Tool
 import com.panwar2001.pdfpro.ui.AppBar
-import kotlinx.coroutines.launch
 
 
 @Composable
 fun FilePickerScreen(onNavigationIconClick:()->Unit,
-                     setUri: (Uri)->Unit={},
-                     setUris:(List<Uri>)->Unit={},
-                     setLoading:(Boolean)->Unit,
-                     navigate: ()->Unit,
-                     selectMultipleFile: Boolean=false,
-                     mimeType:String,
+                     onClick: () -> Unit,
                      tool:Tool) {
-    val snackBarHostState = remember { SnackbarHostState() }
-    val scope = rememberCoroutineScope()
-    val errorMessage= stringResource(id = R.string.error_message)
-    val tryAgain:()->Unit={
-
-        scope.launch {
-            snackBarHostState.showSnackbar(
-                message = errorMessage,
-                // Defaults to SnackbarDuration.Short
-                duration = SnackbarDuration.Short
-            )
-        }
-    }
-    val pdfPickerLauncher= if(selectMultipleFile){
-        rememberLauncherForActivityResult(
-        contract = ActivityResultContracts.OpenMultipleDocuments() ,
-        onResult = {
-            if(it.isNotEmpty()) {
-                setUris(it)
-                navigate()
-            } })
-    }else{
-        rememberLauncherForActivityResult(
-            contract = ActivityResultContracts.OpenDocument(),
-            onResult = {
-                if(it!=null){
-                        setUri(it)
-                        navigate()
-                }
-            })
-
-    }
-    val imagesPickerLauncher= rememberLauncherForActivityResult(
-        contract = ActivityResultContracts.PickMultipleVisualMedia() ,
-        onResult = {
-            if(it.isNotEmpty()) {
-                setUris(it)
-                navigate()
-            } })
-
-    Scaffold(
-        snackbarHost = {
-            SnackbarHost(hostState = snackBarHostState)
-        },
-        topBar = {
+    Scaffold(topBar = {
         AppBar(onNavigationIconClick =onNavigationIconClick ) //Appbar scope end
     }) { innerPadding ->
         Column(modifier = Modifier
@@ -105,22 +45,7 @@ fun FilePickerScreen(onNavigationIconClick:()->Unit,
                 horizontalArrangement = Arrangement.Center
             )
             {
-              Button(buttonText = stringResource(id = tool.buttonDescription), onClick ={
-                  try {
-                      if(mimeType=="application/pdf") {
-                          pdfPickerLauncher.launch(arrayOf(mimeType))
-                      }else{
-                          imagesPickerLauncher.launch(
-                              PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly)
-                          )
-                      }
-                      setLoading(true)
-                  }
-                  catch (e:Exception){
-                      tryAgain()
-                      e.printStackTrace()
-                  }
-              })
+              Button(buttonText = stringResource(id = tool.buttonDescription), onClick = onClick)
             }
         }
     } //Scaffold scope end

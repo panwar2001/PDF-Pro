@@ -1,6 +1,6 @@
 package com.panwar2001.pdfpro.ui.view_models
 
-import android.app.Application
+import android.content.Context
 import android.graphics.Bitmap
 import android.graphics.pdf.PdfRenderer
 import android.net.Uri
@@ -10,13 +10,16 @@ import androidx.compose.ui.graphics.ImageBitmap
 import androidx.compose.ui.graphics.asImageBitmap
 import androidx.core.graphics.drawable.toBitmap
 import androidx.core.graphics.drawable.toDrawable
-import androidx.lifecycle.AndroidViewModel
+import androidx.lifecycle.ViewModel
 import com.panwar2001.pdfpro.R
+import dagger.hilt.android.lifecycle.HiltViewModel
+import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import java.util.Timer
+import javax.inject.Inject
 import kotlin.concurrent.schedule
 
 /**
@@ -27,13 +30,13 @@ data class PdfToImagesUiState(
     val isLoading:Boolean=false,
     val thumbnail: ImageBitmap= R.drawable.default_photo.toDrawable().toBitmap(width =300, height = 300).asImageBitmap(),
     val fileName: String="file.pdf",
-    val images:List<ImageBitmap> = listOf(),
+    val images:List<Bitmap> = listOf(),
     val progress:Float=0f,
     val numPages:Int=0
 )
 
-
-class PdfToImagesViewModel(application: Application): AndroidViewModel(application )  {
+@HiltViewModel
+class PdfToImagesViewModel @Inject constructor(@ApplicationContext val context: Context): ViewModel() {
     private val _uiState = MutableStateFlow(PdfToImagesUiState())
     val uiState: StateFlow<PdfToImagesUiState> = _uiState.asStateFlow()
     /**
@@ -64,12 +67,10 @@ class PdfToImagesViewModel(application: Application): AndroidViewModel(applicati
 
     /**
      * using pdf-box to generate thumbnail of pdf (Bitmap of first page of pdf using it's uri)
-     * @param context application context
      */
 
     @WorkerThread
     fun generateThumbnailFromPDF(){
-        val context = getApplication<Application>().applicationContext
         try {
             Timer().schedule(1) {
                 val contentResolver = context.contentResolver
@@ -115,8 +116,7 @@ class PdfToImagesViewModel(application: Application): AndroidViewModel(applicati
     }
     @WorkerThread
     fun generateImages(){
-        val context = getApplication<Application>().applicationContext
-        val imagesList = mutableListOf<ImageBitmap>()
+        val imagesList = mutableListOf<Bitmap>()
         try {
             Timer().schedule(1) {
                 val contentResolver = context.contentResolver
@@ -137,7 +137,7 @@ class PdfToImagesViewModel(application: Application): AndroidViewModel(applicati
                                 null,
                                 PdfRenderer.Page.RENDER_MODE_FOR_DISPLAY
                             )
-                            imagesList.add(bitmap.asImageBitmap())
+                            imagesList.add(bitmap)
                             _uiState.update { state ->
                                 state.copy(progress = pageNum * 1f / uiState.value.numPages)
                             }

@@ -12,6 +12,7 @@
     <uses-feature android:name="android.hardware.camera" />
     <uses-permission android:name="android.permission.CAMERA"/>
     <application
+        android:name=".HiltApplicationClass"
         android:allowBackup="true"
         android:icon="@mipmap/launcher_icon"
         android:label="@string/app_name"
@@ -31,7 +32,8 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-<!--  file provider: https://developer.android.com/reference/androidx/core/content/FileProvider      -->
+
+    <!--  file provider: https://developer.android.com/reference/androidx/core/content/FileProvider      -->
         <provider
             android:name="androidx.core.content.FileProvider"
             android:authorities="com.panwar2001.pdfpro.fileprovider"

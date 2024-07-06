@@ -1,6 +1,6 @@
 package com.panwar2001.pdfpro.ui.view_models
 
-import android.app.Application
+import android.content.Context
 import android.graphics.Bitmap
 import android.graphics.pdf.PdfRenderer
 import android.net.Uri
@@ -10,15 +10,17 @@ import androidx.compose.ui.graphics.ImageBitmap
 import androidx.compose.ui.graphics.asImageBitmap
 import androidx.core.graphics.drawable.toBitmap
 import androidx.core.graphics.drawable.toDrawable
-import androidx.lifecycle.AndroidViewModel
+import androidx.lifecycle.ViewModel
 import com.panwar2001.pdfpro.R
 import com.tom_roush.pdfbox.pdmodel.PDDocument
 import com.tom_roush.pdfbox.text.PDFTextStripper
+import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import java.util.Timer
+import javax.inject.Inject
 import kotlin.concurrent.schedule
 
 /**
@@ -34,7 +36,7 @@ data class PdfToTextUiState(
 )
 
 
-class PdfToTextViewModel(application: Application): AndroidViewModel(application ) {
+class PdfToTextViewModel@Inject constructor(@ApplicationContext val context: Context): ViewModel() {
     private val _uiState = MutableStateFlow(PdfToTextUiState())
     val uiState: StateFlow<PdfToTextUiState> = _uiState.asStateFlow()
     /**
@@ -66,7 +68,6 @@ class PdfToTextViewModel(application: Application): AndroidViewModel(application
      */
     @WorkerThread
     fun generateThumbnailFromPDF(){
-        val context = getApplication<Application>().applicationContext
         try {
             Timer().schedule(1) {
                 val contentResolver = context.contentResolver
@@ -113,7 +114,6 @@ class PdfToTextViewModel(application: Application): AndroidViewModel(application
     }
     @WorkerThread
      fun convertToText(){
-        val context = getApplication<Application>().applicationContext
         val inputStream=context.contentResolver.openInputStream(uiState.value.uri)
         Timer().schedule(1) {
             inputStream.use {

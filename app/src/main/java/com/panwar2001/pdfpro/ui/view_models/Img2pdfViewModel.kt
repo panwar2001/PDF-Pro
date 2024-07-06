@@ -1,6 +1,5 @@
 package com.panwar2001.pdfpro.ui.view_models
 
-import android.app.Application
 import android.content.Context
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
@@ -12,8 +11,10 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Paint
 import androidx.core.content.FileProvider
 import androidx.documentfile.provider.DocumentFile
-import androidx.lifecycle.AndroidViewModel
+import androidx.lifecycle.ViewModel
 import com.panwar2001.pdfpro.data.ImageInfo
+import dagger.hilt.android.lifecycle.HiltViewModel
+import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -23,6 +24,7 @@ import java.io.FileOutputStream
 import java.io.IOException
 import java.io.InputStream
 import java.util.Timer
+import javax.inject.Inject
 import kotlin.concurrent.schedule
 
 /**
@@ -40,7 +42,9 @@ data class Img2PdfUiState(
 /**
  * Android view model is used to pass the context to the view model
  */
-class Img2pdfViewModel(application: Application):AndroidViewModel(application ){
+
+@HiltViewModel
+class Img2pdfViewModel @Inject constructor(@ApplicationContext val context: Context): ViewModel() {
     private val _uiState = MutableStateFlow(Img2PdfUiState())
     val uiState: StateFlow<Img2PdfUiState> = _uiState.asStateFlow()
     /**
@@ -65,7 +69,6 @@ class Img2pdfViewModel(application: Application):AndroidViewModel(application ){
      *  @param uri of image
      */
     private fun getImageInfo(uri:Uri):ImageInfo{
-        val context = getApplication<Application>().applicationContext
         val docFile=DocumentFile.fromSingleUri(context,uri)
         return ImageInfo(uri = uri,
                          type = docFile?.type?:"",
@@ -125,11 +128,10 @@ class Img2pdfViewModel(application: Application):AndroidViewModel(application ){
     fun convert2Pdf(){
         Timer().schedule(1) {
             val document = PdfDocument()
-            val context = getApplication<Application>().applicationContext
             val length = uiState.value.imageList.size
             for (i in 0..<length) {
                 val uri = uiState.value.imageList[i].uri
-                val bitmap = uri.toBitmap(context)
+                val bitmap = uri.toBitmap()
                 val pageInfo = PageInfo.Builder(bitmap.width, bitmap.height, i + 1).create()
                 val page = document.startPage(pageInfo)
                 val canvas = page.canvas
@@ -165,7 +167,7 @@ class Img2pdfViewModel(application: Application):AndroidViewModel(application ){
             setLoading(false)
         }
     }
-    private fun Uri.toBitmap(context: Context): Bitmap {
+    private fun Uri.toBitmap(): Bitmap {
         var inputStream: InputStream? = null
         try {
             inputStream = context.contentResolver.openInputStream(this)

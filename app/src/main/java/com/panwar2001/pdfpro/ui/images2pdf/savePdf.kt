@@ -1,9 +1,6 @@
 package com.panwar2001.pdfpro.ui.images2pdf
 
 import android.net.Uri
-import androidx.activity.compose.rememberLauncherForActivityResult
-import androidx.activity.result.contract.ActivityResultContracts
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -12,10 +9,9 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ArrowForward
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Scaffold
@@ -25,7 +21,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.ImageBitmap
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
@@ -53,7 +48,8 @@ fun SavePdfScreen(backNavigate:()->Unit,
                 ){
                     Text(text = stringResource(id = R.string.convert_to_images),
                         fontSize = 20.sp)
-                    Icon(Icons.Filled.ArrowForward,
+                    Icon(
+                        Icons.AutoMirrored.Filled.ArrowBack,
                         stringResource(id = R.string.next))
                 }
             }
@@ -93,12 +89,3 @@ fun SavePdfScreen(backNavigate:()->Unit,
         }
     }
 }
-
-
-//val = rememberLauncherForActivityResult(
-//    contract = ActivityResultContracts.PickMultipleVisualMedia() ,
-//    onResult = {
-//        if(it.isNotEmpty()) {
-//            addImgUris(it)
-//        } })
-

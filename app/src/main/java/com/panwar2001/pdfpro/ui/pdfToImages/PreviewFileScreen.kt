@@ -11,7 +11,7 @@ import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ArrowForward
+import androidx.compose.material.icons.automirrored.filled.ArrowForward
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Scaffold
@@ -55,7 +55,8 @@ fun PreviewFileScreen(onNavigationIconClick:()->Unit,
                 ){
                     Text(text = stringResource(id = R.string.convert_to_images),
                         fontSize = 20.sp)
-                    Icon(Icons.Filled.ArrowForward,
+                    Icon(
+                        Icons.AutoMirrored.Filled.ArrowForward,
                          stringResource(id = R.string.next))
                 }
             }

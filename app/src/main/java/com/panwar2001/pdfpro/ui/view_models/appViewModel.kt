@@ -1,6 +1,5 @@
 package com.panwar2001.pdfpro.ui.view_models
 
-import android.app.Application
 import android.app.DownloadManager
 import android.app.LocaleManager
 import android.content.Context
@@ -11,11 +10,14 @@ import android.os.LocaleList
 import androidx.annotation.WorkerThread
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.core.os.LocaleListCompat
-import androidx.lifecycle.AndroidViewModel
+import androidx.lifecycle.ViewModel
+import dagger.hilt.android.lifecycle.HiltViewModel
+import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import java.util.Locale
+import javax.inject.Inject
 
 /**
  * Data class that represents the current UI state
@@ -25,7 +27,9 @@ data class AppUiState(
 )
 
 
-class AppViewModel(application: Application): AndroidViewModel(application ) {
+@HiltViewModel
+class AppViewModel @Inject constructor(@ApplicationContext val context: Context): ViewModel() {
+
     private val _uiState = MutableStateFlow(AppUiState())
     val uiState: StateFlow<AppUiState> = _uiState.asStateFlow()
     /**
@@ -36,7 +40,6 @@ class AppViewModel(application: Application): AndroidViewModel(application ) {
     }
     @WorkerThread
      fun getCurrentLocale(): String {
-         val context = getApplication<Application>().applicationContext
         return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
             context.getSystemService(LocaleManager::class.java).applicationLocales.toLanguageTags()
         } else {
@@ -48,7 +51,6 @@ class AppViewModel(application: Application): AndroidViewModel(application ) {
      */
     @WorkerThread
      fun setLocale(localeTag: String) {
-        val context = getApplication<Application>().applicationContext
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
             context.getSystemService(LocaleManager::class.java).applicationLocales=  LocaleList(
                 Locale.forLanguageTag(localeTag))

@@ -7,7 +7,7 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.material3.Divider
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Switch
@@ -63,9 +63,9 @@ fun DrawerHeader() {
                     textAlign = TextAlign.Center
                 )
             }
-            Divider(
+            HorizontalDivider(
                 Modifier.align(Alignment.BottomCenter), thickness = 1.dp,
-                Color.DarkGray
+                color = Color.DarkGray
             )
         }
 }
@@ -104,8 +104,7 @@ fun DrawerBody(
             modifier = Modifier.weight(1f)
         )
     }
-    LazyColumn() {
-
+    LazyColumn {
         item{
             NavItem(navigateTo = navigateTo, item = ToolsData(
                 R.drawable.language,
