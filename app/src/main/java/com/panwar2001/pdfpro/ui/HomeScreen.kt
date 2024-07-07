@@ -26,8 +26,10 @@ import androidx.compose.foundation.pager.PagerState
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Clear
-import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.Menu
+import androidx.compose.material.icons.filled.Search
+import androidx.compose.material.icons.outlined.CheckCircle
+import androidx.compose.material.icons.outlined.Home
 import androidx.compose.material3.AssistChip
 import androidx.compose.material3.AssistChipDefaults
 import androidx.compose.material3.CardDefaults
@@ -37,9 +39,6 @@ import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
-import androidx.compose.material3.LargeTopAppBar
-import androidx.compose.material3.LinearProgressIndicator
-import androidx.compose.material3.MediumTopAppBar
 import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.RadioButton
 import androidx.compose.material3.Scaffold
@@ -47,6 +46,7 @@ import androidx.compose.material3.SearchBar
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
+import androidx.compose.material3.TopAppBarScrollBehavior
 import androidx.compose.material3.rememberTopAppBarState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -66,6 +66,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import com.panwar2001.pdfpro.R
 import com.panwar2001.pdfpro.data.DataSource
 import com.panwar2001.pdfpro.data.ToolsData
@@ -93,57 +94,14 @@ fun HomeScreen(onNavigationIconClick:()->Unit,
                options: List<Int> ,
                scrollToPage:(Int)->Unit,
                setSortBy: (Int) -> Unit,
-               sortBy: Int,
-               toggleSortOrder: () -> Unit) {
+               toggleSortOrder: () -> Unit,
+               sortBy: Int) {
     val scrollBehavior = TopAppBarDefaults.exitUntilCollapsedScrollBehavior(rememberTopAppBarState())
     Scaffold(
         modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
-        topBar = {
-            Column {
-                TopAppBar(title = { Text("dkfjs")},
-                    scrollBehavior=scrollBehavior)
-                if (loading) LinearProgressIndicator(modifier = Modifier.fillMaxWidth())
-//                SearchBar(query = query,
-//                    onQueryChange = onQueryChange,
-//                    onSearch = onSearch,
-//                    active = active,
-//                    onActiveChange = onActiveChange,
-//                    modifier = Modifier.fillMaxWidth(),
-//                    placeholder = {Text(text = stringResource(id = R.string.search_placeholder))},
-//                    leadingIcon = {LeadingIcon(onNavigationIconClick)},
-//                    trailingIcon = {
-//                        TrailingIcon{
-//                            if (query.isNotEmpty()) {
-//                                onQueryChange("")
-//                            } else if (active) {
-//                                onActiveChange(false)
-//                            }}
-//                    }) {
-//                    PdfFilesScreen(
-//                        listPDF = pdfList.take(3),
-//                        shareFile = shareFile,
-//                        onPdfCardClick = onPdfCardClick
-//                    )
-//                }
-            }
-        }, bottomBar = {
-
-            Row(Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.SpaceEvenly,
-                verticalAlignment = Alignment.CenterVertically,
-            ){
-            BottomIconButton(
-                onToggle = {scrollToPage(0)},
-                icon = Icons.Default.Home,
-                text = stringResource(R.string.home)
-            )
-            BottomIconButton(
-                onToggle = {scrollToPage(1)},
-                icon = R.drawable.pdf_icon,
-                text = stringResource(R.string.pdf_files_tab)
-            )
-                }
-        },
+        topBar = {HomeScreenTopAppBar(scrollBehavior)},
+        bottomBar = { HomeScreenBottomBar(scrollToPage = scrollToPage,
+                                          pagerState = pagerState )},
         floatingActionButton = { if(pagerState.currentPage==1)FloatingBottomSheetButton {setBottomSheetState(true)}}
     ) { innerPadding ->
         Column(
@@ -151,6 +109,15 @@ fun HomeScreen(onNavigationIconClick:()->Unit,
                 .fillMaxSize()
                 .padding(innerPadding)
         ) {
+            HomeScreenSearchBar(
+                onNavigationIconClick = onNavigationIconClick,
+                pdfList = pdfList,
+                query = query,
+                onQueryChange = onQueryChange,
+                onSearch = onSearch,
+                active = active,
+                onActiveChange=onActiveChange)
+
             HorizontalPager(state = pagerState) { currentPage ->
                 if (currentPage == 0) {
                     ComposeTools(searchedText = query,
@@ -171,6 +138,80 @@ fun HomeScreen(onNavigationIconClick:()->Unit,
 
         }
     }
+}
+
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun HomeScreenSearchBar(
+    onNavigationIconClick:()->Unit,
+    pdfList: List<PdfRow>,
+    query:String,
+    onQueryChange:(String)->Unit,
+    onSearch:(String)->Unit,
+    active:Boolean,
+    onActiveChange:(Boolean)->Unit)
+{
+    SearchBar(query = query,
+        onQueryChange = onQueryChange,
+        onSearch = onSearch,
+        active = active,
+        onActiveChange = onActiveChange,
+        modifier = Modifier.fillMaxWidth(),
+        placeholder = {Text(text = stringResource(id = R.string.search_placeholder))},
+        leadingIcon = {LeadingIcon(onNavigationIconClick)},
+        trailingIcon = {
+            TrailingIcon{
+                if (query.isNotEmpty()) {
+                    onQueryChange("")
+                } else if (active) {
+                    onActiveChange(false)
+                }}
+        }) {
+        LazyColumn {
+            items(pdfList){
+                Row(Modifier.height(50.dp),
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                    verticalAlignment = Alignment.CenterVertically){
+                    Row(
+                        Modifier
+                            .fillMaxSize()
+                            .weight(1f)
+                            .clickable {
+                                onSearch(it.name)
+                            },
+                        verticalAlignment = Alignment.CenterVertically){
+                        Icon(imageVector = Icons.Default.Search,
+                            modifier = Modifier.padding(start=10.dp),
+                            contentDescription = null)
+                        Text(text = it.name,
+                            fontSize = 18.sp ,
+                            modifier = Modifier.padding(start=10.dp))
+                    }
+                    IconButton(onClick = { onQueryChange(it.name)}) {
+                        Icon(imageVector = Icons.Outlined.CheckCircle,
+                            contentDescription = null)
+                    }
+                }
+                HorizontalDivider()
+            }
+        }
+    }
+}
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun HomeScreenTopAppBar(scrollBehavior:TopAppBarScrollBehavior){
+        TopAppBar(title = { Text("Pdf Pro",
+                              color = Color.Red,
+                              fontWeight = FontWeight.Bold,
+                              fontSize = 32.sp)},
+            navigationIcon = {
+                Icon(painter = painterResource(id = R.mipmap.launcher_icon_foreground),
+                    modifier = Modifier.size(70.dp),
+                    contentDescription = null,
+                    tint = Color.Red)
+            },
+            scrollBehavior=scrollBehavior)
 }
 @Composable
 fun FloatingBottomSheetButton(onClick: () -> Unit){
@@ -225,6 +266,7 @@ fun ComposeTools(searchedText:String,
     }
 }
 
+
 /**
  * Composable of clickable card which displays tool information to user
  *
@@ -264,11 +306,32 @@ fun Card(item: ToolsData,
                 .size(width = 40.dp, height = 40.dp)
                 .padding(vertical = 1.dp)
                 .align(Alignment.CenterHorizontally),
-            tint=Color.Blue
+            tint=Color.Red
         )
     }
 }
-
+@OptIn(ExperimentalFoundationApi::class)
+@Composable
+fun HomeScreenBottomBar(scrollToPage: (Int) -> Unit,
+                        pagerState: PagerState){
+    Row(Modifier.fillMaxWidth(),
+        horizontalArrangement = Arrangement.SpaceEvenly,
+        verticalAlignment = Alignment.CenterVertically,
+    ){
+        BottomIconButton(
+            onToggle = {scrollToPage(0)},
+            icon = Icons.Outlined.Home,
+            text = stringResource(R.string.home),
+            highlightButton = pagerState.currentPage==0
+        )
+        BottomIconButton(
+            onToggle = {scrollToPage(1)},
+            icon = R.drawable.pdf_icon,
+            text = stringResource(R.string.pdf_files_tab),
+            highlightButton = pagerState.currentPage==1
+        )
+    }
+}
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -351,8 +414,8 @@ fun Preview(){
         pagerState = pagerState,
         onQueryChange = {query=it},
         onSearch = {
+            query=it
             active=false
-            query=""
         },
         active = active,
         onActiveChange ={ active=it} ,

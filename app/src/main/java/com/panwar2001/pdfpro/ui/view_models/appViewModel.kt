@@ -6,15 +6,18 @@ import android.content.ContentUris
 import android.content.Context
 import android.content.Intent
 import android.database.Cursor
+import android.graphics.pdf.PdfRenderer
 import android.net.Uri
 import android.os.Build
 import android.os.Environment
 import android.os.LocaleList
 import android.provider.MediaStore
+import android.provider.OpenableColumns
 import androidx.annotation.WorkerThread
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.core.os.LocaleListCompat
 import androidx.lifecycle.ViewModel
+import com.panwar2001.pdfpro.R
 import com.panwar2001.pdfpro.ui.PdfRow
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
@@ -33,19 +36,29 @@ import javax.inject.Inject
 data class AppUiState(
     val text:String="",
     val query:String="",
-    val sortOrder:String="DESC",
-    val sortOption:String=MediaStore.Files.FileColumns.DATE_MODIFIED,
-    val pdfsList:List<PdfRow> = listOf()
-    )
+    val isAscending: Boolean=false,
+    val sortOption:Int=R.string.sort_by_date,
+    val pdfsList:List<PdfRow> = listOf(),
+    val searchBarActive:Boolean= false,
+    val isBottomSheetVisible:Boolean=false,
+    val pdfUri:Uri?=null,
+    val pdfName:String="",
+    val numPages:Int=0)
 
 
 @HiltViewModel
 class AppViewModel @Inject constructor(@ApplicationContext val context: Context): ViewModel() {
-
     private val _uiState = MutableStateFlow(AppUiState())
     private val mimeType = "application/pdf"
+    val options= listOf(
+        R.string.sort_by_date,
+        R.string.sort_by_size,
+        R.string.sort_by_name)
 
     val uiState: StateFlow<AppUiState> = _uiState.asStateFlow()
+    init {
+        searchPdfs()
+    }
     /**
      * Reset the order state
      */
@@ -65,9 +78,9 @@ class AppViewModel @Inject constructor(@ApplicationContext val context: Context)
             it.copy(query=query)
         }
     }
-    fun setSortOrder(isAscending:Boolean){
+    fun toggleSortOrder(){
         _uiState.update {
-            it.copy(sortOrder = if(isAscending) "ASC" else "DESC" )
+            it.copy(isAscending =!it.isAscending)
         }
     }
     private fun setPdfsList(pdfsList:List<PdfRow>){
@@ -75,13 +88,48 @@ class AppViewModel @Inject constructor(@ApplicationContext val context: Context)
             it.copy(pdfsList = pdfsList)
         }
     }
-    fun setSortBy(sortBy:Int){
+    fun setSearchBarActive(active:Boolean){
         _uiState.update {
-            it.copy(sortOrder = when(sortBy){
-                0 -> MediaStore.Files.FileColumns.DISPLAY_NAME
-                1 -> MediaStore.Files.FileColumns.SIZE
-                else-> MediaStore.Files.FileColumns.DATE_MODIFIED
-            })
+            it.copy(searchBarActive = active)
+        }
+    }
+    @WorkerThread
+    fun setUri(uriId:Long){
+        val baseUri = MediaStore.Files.getContentUri("external")
+        val uri = ContentUris.withAppendedId(baseUri, uriId)
+        _uiState.update {
+            it.copy(pdfUri = uri)
+        }
+//        setPdfDetails(uri)
+    }
+    @WorkerThread
+    private fun setPdfDetails(uri:Uri) {
+        val contentResolver = context.contentResolver
+        val fileDescriptor = contentResolver.openFileDescriptor(uri, "r")
+        fileDescriptor?.use { descriptor ->
+            _uiState.update { it.copy(numPages = PdfRenderer(descriptor).pageCount) }
+        }
+//        //set file name
+//        val returnCursor = contentResolver.query(uri, null, null, null, null)
+//        returnCursor.use {
+//            if (it != null) {
+//                val nameIndex = it.getColumnIndex(OpenableColumns.DISPLAY_NAME)
+//                it.moveToFirst()
+//                _uiState.update { state ->
+//                    state.copy(pdfName = it.getString(nameIndex))
+//                }
+//                it.close()
+//            }
+//        }
+    }
+    fun setBottomSheetVisible(visible:Boolean){
+        _uiState.update {
+            it.copy(isBottomSheetVisible = visible)
+        }
+    }
+    fun setSortOption(sortOption:Int){
+        _uiState.update {
+            it.copy(sortOption = sortOption)
         }
     }
     /**
@@ -121,8 +169,14 @@ class AppViewModel @Inject constructor(@ApplicationContext val context: Context)
             MediaStore.Files.FileColumns.SIZE
         )
 
+        val sortBy=when(uiState.value.sortOption){
+            R.string.sort_by_name -> MediaStore.Files.FileColumns.DISPLAY_NAME
+            R.string.sort_by_size -> MediaStore.Files.FileColumns.SIZE
+            else-> MediaStore.Files.FileColumns.DATE_MODIFIED
+        }
+        val sortOrder= if(uiState.value.isAscending) "ASC" else "DESC"
         val whereClause = "${MediaStore.Files.FileColumns.MIME_TYPE} IN ('$mimeType') AND ${MediaStore.Files.FileColumns.DISPLAY_NAME} LIKE '%${uiState.value.query}%'"
-        val orderBy = "${uiState.value.sortOrder} ${uiState.value.sortOption}"
+        val orderBy = "$sortBy $sortOrder"
         val cursor: Cursor? = context.contentResolver.query(
             MediaStore.Files.getContentUri("external"),
             projection,
@@ -158,15 +212,16 @@ class AppViewModel @Inject constructor(@ApplicationContext val context: Context)
         return  Math.round(this*100.0f/1048576)/100f
     }
 
-    fun sharePdfFile(id:Long){
+    fun sharePdfFile(id:Long,startActivity:(shareIntent:Intent)->Unit){
         val baseUri = MediaStore.Files.getContentUri("external")
         val fileUri= ContentUris.withAppendedId(baseUri, id)
         val shareIntent= Intent().apply {
             action= Intent.ACTION_SEND
             type= mimeType
+            addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
             putExtra(Intent.EXTRA_STREAM,fileUri)
             addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
         }
-        context.startActivity(Intent.createChooser(shareIntent,"Share PDF"))
+        startActivity(shareIntent)
     }
 }

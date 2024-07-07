@@ -1,6 +1,7 @@
 package com.panwar2001.pdfpro.ui.components
 
 import android.annotation.SuppressLint
+import android.graphics.drawable.Icon
 import android.net.Uri
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -13,6 +14,7 @@ import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Share
+import androidx.compose.material.icons.outlined.Home
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.BottomAppBar
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -46,6 +48,7 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.tooling.preview.Preview
 import com.github.barteksc.pdfviewer.PDFView
 import com.panwar2001.pdfpro.R
 /**
@@ -242,10 +245,12 @@ fun BottomIconButton(onToggle:()->Unit,
                      icon:Any,
                      text:String,
                      tint:Color=Color.Unspecified,
+                     highlightButton: Boolean=false
                      ){
     Column(verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally){
-        IconButton(onClick = onToggle) {
+        Button(onClick = onToggle,
+            colors =  ButtonDefaults.buttonColors(if(highlightButton) Color.Red.copy(alpha = 0.1f) else Color.Transparent)) {
             if(icon is Int) {
                 Icon(
                     painter = painterResource(id = icon),
@@ -266,4 +271,12 @@ fun BottomIconButton(onToggle:()->Unit,
         Text(text = text,
             fontWeight = FontWeight.Bold)
     }
+}
+@Preview
+@Composable
+fun PreviewButton(){
+    BottomIconButton(onToggle = {  },
+                     icon = Icons.Outlined.Home,
+                     text = "Home" ,
+                     highlightButton = true)
 }

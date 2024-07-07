@@ -75,8 +75,8 @@ class PdfToImagesViewModel @Inject constructor(@ApplicationContext val context: 
             Timer().schedule(1) {
                 val contentResolver = context.contentResolver
                 val fileDescriptor = contentResolver.openFileDescriptor(uiState.value.uri, "r")
-                fileDescriptor.use { descriptor ->
-                    val pdfRenderer = PdfRenderer(descriptor!!)
+                fileDescriptor?.use { descriptor ->
+                    val pdfRenderer = PdfRenderer(descriptor)
                     pdfRenderer.use { renderer ->
                         val page = renderer.openPage(0)
                         val bitmap = Bitmap.createBitmap(
