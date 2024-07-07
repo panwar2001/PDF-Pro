@@ -241,7 +241,7 @@ fun PageNumberInputDialog(onDismiss: () -> Unit,
 fun BottomIconButton(onToggle:()->Unit,
                      icon:Any,
                      text:String,
-                     tint:Color,
+                     tint:Color=Color.Unspecified,
                      ){
     Column(verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally){
@@ -263,6 +263,7 @@ fun BottomIconButton(onToggle:()->Unit,
                 )
             }
         }
-        Text(text = text)
+        Text(text = text,
+            fontWeight = FontWeight.Bold)
     }
 }

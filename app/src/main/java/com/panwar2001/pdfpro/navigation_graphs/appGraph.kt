@@ -25,21 +25,26 @@ fun NavGraphBuilder.appGraph(navController: NavController,
                              drawerState: DrawerState){
 
     composable(route = Screens.Home.route) {
-        HomeScreen(onNavigationIconClick = {
-            scope.launch { drawerState.apply { if (isClosed) open() else close() } }
-        }) {
-            // lambda function for navigation
-            navController.navigate(it) {
-                if (drawerState.isOpen) {
-                    scope.launch { drawerState.apply { close() } }
-                }
-                // Avoid multiple copies of the same destination when
-                // selecting the same item
-                launchSingleTop = true
-                // Restore state when selecting a previously selected item
-                restoreState = true
-            }
-        }
+//        val sheetState = rememberModalBottomSheetState(
+//        skipPartiallyExpanded = false,
+//    )
+
+//        HomeScreen(onNavigationIconClick = {
+//            scope.launch { drawerState.apply { if (isClosed) open() else close() } }
+//        }) {
+//            // lambda function for navigation
+//            navController.navigate(it) {
+//                if (drawerState.isOpen) {
+//                    scope.launch { drawerState.apply { close() } }
+//                }
+//                // Avoid multiple copies of the same destination when
+//                // selecting the same item
+//                launchSingleTop = true
+//                // Restore state when selecting a previously selected item
+//                restoreState = true
+//            }
+//        }
+
     }
     composable(route= Screens.LanguagePickerScreen.route){backStackEntry->
         val viewModel = backStackEntry.sharedViewModel<AppViewModel>(navController)

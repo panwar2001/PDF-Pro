@@ -1,10 +1,7 @@
 package com.panwar2001.pdfpro.ui
 
 import android.annotation.SuppressLint
-import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.ExperimentalFoundationApi
-import androidx.compose.foundation.background
-import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -25,8 +22,8 @@ import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.pager.HorizontalPager
+import androidx.compose.foundation.pager.PagerState
 import androidx.compose.foundation.pager.rememberPagerState
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Clear
 import androidx.compose.material.icons.filled.Home
@@ -40,19 +37,18 @@ import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.LargeTopAppBar
 import androidx.compose.material3.LinearProgressIndicator
+import androidx.compose.material3.MediumTopAppBar
 import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.RadioButton
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Tab
-import androidx.compose.material3.TabRow
+import androidx.compose.material3.SearchBar
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextField
-import androidx.compose.material3.TextFieldDefaults
-import androidx.compose.material3.rememberModalBottomSheetState
+import androidx.compose.material3.TopAppBar
+import androidx.compose.material3.TopAppBarDefaults
+import androidx.compose.material3.rememberTopAppBarState
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
@@ -62,191 +58,151 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import com.panwar2001.pdfpro.R
 import com.panwar2001.pdfpro.data.DataSource
 import com.panwar2001.pdfpro.data.ToolsData
+import com.panwar2001.pdfpro.ui.components.BottomIconButton
 import kotlinx.coroutines.launch
-import java.util.Timer
-import kotlin.concurrent.schedule
-data object TAB{
-    const val HOME_TAB:Int=0
-    const val FILES_TAB:Int=1
-}
+
 
 @SuppressLint("RememberReturnType")
 @OptIn(ExperimentalFoundationApi::class, ExperimentalMaterial3Api::class)
 @Composable
 fun HomeScreen(onNavigationIconClick:()->Unit,
-    navigateTo: (String)->Unit) {
-    val textState = remember { mutableStateOf(TextFieldValue("")) }
-    val pagerState = rememberPagerState(
-        initialPage = 0,
-        pageCount = { 2 }
-    )
-
-    var selectedTab by remember { mutableIntStateOf(pagerState.currentPage) }
-    val scope = rememberCoroutineScope()
-    var loading by remember { mutableStateOf(false) }
-    var showBottomSheet by remember { mutableStateOf(false) }
-    var sortFile by remember { mutableStateOf("") }
-    var ascendingOrder by remember {mutableStateOf(false)}
-
-    val sheetState = rememberModalBottomSheetState(
-        skipPartiallyExpanded = false,
-    )
-    LaunchedEffect(selectedTab) {
-        pagerState.scrollToPage(selectedTab)
-    }
-    LaunchedEffect(pagerState.currentPage) {
-        selectedTab = pagerState.currentPage
-    }
-    LaunchedEffect(loading) {
-        scope.launch {
-            Timer().schedule(10000) {
-                loading = false
-            }
-        }
-    }
+               pdfList: List<PdfRow>,
+               navigateTo: (String)->Unit,
+               query:String,
+               pagerState: PagerState,
+               onQueryChange:(String)->Unit,
+               onSearch:(String)->Unit,
+               active:Boolean,
+               onActiveChange:(Boolean)->Unit,
+               loading:Boolean,
+               showBottomSheet:Boolean,
+               setBottomSheetState:(Boolean)->Unit,
+               shareFile:(Long)->Unit,
+               onPdfCardClick:(Long)->Unit,
+               options: List<Int> ,
+               scrollToPage:(Int)->Unit,
+               setSortBy: (Int) -> Unit,
+               sortBy: Int,
+               toggleSortOrder: () -> Unit) {
+    val scrollBehavior = TopAppBarDefaults.exitUntilCollapsedScrollBehavior(rememberTopAppBarState())
     Scaffold(
+        modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
         topBar = {
             Column {
-                if (loading) {
-                    LinearProgressIndicator(modifier = Modifier.fillMaxWidth())
-                }
-                SearchView(
-                    state = textState,
-                    placeHolder = "${stringResource(id = R.string.search_placeholder)}...",
-                    modifier = Modifier,
-                    onNavigationIconClick = onNavigationIconClick
-                )
+                TopAppBar(title = { Text("dkfjs")},
+                    scrollBehavior=scrollBehavior)
+                if (loading) LinearProgressIndicator(modifier = Modifier.fillMaxWidth())
+//                SearchBar(query = query,
+//                    onQueryChange = onQueryChange,
+//                    onSearch = onSearch,
+//                    active = active,
+//                    onActiveChange = onActiveChange,
+//                    modifier = Modifier.fillMaxWidth(),
+//                    placeholder = {Text(text = stringResource(id = R.string.search_placeholder))},
+//                    leadingIcon = {LeadingIcon(onNavigationIconClick)},
+//                    trailingIcon = {
+//                        TrailingIcon{
+//                            if (query.isNotEmpty()) {
+//                                onQueryChange("")
+//                            } else if (active) {
+//                                onActiveChange(false)
+//                            }}
+//                    }) {
+//                    PdfFilesScreen(
+//                        listPDF = pdfList.take(3),
+//                        shareFile = shareFile,
+//                        onPdfCardClick = onPdfCardClick
+//                    )
+//                }
             }
-        },
-        floatingActionButton = {
-            if (selectedTab == TAB.FILES_TAB && selectedTab == pagerState.currentPage) {
-                FloatingActionButton(
-                    onClick = { showBottomSheet = true },
-                    containerColor = Color.White,
-                ) {
-                    Icon(
-                        painter = painterResource(id = R.drawable.baseline_sort_24),
-                        contentDescription = null,
-                        tint = Color.Black,
-                        modifier = Modifier.size(32.dp)
-                    )
-                }
+        }, bottomBar = {
 
-            }
+            Row(Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceEvenly,
+                verticalAlignment = Alignment.CenterVertically,
+            ){
+            BottomIconButton(
+                onToggle = {scrollToPage(0)},
+                icon = Icons.Default.Home,
+                text = stringResource(R.string.home)
+            )
+            BottomIconButton(
+                onToggle = {scrollToPage(1)},
+                icon = R.drawable.pdf_icon,
+                text = stringResource(R.string.pdf_files_tab)
+            )
+                }
         },
+        floatingActionButton = { if(pagerState.currentPage==1)FloatingBottomSheetButton {setBottomSheetState(true)}}
     ) { innerPadding ->
         Column(
             Modifier
                 .fillMaxSize()
                 .padding(innerPadding)
         ) {
-            TabRow(selectedTabIndex = selectedTab) {
-                TabComponent(
-                    isSelected = selectedTab == TAB.HOME_TAB,
-                    onClick = {
-                        selectedTab = TAB.HOME_TAB
-                        loading = true
-                    },
-                    titleId = R.string.home,
-                    icon = Icons.Default.Home
-                )
-                TabComponent(
-                    isSelected = selectedTab == TAB.FILES_TAB,
-                    onClick = {
-                        selectedTab = TAB.FILES_TAB
-                        loading = true
-                    },
-                    titleId = R.string.pdf_files_tab,
-                    iconId = R.drawable.pdf_icon
-                )
-            }
             HorizontalPager(state = pagerState) { currentPage ->
                 if (currentPage == 0) {
-                    Screen(
-                        searchedText = textState.value.text,
-                        navigateTo
-                    )
-                } else {
-                    PdfFilesScreen(navigateTo,
-                                  sortFile,
-                                  ascendingOrder,
-                                  searchedFileName = textState.value.text)
+                    ComposeTools(searchedText = query,
+                                 navigateTo=navigateTo)
+                }else{
+                    PdfFilesScreen(listPDF = pdfList ,
+                                   shareFile = shareFile,
+                                   onPdfCardClick=onPdfCardClick)
+                    if (showBottomSheet) {
+                        BottomSheet(onBottomSheetDismiss = {setBottomSheetState(false)},
+                            toggleSortOrder = toggleSortOrder,
+                            sortBy=sortBy,
+                            setSortBy = setSortBy,
+                            options=options)
+                    }
                 }
             }
 
-            if (showBottomSheet) {
-                val options = listOf(
-                    stringResource(id = R.string.sort_by_date),
-                    stringResource(id = R.string.sort_by_size),
-                    stringResource(id = R.string.sort_by_name)
-                )
-                if(sortFile==""){
-                    sortFile= stringResource(id = R.string.sort_by_date)
-                }
-                ModalBottomSheet(
-                    modifier = Modifier.fillMaxHeight(),
-                    sheetState = sheetState,
-                    onDismissRequest = { showBottomSheet = false }
-                ) {
-                    Row {
-                        Text(
-                        stringResource(id = R.string.sort_options),
-                        modifier = Modifier.padding(16.dp),
-                        fontWeight = FontWeight.Bold
-                    )
-                        AssistChip(
-                            onClick = {ascendingOrder = !ascendingOrder},
-                            label = {Text(
-                                text= stringResource(id = R.string.change_order),
-                                fontWeight = FontWeight.Bold
-                            )},
-                            leadingIcon = {
-                                Icon(
-                                    painter = painterResource(id = R.drawable.arrow_sort),
-                                    contentDescription =null,
-                                    modifier= Modifier.size(AssistChipDefaults.IconSize)
-                                )
-                            }
-                        )
-                    }
-                    LazyColumn {
-                        items(options) { option ->
-                            Column {
-                                HorizontalDivider(thickness = 2.dp)
-                                Row(
-                                horizontalArrangement = Arrangement.SpaceBetween,
-                                verticalAlignment = Alignment.CenterVertically,
-                                modifier = Modifier
-                                    .padding(horizontal = 20.dp)
-                            ) {
-                                    RadioButton(selected = option == sortFile,
-                                    enabled = option != sortFile,
-                                    onClick = {sortFile=option})
-                                    Text(text = option)
-                                    Spacer(modifier=Modifier.width(20.dp))
-                                }
-                            }
-                        }
-                    }
-                }
-            }
         }
     }
 }
+@Composable
+fun FloatingBottomSheetButton(onClick: () -> Unit){
+    FloatingActionButton(
+        onClick = onClick,
+        containerColor = Color.White,
+    ) {
+        Icon(
+            painter = painterResource(id = R.drawable.baseline_sort_24),
+            contentDescription = null,
+            tint = Color.Black,
+            modifier = Modifier.size(32.dp)
+        )
+    }
+}
+
+@Composable
+fun LeadingIcon(onNavigationIconClick: () -> Unit){
+    IconButton(onClick = onNavigationIconClick) {
+        Icon(
+            imageVector = Icons.Filled.Menu,
+            contentDescription = stringResource(id = R.string.menu)
+        )
+    }
+}
+@Composable
+fun TrailingIcon(onClick:()->Unit){
+    Icon(modifier = Modifier.clickable {onClick()},
+        imageVector = Icons.Default.Clear,
+        contentDescription = stringResource(id = R.string.close))
+}
+
 /**
  *  Composable that iterates through various tools and display them on a card
  *
@@ -254,15 +210,14 @@ fun HomeScreen(onNavigationIconClick:()->Unit,
  *  the list of tools which match with the [searchedText]
  */
 @Composable
-fun Screen(searchedText:String,
+fun ComposeTools(searchedText:String,
            navigateTo: (String)->Unit) {
-    val list=DataSource.ToolsList
     val context= LocalContext.current
     LazyVerticalGrid(columns = GridCells.Fixed(2),
         contentPadding = PaddingValues(20.dp),
         modifier = Modifier.fillMaxSize()
     ) {
-        items(items = list.filter {
+        items(items = DataSource.ToolsList.filter {
             context.getString(it.title).contains(searchedText, ignoreCase = true)
         }, key = {it.title}) {item ->
             Card(item =item,navigateTo=navigateTo)
@@ -314,92 +269,103 @@ fun Card(item: ToolsData,
     }
 }
 
+
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun SearchView(
-    state: MutableState<TextFieldValue>,
-    placeHolder: String,
-    modifier: Modifier,
-    onNavigationIconClick: () -> Unit
-) {
-    TextField(
-        value = state.value,
-        onValueChange = {value->
-            state.value = value
-        },
-        modifier
-            .fillMaxWidth()
-            .background(color = Color.Red.copy(alpha = .0f))
-            .padding(horizontal = 10.dp, vertical = 10.dp)
-            .border(
-                border = BorderStroke(0.dp, Color.Transparent),
-                shape = RoundedCornerShape(40.dp)
-            ),
-        shape = RoundedCornerShape(40.dp),
-        placeholder = {
-            Text(text = placeHolder)
-        },
-        leadingIcon = {
-            IconButton(onClick = {onNavigationIconClick() }) {
-                Icon(
-                    imageVector = Icons.Filled.Menu,
-                    contentDescription = stringResource(id = R.string.menu)
-                )
-            }
-        },
-        trailingIcon = {
-            Icon(modifier=modifier.clickable {
-                if(state.value.text.isNotEmpty()){
-                    state.value= TextFieldValue("")
+fun BottomSheet(onBottomSheetDismiss:()->Unit,
+                toggleSortOrder:()->Unit,
+                sortBy:Int,
+                setSortBy:(Int)->Unit,
+                options:List<Int>){
+    ModalBottomSheet(
+        modifier = Modifier.fillMaxHeight(),
+        onDismissRequest = onBottomSheetDismiss
+    ) {
+        Row {
+            Text(stringResource(id = R.string.sort_options),
+                modifier = Modifier.padding(16.dp),
+                fontWeight = FontWeight.Bold)
+            AssistChip(
+                onClick = toggleSortOrder,
+                label = {Text(
+                    text= stringResource(id = R.string.change_order),
+                    fontWeight = FontWeight.Bold
+                )},
+                leadingIcon = {
+                    Icon(
+                        painter = painterResource(id = R.drawable.arrow_sort),
+                        contentDescription =null,
+                        modifier= Modifier.size(AssistChipDefaults.IconSize)
+                    )
                 }
-            },
-                imageVector = Icons.Default.Clear,
-                contentDescription = stringResource(id = R.string.close))
-        },
-        colors = TextFieldDefaults.colors(
-            disabledTextColor = Color.Transparent,
-            focusedIndicatorColor = Color.Transparent,
-            unfocusedIndicatorColor = Color.Transparent,
-            disabledIndicatorColor = Color.Transparent
-        ),
-        maxLines = 1,
-        singleLine = true,
-        textStyle = TextStyle(
-            fontSize = 20.sp
-        )
-    )
-}
-@Composable
-fun TabComponent(isSelected:Boolean,
-                 onClick:()->Unit,
-                 titleId:Int,
-                 icon:ImageVector?=null,
-                 iconId:Int?=null){
-    Tab(selected = isSelected ,
-        onClick = onClick,
-        enabled = !isSelected) {
-        Row(verticalAlignment = Alignment.CenterVertically){
-            if(icon!=null) {
-                Icon(
-                    imageVector = icon,
-                    contentDescription = stringResource(id = titleId)
-                )
-            }else if(iconId!=null){
-                Icon(
-                    painter = painterResource(id = iconId),
-                    modifier = Modifier.size(26.dp),
-                    contentDescription = stringResource(id = titleId),
-                )
+            )
+        }
+        LazyColumn {
+            items(options) { option ->
+                Column {
+                    HorizontalDivider(thickness = 2.dp)
+                    Row(
+                        horizontalArrangement = Arrangement.SpaceBetween,
+                        verticalAlignment = Alignment.CenterVertically,
+                        modifier = Modifier
+                            .padding(horizontal = 20.dp)
+                    ) {
+                        RadioButton(selected = option == sortBy,
+                            enabled = option != sortBy,
+                            onClick = {setSortBy(option)})
+                        Text(text = stringResource(id = option))
+                        Spacer(modifier=Modifier.width(20.dp))
+                    }
+                }
             }
-            Text(text= stringResource(id = titleId),
-                modifier = Modifier.padding(10.dp))
         }
     }
 }
+
+
+@OptIn(ExperimentalFoundationApi::class)
 @Preview
 @Composable
 fun Preview(){
-    HomeScreen({}) {
-
+    val pdfList= mutableListOf<PdfRow>()
+    repeat(20) {
+        pdfList.add(PdfRow("18/03/02", "file_${it}.pdf", 2f, 0))
     }
+    var query by remember{ mutableStateOf("") }
+    var active by remember{ mutableStateOf(false) }
+    val pagerState= rememberPagerState{2}
+    var showBottomSheet by remember { mutableStateOf(false) }
+    val scope= rememberCoroutineScope()
+    val options = listOf(
+        R.string.sort_by_date,
+        R.string.sort_by_size,
+        R.string.sort_by_name)
+    var sortBy by  remember {
+        mutableIntStateOf(options[0])
+    }
+    HomeScreen(
+        onNavigationIconClick = { },
+        pdfList = pdfList,
+        navigateTo = {},
+        query = query,
+        pagerState = pagerState,
+        onQueryChange = {query=it},
+        onSearch = {
+            active=false
+            query=""
+        },
+        active = active,
+        onActiveChange ={ active=it} ,
+        loading = false,
+        showBottomSheet = showBottomSheet,
+        setBottomSheetState = {showBottomSheet=it},
+        shareFile = {},
+        onPdfCardClick = {},
+        scrollToPage = {if(it!=pagerState.currentPage)scope.launch { pagerState.scrollToPage(it)}},
+        setSortBy = {sortBy=it},
+        sortBy = options[0],
+        options = options,
+        toggleSortOrder = {})
+
 }
 
