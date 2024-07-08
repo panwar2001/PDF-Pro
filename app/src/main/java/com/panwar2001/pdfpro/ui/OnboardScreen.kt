@@ -11,7 +11,6 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -69,33 +68,44 @@ fun  OnboardScreen( navigateToHome: () -> Unit,
                    onNextButtonClick: () -> Unit) {
     val configuration = LocalConfiguration.current
     Column(
-        Modifier.padding(dimensionResource(id = R.dimen.spacing_large))
-            .fillMaxSize(),
+        Modifier.fillMaxSize(),
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.SpaceBetween
-    ) { 
+    ) {
         Skip(navigateToHome)
         HorizontalPager(state = pagerState,Modifier.wrapContentSize()) { page ->
         if (configuration.orientation == Configuration.ORIENTATION_LANDSCAPE) {
            LandscapeLayout(
                imageId = onBoardList[page].icon,
-               pageCount = pagerState.pageCount,
                titleId = onBoardList[page].title,
-               currentPage = page ,
                descriptionId = onBoardList[page].description
            )
         } else {
-            DisplayImage(imageId = onBoardList[page].icon)
-            Title(textId = onBoardList[page].title)
-            Description(descriptionId = onBoardList[page].description)
+            Column(
+                Modifier.padding(dimensionResource(id = R.dimen.spacing_large)),
+                horizontalAlignment = Alignment.CenterHorizontally,
+            ) {
+                DisplayImage(imageId = onBoardList[page].icon)
+                Spacer(modifier = Modifier.height(dimensionResource(id = R.dimen.spacing_large)))
+                Title(textId = onBoardList[page].title)
+                Spacer(modifier = Modifier.height(dimensionResource(id = R.dimen.spacing_large)))
+                Description(descriptionId = onBoardList[page].description)
+            }
+        }
+        }
+        Column(horizontalAlignment = Alignment.CenterHorizontally){
             PageIndicator(
                 pageCount = pagerState.pageCount,
-                currentPage = page)
+                currentPage = pagerState.targetPage
+            )
+            Spacer(modifier = Modifier.height(dimensionResource(id = R.dimen.spacing_large)))
+            NextButton(
+                textId = if (pagerState.pageCount != pagerState.currentPage+1)
+                    R.string.next else R.string.started,
+                onNextButtonClick = onNextButtonClick
+            )
         }
-        NextButton(textId = if(pagerState.pageCount!=pagerState.currentPage)
-                           R.string.next else R.string.started,
-                   onNextButtonClick=onNextButtonClick)
-      }
+
     }
 }
 
@@ -105,33 +115,27 @@ fun  OnboardScreen( navigateToHome: () -> Unit,
  * [LandscapeLayout] composable orients the onboarding screen in landscape layout
  *
  * @param imageId resource id of image
- * @param pageCount the number of pages displayed via horizontal pager
  * @param titleId resource id of title
- * @param currentPage current page of horizontal pager
  * @param descriptionId resource id of description
  */
 @Composable
 fun  LandscapeLayout(imageId: Int,
-                    pageCount: Int,
                     titleId:Int,
-                    currentPage: Int,
                     descriptionId: Int){
-    Row(Modifier.fillMaxSize(),
+    Row(Modifier.fillMaxWidth(),
         horizontalArrangement = Arrangement.SpaceBetween,
         verticalAlignment =Alignment.CenterVertically
         ) {
-        Column(Modifier.fillMaxHeight(),
+        Column(
             verticalArrangement = Arrangement.SpaceBetween,
             horizontalAlignment = Alignment.CenterHorizontally) {
             DisplayImage(imageId =imageId)
-            PageIndicator(
-                pageCount = pageCount,
-                currentPage = currentPage)
         }
-        Column(Modifier.fillMaxSize(),
+        Column(
             verticalArrangement = Arrangement.SpaceBetween,
             horizontalAlignment = Alignment.CenterHorizontally) {
             Title(textId = titleId)
+            Spacer(modifier = Modifier.height(dimensionResource(id = R.dimen.spacing_large)))
             Description(descriptionId = descriptionId)
          }
     }
@@ -150,23 +154,25 @@ fun  LandscapeLayout(imageId: Int,
 @Composable
 fun NextButton(textId: Int,
                onNextButtonClick:()->Unit){
-    Button(
-        onClick = onNextButtonClick,
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(horizontal = dimensionResource(id = R.dimen.spacing_xxlarge)),
-        colors=ButtonDefaults.buttonColors(colorResource(id = R.color.primary))
-    ) {
-        Text(
-            text = stringResource(id = textId),
-            fontSize = MaterialTheme.typography.titleLarge.fontSize,
-            fontStyle = MaterialTheme.typography.titleLarge.fontStyle,
-            fontFamily = MaterialTheme.typography.titleLarge.fontFamily,
-            fontWeight = MaterialTheme.typography.titleLarge.fontWeight,
-            letterSpacing = MaterialTheme.typography.titleLarge.letterSpacing,
-            textDecoration = MaterialTheme.typography.titleLarge.textDecoration,
-            color = Color.White
-        )
+    Row{
+        Button(
+            onClick = onNextButtonClick,
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(horizontal = dimensionResource(id = R.dimen.spacing_xxlarge)),
+            colors = ButtonDefaults.buttonColors(colorResource(id = R.color.primary))
+        ) {
+            Text(
+                text = stringResource(id = textId),
+                fontSize = MaterialTheme.typography.titleLarge.fontSize,
+                fontStyle = MaterialTheme.typography.titleLarge.fontStyle,
+                fontFamily = MaterialTheme.typography.titleLarge.fontFamily,
+                fontWeight = MaterialTheme.typography.titleLarge.fontWeight,
+                letterSpacing = MaterialTheme.typography.titleLarge.letterSpacing,
+                textDecoration = MaterialTheme.typography.titleLarge.textDecoration,
+                color = Color.White
+            )
+        }
     }
 }
 
@@ -311,8 +317,19 @@ fun MaterialTheme.isLight() = this.colorScheme.background.luminance() > 0.5
 @Composable
 fun OnBoardingScreenPreview(){
     val pagerState= rememberPagerState {3}
-    repeat(2) {
-        PDFProTheme(darkTheme = it==1) {
+    val onBoardList= listOf(
+        OnBoardData(icon= R.drawable.ocr,
+            title= R.string.ocr_pdf,
+            description = R.string.ocr_description),
+        OnBoardData(icon= R.drawable.pdf_compresser,
+            title= R.string.compress_pdf,
+            description = R.string.compress_pdf_description),
+        OnBoardData(icon= R.drawable.lock_pdf,
+            title= R.string.lock_pdf,
+            description = R.string.lock_description)
+    )
+
+    PDFProTheme(darkTheme = false) {
             Surface(
                 modifier = Modifier.fillMaxSize(),
                 color = MaterialTheme.colorScheme.background
@@ -320,10 +337,9 @@ fun OnBoardingScreenPreview(){
                 OnboardScreen(
                     navigateToHome = { /*TODO*/ },
                     pagerState = pagerState,
-                    onBoardList = listOf()
+                    onBoardList = onBoardList
                 ) {}
             }
         }
-    }
 }
 
