@@ -6,7 +6,6 @@ import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -41,137 +40,125 @@ import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
-import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import com.panwar2001.pdfpro.R
-import com.panwar2001.pdfpro.data.Screens
 import com.panwar2001.pdfpro.ui.components.DevicePreviews
 import com.panwar2001.pdfpro.ui.theme.PDFProTheme
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
-
-data class OnBoardData(
-    val icon: Int,
-    val title:Int,
-    val description:Int
-)
-val OnBoardList= listOf(
-    OnBoardData(icon=R.drawable.ocr,
-                title=R.string.ocr_pdf,
-                description = R.string.ocr_description),
-    OnBoardData(icon=R.drawable.pdf_compresser,
-                title=R.string.compress_pdf,
-                description = R.string.compress_pdf_description),
-    OnBoardData(icon=R.drawable.lock_pdf,
-                title=R.string.lock_pdf,
-                description = R.string.lock_description)
-)
+import com.panwar2001.pdfpro.ui.view_models.OnBoardData
 
 
 /**
- * @param navigateTo function that helps to navigate to a screen
+ * First time screen to user
+ *
+ * The [OnboardScreen] is displayed to user first time when the app is opened
+ * It displays in brief the features and use cases of the app, which enhance user
+ * experience.
+ *
+ * @param navigateToHome navigates screen to home screen
+ * @param pagerState  stores state of pager
+ * @param onBoardList list of features data
+ * @param onNextButtonClick handles logic to either jump to next pager state or to home screen
  */
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
-fun OnboardScreen( navigateTo:(String)->Unit) {
-    val pagerState = rememberPagerState( pageCount = {OnBoardList.size})
+fun  OnboardScreen( navigateToHome: () -> Unit,
+                   pagerState: PagerState,
+                   onBoardList:List<OnBoardData>,
+                   onNextButtonClick: () -> Unit) {
     val configuration = LocalConfiguration.current
-    if (configuration.orientation==Configuration.ORIENTATION_LANDSCAPE) {
-        LandscapeLayout(pagerState = pagerState, navigateTo=navigateTo)
-    } else {
-        PortraitLayout(pagerState = pagerState, navigateTo=navigateTo)
-    }
-}
-@OptIn(ExperimentalFoundationApi::class)
-@Composable
-fun PortraitLayout( modifier: Modifier = Modifier,
-                    pagerState:PagerState,
-                    navigateTo: (String) -> Unit) {
     Column(
-        modifier.fillMaxSize(),
+        Modifier.padding(dimensionResource(id = R.dimen.spacing_large))
+            .fillMaxSize(),
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.SpaceBetween
-    ) {
-
-        HorizontalPager(state = pagerState,modifier.wrapContentSize()) { page ->
-            // Our page content
-         Column(
-             modifier
-                 .padding(dimensionResource(id = R.dimen.spacing_large))
-                 .fillMaxHeight(),
-             horizontalAlignment = Alignment.CenterHorizontally,
-             verticalArrangement = Arrangement.SpaceBetween
-         ) {
-             Skip(navigateTo)
-             DisplayImage(page = page)
-             Title(page = page)
-             Description(page = page)
-             PageIndicator(
-                 pageCount = OnBoardList.size,
-                 currentPage = pagerState.currentPage)
-             NextButton(pagerState = pagerState, page = page,navigateTo)
-         }
+    ) { 
+        Skip(navigateToHome)
+        HorizontalPager(state = pagerState,Modifier.wrapContentSize()) { page ->
+        if (configuration.orientation == Configuration.ORIENTATION_LANDSCAPE) {
+           LandscapeLayout(
+               imageId = onBoardList[page].icon,
+               pageCount = pagerState.pageCount,
+               titleId = onBoardList[page].title,
+               currentPage = page ,
+               descriptionId = onBoardList[page].description
+           )
+        } else {
+            DisplayImage(imageId = onBoardList[page].icon)
+            Title(textId = onBoardList[page].title)
+            Description(descriptionId = onBoardList[page].description)
+            PageIndicator(
+                pageCount = pagerState.pageCount,
+                currentPage = page)
         }
+        NextButton(textId = if(pagerState.pageCount!=pagerState.currentPage)
+                           R.string.next else R.string.started,
+                   onNextButtonClick=onNextButtonClick)
+      }
     }
 }
 
-@OptIn(ExperimentalFoundationApi::class)
+/**
+ * landscape screen
+ *
+ * [LandscapeLayout] composable orients the onboarding screen in landscape layout
+ *
+ * @param imageId resource id of image
+ * @param pageCount the number of pages displayed via horizontal pager
+ * @param titleId resource id of title
+ * @param currentPage current page of horizontal pager
+ * @param descriptionId resource id of description
+ */
 @Composable
-fun LandscapeLayout(modifier: Modifier=Modifier,
-                    pagerState: PagerState,
-                    navigateTo: (String) -> Unit){
-    HorizontalPager(state = pagerState, modifier.wrapContentSize()) { page ->
-    Row(modifier.fillMaxSize(),
+fun  LandscapeLayout(imageId: Int,
+                    pageCount: Int,
+                    titleId:Int,
+                    currentPage: Int,
+                    descriptionId: Int){
+    Row(Modifier.fillMaxSize(),
         horizontalArrangement = Arrangement.SpaceBetween,
         verticalAlignment =Alignment.CenterVertically
         ) {
-        Column(modifier.fillMaxHeight(),
+        Column(Modifier.fillMaxHeight(),
             verticalArrangement = Arrangement.SpaceBetween,
             horizontalAlignment = Alignment.CenterHorizontally) {
-            DisplayImage(page = page)
+            DisplayImage(imageId =imageId)
             PageIndicator(
-                pageCount = OnBoardList.size,
-                currentPage = pagerState.currentPage
-            )
+                pageCount = pageCount,
+                currentPage = currentPage)
         }
-
-        Column(modifier.fillMaxSize(),
+        Column(Modifier.fillMaxSize(),
             verticalArrangement = Arrangement.SpaceBetween,
             horizontalAlignment = Alignment.CenterHorizontally) {
-            Skip(navigateTo)
-            Title(page = page)
-            Description(page = page)
-            NextButton(pagerState = pagerState, page = page,navigateTo)
+            Title(textId = titleId)
+            Description(descriptionId = descriptionId)
          }
-        }
     }
 }
 
 
-@OptIn(ExperimentalFoundationApi::class)
+/**
+ * Next button
+ *
+ * Composable [NextButton] that moves the page to next state of horizontal pager or
+ * switch the onboarding screen to home screen
+ *
+ * @param textId resource id of the text
+ * @param onNextButtonClick Move to next page or to the home screen
+ */
 @Composable
-fun NextButton(pagerState: PagerState,page:Int,navigateTo: (String) -> Unit){
+fun NextButton(textId: Int,
+               onNextButtonClick:()->Unit){
     Button(
-        onClick = {
-          if(pagerState.currentPage+1==OnBoardList.size){
-              navigateTo(Screens.Home.route)
-          }else {
-              CoroutineScope(Dispatchers.Main).launch {
-                  pagerState.scrollToPage(pagerState.currentPage + 1)
-              }
-          } },
+        onClick = onNextButtonClick,
         modifier = Modifier
             .fillMaxWidth()
             .padding(horizontal = dimensionResource(id = R.dimen.spacing_xxlarge)),
         colors=ButtonDefaults.buttonColors(colorResource(id = R.color.primary))
     ) {
         Text(
-            text = stringResource(id =if(OnBoardList.size!=page+1) R.string.next else R.string.started),
+            text = stringResource(id = textId),
             fontSize = MaterialTheme.typography.titleLarge.fontSize,
             fontStyle = MaterialTheme.typography.titleLarge.fontStyle,
             fontFamily = MaterialTheme.typography.titleLarge.fontFamily,
@@ -183,10 +170,17 @@ fun NextButton(pagerState: PagerState,page:Int,navigateTo: (String) -> Unit){
     }
 }
 
+/**
+ * Displays Title
+ *
+ * Composable [Title] It  displays title of a particular feature
+ *
+ * @param textId resource id of the title
+ */
 @Composable
-fun Title(page:Int){
+fun Title(textId:Int){
     Text(
-        text = stringResource(id = OnBoardList[page].title),
+        text = stringResource(id = textId),
         fontSize = MaterialTheme.typography.headlineLarge.fontSize,
         fontWeight = FontWeight.Bold,
         overflow= TextOverflow.Clip,
@@ -199,11 +193,19 @@ fun Title(page:Int){
             .wrapContentSize()
     )
 }
+
+/**
+ * Display App Feature Image
+ *
+ * Composable [DisplayImage] It is a image component which displays the image relevant to feature of the app
+ *
+ * @param imageId resource id of the image
+ */
 @Composable
-fun DisplayImage(page:Int){
+fun DisplayImage(imageId:Int){
     Image(
-        painter = painterResource(id = OnBoardList[page].icon),
-        contentDescription = stringResource(id = OnBoardList[page].title),
+        painter = painterResource(id = imageId),
+        contentDescription = null,
         modifier = Modifier
             .wrapContentSize()
             .padding(dimensionResource(id = R.dimen.spacing_large))
@@ -211,11 +213,18 @@ fun DisplayImage(page:Int){
     )
 }
 
+/**
+ * Description of current page
+ *
+ * [Description] Composable that displays the description of a particular tool on a horizontalPager
+ *
+ * @param descriptionId resource id of description
+ */
 @Composable
-fun Description(page:Int){
+fun Description(descriptionId:Int){
     Spacer(Modifier.height(dimensionResource(id = R.dimen.spacing_small)))
     Text(
-        text = stringResource(id = OnBoardList[page].description),
+        text = stringResource(id = descriptionId),
         overflow= TextOverflow.Clip,
         textAlign = TextAlign.Center,
         fontSize = MaterialTheme.typography.titleMedium.fontSize,
@@ -226,8 +235,15 @@ fun Description(page:Int){
         textDecoration = MaterialTheme.typography.titleMedium.textDecoration)
 }
 
+/**
+ * Skip to home Screen
+ *
+ * Composable [Skip] is a clickable text, which on Click help navigate to screen
+ *
+ * @param navigateToHome function to navigate to home screen
+ */
 @Composable
-fun Skip(navigateTo: (String) -> Unit){
+fun Skip(navigateToHome: () -> Unit){
     Row(horizontalArrangement = Arrangement.End,
         modifier = Modifier.fillMaxWidth()) {
         Text(
@@ -239,14 +255,21 @@ fun Skip(navigateTo: (String) -> Unit){
             letterSpacing = MaterialTheme.typography.headlineSmall.letterSpacing,
             textDecoration = MaterialTheme.typography.headlineSmall.textDecoration,
             modifier = Modifier.clickable {
-                navigateTo(Screens.Home.route)
+                navigateToHome()
             }
         )
         MaterialTheme.colorScheme.background
     }
 }
 
-
+/**
+ *  indicates page
+ *
+ *  [PageIndicator] composable indicates the page on the screen
+ *
+ *  @param pageCount The number of pages
+ *  @param currentPage denotes the index of the current page
+ */
 @Composable
 fun PageIndicator(pageCount: Int, currentPage: Int) {
     val dimIfSelected=dimensionResource(id = R.dimen.spacing_moreLarge)
@@ -269,31 +292,37 @@ fun PageIndicator(pageCount: Int, currentPage: Int) {
     }
     Spacer(modifier = Modifier.height(dimensionResource(id = R.dimen.spacing_none)))
 }
+
+/**
+ * check theme
+ *
+ * Composable [isLight] that checks whether the screen is in light or dark theme
+ *
+ * @return Boolean value if the screen is light themed or not
+ * @receiver [PageIndicator]
+ */
 @Composable
 fun MaterialTheme.isLight() = this.colorScheme.background.luminance() > 0.5
 
-@DevicePreviews
-@Composable
-fun LightModeOnBoardingScreenPreview(){
-    PDFProTheme(darkTheme =false) {
-        Surface(
-            modifier = Modifier.fillMaxSize(),
-            color = MaterialTheme.colorScheme.background
-        ) {
-            OnboardScreen {}
-        }
-    }
-}
 
+
+@OptIn(ExperimentalFoundationApi::class)
 @DevicePreviews
 @Composable
-fun DarkModeOnBoardingScreenPreview(){
-    PDFProTheme(darkTheme =true) {
-        Surface(
-            modifier = Modifier.fillMaxSize(),
-            color = MaterialTheme.colorScheme.background
-        ) {
-            OnboardScreen {}
+fun OnBoardingScreenPreview(){
+    val pagerState= rememberPagerState {3}
+    repeat(2) {
+        PDFProTheme(darkTheme = it==1) {
+            Surface(
+                modifier = Modifier.fillMaxSize(),
+                color = MaterialTheme.colorScheme.background
+            ) {
+                OnboardScreen(
+                    navigateToHome = { /*TODO*/ },
+                    pagerState = pagerState,
+                    onBoardList = listOf()
+                ) {}
+            }
         }
     }
 }

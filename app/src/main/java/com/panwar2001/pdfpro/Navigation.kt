@@ -13,8 +13,10 @@ import androidx.activity.compose.setContent
 import androidx.appcompat.app.AppCompatActivity
 import androidx.compose.animation.EnterTransition
 import androidx.compose.animation.ExitTransition
+import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.material3.DrawerValue
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalDrawerSheet
@@ -48,6 +50,7 @@ import com.panwar2001.pdfpro.ui.OnboardScreen
 import com.panwar2001.pdfpro.ui.components.DrawerBody
 import com.panwar2001.pdfpro.ui.components.DrawerHeader
 import com.panwar2001.pdfpro.ui.theme.PDFProTheme
+import com.panwar2001.pdfpro.ui.view_models.OnBoardScreenViewModel
 import com.tom_roush.pdfbox.android.PDFBoxResourceLoader
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
@@ -176,6 +179,7 @@ class Navigation : AppCompatActivity() {
  *
  * @param navController
  */
+@OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun NavigationController(
     navController: NavHostController= rememberNavController(),
@@ -232,12 +236,25 @@ fun NavigationController(
             {
 
                 composable(route = Screens.OnBoard.route) {
-                    OnboardScreen {
-                        // lambda function for navigation
+                    val viewModel=OnBoardScreenViewModel()
+                    val pagerState = rememberPagerState( pageCount = { viewModel.onBoardList.size})
+                    val navigateToHome:()->Unit={
                         setOnboardingFinished()
                         navController.popBackStack()
-                        navController.navigate(it)
+                        navController.navigate(Screens.Home.route)
                     }
+                    OnboardScreen(navigateToHome = navigateToHome,
+                                  pagerState = pagerState,
+                                  onBoardList = viewModel.onBoardList,
+                                  onNextButtonClick = {
+                                          if(pagerState.currentPage+1==pagerState.pageCount){
+                                              navigateToHome()
+                                          }else {
+                                              scope.launch {
+                                                  pagerState.animateScrollToPage(pagerState.currentPage + 1)
+                                              }
+                                          }
+                                  })
                 }
                 appGraph(navController=navController,
                     scope=scope,
