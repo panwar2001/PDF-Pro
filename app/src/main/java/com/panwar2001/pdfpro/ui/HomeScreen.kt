@@ -2,6 +2,8 @@ package com.panwar2001.pdfpro.ui
 
 import android.annotation.SuppressLint
 import androidx.compose.foundation.ExperimentalFoundationApi
+import androidx.compose.foundation.Image
+import androidx.compose.foundation.MarqueeSpacing
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -28,6 +30,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Clear
 import androidx.compose.material.icons.filled.Menu
 import androidx.compose.material.icons.filled.Search
+import androidx.compose.material.icons.filled.Share
 import androidx.compose.material.icons.outlined.CheckCircle
 import androidx.compose.material.icons.outlined.Home
 import androidx.compose.material3.AssistChip
@@ -64,6 +67,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -73,6 +77,12 @@ import com.panwar2001.pdfpro.data.ToolsData
 import com.panwar2001.pdfpro.ui.components.BottomIconButton
 import kotlinx.coroutines.launch
 
+data class PdfRow(
+    val dateModified: String,
+    val name: String,
+    val size: Float,
+    val id: Long
+)
 
 @SuppressLint("RememberReturnType")
 @OptIn(ExperimentalFoundationApi::class, ExperimentalMaterial3Api::class)
@@ -95,7 +105,9 @@ fun HomeScreen(onNavigationIconClick:()->Unit,
                scrollToPage:(Int)->Unit,
                setSortBy: (Int) -> Unit,
                toggleSortOrder: () -> Unit,
-               sortBy: Int) {
+               sortBy: Int,
+               topSearchCount:Int=7,
+               onSearchTrailingIconClick:()->Unit) {
     val scrollBehavior = TopAppBarDefaults.exitUntilCollapsedScrollBehavior(rememberTopAppBarState())
     Scaffold(
         modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
@@ -111,12 +123,13 @@ fun HomeScreen(onNavigationIconClick:()->Unit,
         ) {
             HomeScreenSearchBar(
                 onNavigationIconClick = onNavigationIconClick,
-                pdfList = pdfList,
+                pdfList = pdfList.take(topSearchCount),
                 query = query,
                 onQueryChange = onQueryChange,
                 onSearch = onSearch,
                 active = active,
-                onActiveChange=onActiveChange)
+                onActiveChange=onActiveChange,
+                onSearchTrailingIconClick=onSearchTrailingIconClick)
 
             HorizontalPager(state = pagerState) { currentPage ->
                 if (currentPage == 0) {
@@ -150,7 +163,8 @@ fun HomeScreenSearchBar(
     onQueryChange:(String)->Unit,
     onSearch:(String)->Unit,
     active:Boolean,
-    onActiveChange:(Boolean)->Unit)
+    onActiveChange:(Boolean)->Unit,
+    onSearchTrailingIconClick:()->Unit)
 {
     SearchBar(query = query,
         onQueryChange = onQueryChange,
@@ -160,14 +174,7 @@ fun HomeScreenSearchBar(
         modifier = Modifier.fillMaxWidth(),
         placeholder = {Text(text = stringResource(id = R.string.search_placeholder))},
         leadingIcon = {LeadingIcon(onNavigationIconClick)},
-        trailingIcon = {
-            TrailingIcon{
-                if (query.isNotEmpty()) {
-                    onQueryChange("")
-                } else if (active) {
-                    onActiveChange(false)
-                }}
-        }) {
+        trailingIcon = { TrailingIcon(onSearchTrailingIconClick)}){
         LazyColumn {
             items(pdfList){
                 Row(Modifier.height(50.dp),
@@ -239,9 +246,12 @@ fun LeadingIcon(onNavigationIconClick: () -> Unit){
 }
 @Composable
 fun TrailingIcon(onClick:()->Unit){
-    Icon(modifier = Modifier.clickable {onClick()},
-        imageVector = Icons.Default.Clear,
-        contentDescription = stringResource(id = R.string.close))
+
+    IconButton(onClick = onClick) {
+        Icon(imageVector = Icons.Default.Clear,
+            contentDescription = stringResource(id = R.string.close)
+        )
+    }
 }
 
 /**
@@ -385,6 +395,54 @@ fun BottomSheet(onBottomSheetDismiss:()->Unit,
     }
 }
 
+@Composable
+fun PdfFilesScreen(listPDF: List<PdfRow>,
+                   shareFile:(Long)->Unit,
+                   onPdfCardClick:(Long)->Unit,
+) {
+    LazyColumn {
+        items(listPDF) { pdfItem ->
+            ElevatedCard(
+                elevation = CardDefaults.cardElevation(defaultElevation = 15.dp),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(10.dp)
+                    .clickable { onPdfCardClick(pdfItem.id) },
+                colors = CardDefaults.cardColors(containerColor = Color.White)
+            ) {
+                Row(Modifier.padding(10.dp),
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                    verticalAlignment = Alignment.CenterVertically){
+                    Image(painter = painterResource(id = R.drawable.pdf_svg),
+                        contentDescription = null,
+                        modifier = Modifier.size(50.dp))
+                    Column {
+                        Row(Modifier.fillMaxWidth(),
+                            horizontalArrangement = Arrangement.SpaceBetween){
+                            Text(
+                                text = pdfItem.name,
+                                overflow = TextOverflow.Ellipsis,
+                                maxLines = 1,
+                                modifier=Modifier.weight(1f))
+                            Icon(
+                                imageVector = Icons.Default.Share,
+                                modifier = Modifier.clickable {shareFile(pdfItem.id)},
+                                contentDescription = null
+                            )
+                        }
+                        Row{
+                            Text("${pdfItem.size} MB")
+                            Spacer(modifier = Modifier.width(20.dp))
+                            Text(pdfItem.dateModified)
+                        }
+                    }
+
+                }
+            }
+        }
+    }
+}
+
 
 @OptIn(ExperimentalFoundationApi::class)
 @Preview
@@ -424,11 +482,12 @@ fun Preview(){
         setBottomSheetState = {showBottomSheet=it},
         shareFile = {},
         onPdfCardClick = {},
-        scrollToPage = {if(it!=pagerState.currentPage)scope.launch { pagerState.scrollToPage(it)}},
+        scrollToPage = {if(it!=pagerState.currentPage)scope.launch { pagerState.animateScrollToPage(it)}},
         setSortBy = {sortBy=it},
         sortBy = options[0],
         options = options,
-        toggleSortOrder = {})
+        toggleSortOrder = {},
+        onSearchTrailingIconClick = {})
 
 }
 

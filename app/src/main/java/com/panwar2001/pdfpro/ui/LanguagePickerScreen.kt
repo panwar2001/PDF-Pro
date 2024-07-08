@@ -27,7 +27,7 @@ import androidx.compose.ui.unit.dp
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun LanguagePickerScreen(navigateUp:()->Unit,
-                         languages:List<Array<String>>,
+                         languages:List<Int>,
                          currentLocale:String,
                          setLocale:(localeTag:String)->Unit){
     Scaffold(topBar = {
@@ -45,7 +45,8 @@ fun LanguagePickerScreen(navigateUp:()->Unit,
             })
     }){
         LazyColumn(modifier = Modifier.padding(it)){
-            items(languages) {language->
+            items(languages) {languageId->
+                val language=stringArrayResource(id = languageId)
                 Row(horizontalArrangement = Arrangement.SpaceBetween,
                     verticalAlignment = Alignment.CenterVertically,
                     modifier = Modifier.padding(horizontal = 20.dp)){
@@ -66,13 +67,12 @@ fun LanguagePickerScreen(navigateUp:()->Unit,
 @Preview
 @Composable
 fun PreviewScreen(){
-    val languages= listOf(
-        stringArrayResource(id = R.array.english),
-        stringArrayResource(id = R.array.French),
-        stringArrayResource(id = R.array.Japanese),
-        stringArrayResource(id = R.array.Russian),
-        stringArrayResource(id = R.array.hindi)
-    )
+    val languages = listOf(
+        R.array.english,
+        R.array.French,
+        R.array.Japanese,
+        R.array.Russian,
+        R.array.hindi)
 
     LanguagePickerScreen(navigateUp = { /*TODO*/ },
                          languages = languages,

@@ -37,6 +37,9 @@ private val LightColorScheme = lightColorScheme(
     */
 )
 
+/**
+ * TODO Correct DarkColorScheme and LightColorScheme should for lower than S android version
+ */
 @Composable
 fun PDFProTheme(
     darkTheme: Boolean = isSystemInDarkTheme(),
@@ -70,7 +73,6 @@ fun PDFProTheme(
 
     MaterialTheme(
         colorScheme = colorScheme,
-        typography = Typography,
         content = content
     )
 }

@@ -9,14 +9,10 @@
     <dimen name="spacing_large">16dp</dimen>
     <dimen name="spacing_xlarge">24dp</dimen>
     <dimen name="spacing_xxlarge">32dp</dimen>
+    <dimen name="spacing_moreLarge">36dp</dimen>
 
-    <!-- Typography -->
-    <dimen name="text_size_small">12sp</dimen>
-    <dimen name="text_size_medium">14sp</dimen>
-    <dimen name="text_size_large">16sp</dimen>
-    <dimen name="text_size_xlarge">18sp</dimen>
-    <dimen name="text_size_xxlarge">20sp</dimen>
-    <dimen name="text_size_extraLarge">30sp</dimen>
+    <dimen name="onboard_image_dimen">150dp</dimen>
+
 
     <!-- Icons -->
     <dimen name="icon_size_small">24dp</dimen>

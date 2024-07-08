@@ -1,14 +1,9 @@
 package com.panwar2001.pdfpro.navigation_graphs
 
-import android.content.ContentUris
 import android.content.Intent
-import android.net.Uri
-import android.provider.MediaStore
-import android.util.Log
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.material3.DrawerState
-import androidx.compose.material3.Text
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.platform.LocalContext
@@ -25,9 +20,7 @@ import com.panwar2001.pdfpro.ui.LanguagePickerScreen
 import com.panwar2001.pdfpro.ui.components.PdfViewer
 import com.panwar2001.pdfpro.ui.view_models.AppViewModel
 import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.runBlocking
 
 
 @OptIn(ExperimentalFoundationApi::class)
@@ -86,28 +79,29 @@ fun NavGraphBuilder.appGraph(navController: NavController,
                 options = viewModel.options,
                 scrollToPage = {
                     if (it != pagerState.currentPage) scope.launch {
-                        pagerState.scrollToPage(
+                        viewModel.setSearchBarActive(false)
+                        pagerState.animateScrollToPage(
                             it
                         )
                     }
                 },
                 setSortBy = viewModel::setSortOption,
                 toggleSortOrder = viewModel::toggleSortOrder,
-                sortBy = uiState.sortOption
+                sortBy = uiState.sortOption,
+                onSearchTrailingIconClick = {
+                    if (uiState.query.isNotEmpty()) {
+                        viewModel.setSearchText("")
+                    } else if (uiState.searchBarActive) {
+                        viewModel.setSearchBarActive(false)
+                    }
+                }
             )
         }
         composable(route = Screens.Home.LanguagePickerScreen.route) { backStackEntry ->
             val viewModel = backStackEntry.sharedViewModel<AppViewModel>(navController)
             val currentLocale = viewModel.getCurrentLocale()
-            val languages = listOf(
-                stringArrayResource(id = R.array.english),
-                stringArrayResource(id = R.array.French),
-                stringArrayResource(id = R.array.Japanese),
-                stringArrayResource(id = R.array.Russian),
-                stringArrayResource(id = R.array.hindi)
-            )
             LanguagePickerScreen(navigateUp = { navController.navigateUp() },
-                languages,
+                viewModel.languages,
                 currentLocale = currentLocale,
                 setLocale = {
                     viewModel.setLocale(it)

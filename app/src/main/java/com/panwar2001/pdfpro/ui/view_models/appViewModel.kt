@@ -16,7 +16,12 @@ import android.provider.OpenableColumns
 import android.util.Log
 import androidx.annotation.WorkerThread
 import androidx.appcompat.app.AppCompatDelegate
+import androidx.compose.foundation.ExperimentalFoundationApi
+import androidx.compose.foundation.pager.PagerState
+import androidx.compose.ui.res.stringArrayResource
 import androidx.core.os.LocaleListCompat
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.panwar2001.pdfpro.R
 import com.panwar2001.pdfpro.ui.PdfRow
@@ -51,13 +56,18 @@ data class AppUiState(
 class AppViewModel @Inject constructor(@ApplicationContext val context: Context): ViewModel() {
     private val _uiState = MutableStateFlow(AppUiState())
     val uiState: StateFlow<AppUiState> = _uiState.asStateFlow()
-
     private val mimeType = "application/pdf"
-
     val options= listOf(
         R.string.sort_by_date,
         R.string.sort_by_size,
         R.string.sort_by_name)
+    val languages = listOf(
+            R.array.english,
+            R.array.French,
+            R.array.Japanese,
+            R.array.Russian,
+            R.array.hindi)
+
     init {
         searchPdfs()
     }
