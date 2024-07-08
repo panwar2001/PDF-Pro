@@ -24,6 +24,8 @@ import androidx.compose.material3.ModalNavigationDrawer
 import androidx.compose.material3.Surface
 import androidx.compose.material3.rememberDrawerState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
@@ -237,24 +239,34 @@ fun NavigationController(
 
                 composable(route = Screens.OnBoard.route) {
                     val viewModel=OnBoardScreenViewModel()
+                    val isLoading  by viewModel.loading.collectAsState()
                     val pagerState = rememberPagerState( pageCount = { viewModel.onBoardList.size})
+
+                    /**
+                     * TODO
+                     * Solve issue : while navigation from onboarding screen to home screen
+                     * the screen freezes and not loads
+                     */
                     val navigateToHome:()->Unit={
-                        setOnboardingFinished()
-                        navController.popBackStack()
-                        navController.navigate(Screens.Home.route)
+                        viewModel.setLoading(true)
+                            navController.navigate(Screens.Home.route) {
+                                navController.popBackStack()
+                                setOnboardingFinished()
+                            }
+                            viewModel.setLoading(false)
                     }
-                    OnboardScreen(navigateToHome = navigateToHome,
-                                  pagerState = pagerState,
-                                  onBoardList = viewModel.onBoardList,
-                                  onNextButtonClick = {
-                                          if(pagerState.currentPage+1==pagerState.pageCount){
-                                              navigateToHome()
-                                          }else {
-                                              scope.launch {
-                                                  pagerState.animateScrollToPage(pagerState.currentPage + 1)
-                                              }
-                                          }
-                                  })
+                        OnboardScreen(navigateToHome = navigateToHome,
+                            pagerState = pagerState,
+                            onBoardList = viewModel.onBoardList,
+                            onNextButtonClick = {
+                                if (pagerState.currentPage + 1 == pagerState.pageCount) {
+                                    navigateToHome()
+                                } else {
+                                    scope.launch {
+                                        pagerState.animateScrollToPage(pagerState.currentPage + 1)
+                                    }
+                                }
+                            })
                 }
                 appGraph(navController=navController,
                     scope=scope,

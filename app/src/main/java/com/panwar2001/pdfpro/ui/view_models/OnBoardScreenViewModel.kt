@@ -2,6 +2,10 @@ package com.panwar2001.pdfpro.ui.view_models
 
 import androidx.lifecycle.ViewModel
 import com.panwar2001.pdfpro.R
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.update
 
 data class OnBoardData(
     val icon: Int,
@@ -22,5 +26,10 @@ class OnBoardScreenViewModel: ViewModel(){
             title= R.string.lock_pdf,
             description = R.string.lock_description)
     )
+    private val _loading = MutableStateFlow(false)
+    val loading: StateFlow<Boolean> = _loading.asStateFlow()
 
+    fun setLoading(loading:Boolean){
+        _loading.update {loading}
+    }
 }
