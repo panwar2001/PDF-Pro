@@ -25,10 +25,13 @@ data class ToolsData(
 
 sealed class Screens(val route:String) {
     data object OnBoard : Screens("onboard")
-    data object Home: Screens("home")
     data object  FilePicker: Screens("pick")
-    data object LanguagePickerScreen: Screens("language_picker")
-    data object PdfViewer: Screens("pdfViewer")
+    data object Home: Screens("home") {
+        data object LanguagePickerScreen: Screens("language_picker")
+        data object homeScreen: Screens("home_screen")
+        data object PdfViewer: Screens("pdfViewer")
+    }
+
     data object PdfToText: Screens("Pdf2Txt") {
         data object PreviewFile : Screens("Pdf2txt_Preview")
         data object TextScreen: Screens("textScreen")

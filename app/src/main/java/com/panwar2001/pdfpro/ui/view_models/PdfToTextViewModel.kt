@@ -14,6 +14,7 @@ import androidx.lifecycle.ViewModel
 import com.panwar2001.pdfpro.R
 import com.tom_roush.pdfbox.pdmodel.PDDocument
 import com.tom_roush.pdfbox.text.PDFTextStripper
+import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -35,7 +36,7 @@ data class PdfToTextUiState(
     val numPages:Int=0
 )
 
-
+@HiltViewModel
 class PdfToTextViewModel@Inject constructor(@ApplicationContext val context: Context): ViewModel() {
     private val _uiState = MutableStateFlow(PdfToTextUiState())
     val uiState: StateFlow<PdfToTextUiState> = _uiState.asStateFlow()

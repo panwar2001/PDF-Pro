@@ -13,6 +13,7 @@ import android.os.Environment
 import android.os.LocaleList
 import android.provider.MediaStore
 import android.provider.OpenableColumns
+import android.util.Log
 import androidx.annotation.WorkerThread
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.core.os.LocaleListCompat
@@ -41,7 +42,7 @@ data class AppUiState(
     val pdfsList:List<PdfRow> = listOf(),
     val searchBarActive:Boolean= false,
     val isBottomSheetVisible:Boolean=false,
-    val pdfUri:Uri?=null,
+    val pdfUri:Uri=Uri.EMPTY,
     val pdfName:String="",
     val numPages:Int=0)
 
@@ -49,13 +50,14 @@ data class AppUiState(
 @HiltViewModel
 class AppViewModel @Inject constructor(@ApplicationContext val context: Context): ViewModel() {
     private val _uiState = MutableStateFlow(AppUiState())
+    val uiState: StateFlow<AppUiState> = _uiState.asStateFlow()
+
     private val mimeType = "application/pdf"
+
     val options= listOf(
         R.string.sort_by_date,
         R.string.sort_by_size,
         R.string.sort_by_name)
-
-    val uiState: StateFlow<AppUiState> = _uiState.asStateFlow()
     init {
         searchPdfs()
     }
@@ -93,34 +95,30 @@ class AppViewModel @Inject constructor(@ApplicationContext val context: Context)
             it.copy(searchBarActive = active)
         }
     }
-    @WorkerThread
-    fun setUri(uriId:Long){
-        val baseUri = MediaStore.Files.getContentUri("external")
-        val uri = ContentUris.withAppendedId(baseUri, uriId)
-        _uiState.update {
-            it.copy(pdfUri = uri)
+ fun setUri(uriId:Long){
+     _uiState.update {
+         val baseUri = MediaStore.Files.getContentUri("external")
+         val uri = ContentUris.withAppendedId(baseUri, uriId)
+         it.copy(pdfUri = uri, numPages = getNumPages(uri), pdfName = getPdfName(uri))
         }
-//        setPdfDetails(uri)
     }
     @WorkerThread
-    private fun setPdfDetails(uri:Uri) {
-        val contentResolver = context.contentResolver
-        val fileDescriptor = contentResolver.openFileDescriptor(uri, "r")
+    private fun getNumPages(uri:Uri): Int{
+        val fileDescriptor = context.contentResolver.openFileDescriptor(uri, "r")
         fileDescriptor?.use { descriptor ->
-            _uiState.update { it.copy(numPages = PdfRenderer(descriptor).pageCount) }
+            return PdfRenderer(descriptor).pageCount
         }
-//        //set file name
-//        val returnCursor = contentResolver.query(uri, null, null, null, null)
-//        returnCursor.use {
-//            if (it != null) {
-//                val nameIndex = it.getColumnIndex(OpenableColumns.DISPLAY_NAME)
-//                it.moveToFirst()
-//                _uiState.update { state ->
-//                    state.copy(pdfName = it.getString(nameIndex))
-//                }
-//                it.close()
-//            }
-//        }
+        return 0
+    }
+    private fun getPdfName(uri:Uri):String{
+        //set file name
+        val returnCursor = context.contentResolver.query(uri, null, null, null, null)
+        returnCursor?.use {
+                val nameIndex = it.getColumnIndex(OpenableColumns.DISPLAY_NAME)
+                it.moveToFirst()
+                return it.getString(nameIndex)
+        }
+        return ""
     }
     fun setBottomSheetVisible(visible:Boolean){
         _uiState.update {

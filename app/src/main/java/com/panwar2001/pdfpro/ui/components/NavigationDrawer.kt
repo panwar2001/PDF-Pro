@@ -109,7 +109,7 @@ fun DrawerBody(
             NavItem(navigateTo = navigateTo, item = ToolsData(
                 R.drawable.language,
                 R.string.language,
-                Screens.LanguagePickerScreen.route))
+                Screens.Home.LanguagePickerScreen.route))
             NavItem(navigateTo = navigateTo, item = ToolsData(
                 iconId=R.drawable.home,
                 title = R.string.home,
