@@ -3,7 +3,7 @@ package com.panwar2001.pdfpro.ui
 import android.annotation.SuppressLint
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.MarqueeSpacing
+import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -17,16 +17,14 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.grid.GridCells
-import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
-import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.PagerState
 import androidx.compose.foundation.pager.rememberPagerState
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.sharp.ArrowForward
 import androidx.compose.material.icons.filled.Clear
 import androidx.compose.material.icons.filled.Menu
 import androidx.compose.material.icons.filled.Search
@@ -42,6 +40,7 @@ import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.RadioButton
 import androidx.compose.material3.Scaffold
@@ -63,6 +62,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.colorResource
+import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
@@ -264,8 +265,7 @@ fun TrailingIcon(onClick:()->Unit){
 fun ComposeTools(searchedText:String,
            navigateTo: (String)->Unit) {
     val context= LocalContext.current
-    LazyVerticalGrid(columns = GridCells.Fixed(2),
-        contentPadding = PaddingValues(20.dp),
+    LazyColumn(contentPadding = PaddingValues(20.dp),
         modifier = Modifier.fillMaxSize()
     ) {
         items(items = DataSource.ToolsList.filter {
@@ -286,38 +286,63 @@ fun ComposeTools(searchedText:String,
 fun Card(item: ToolsData,
          modifier:Modifier=Modifier,
          navigateTo: (String)->Unit){
+    val desId=DataSource.getToolData(item.title).toolDescription
     ElevatedCard(
         elevation = CardDefaults.cardElevation(
             defaultElevation = 15.dp
         ),
         modifier = Modifier
-            .size(width = 10.dp, height = 130.dp)
-            .padding(10.dp)
+            .fillMaxWidth()
+            .padding(dimensionResource(id = R.dimen.spacing_large))
             .clickable { navigateTo(item.route) }
         ,colors = CardDefaults.cardColors(
             containerColor =Color.White,
         )
     ) {
-        Text(
-            text = stringResource(id = item.title),
-            textAlign = TextAlign.Center, // make text center horizontal
-            modifier = modifier
-                .width(150.dp)
-                .height(80.dp)
-                .padding(5.dp)
-                .wrapContentHeight(),// make text center vertical
-            fontWeight = FontWeight.Bold,
-            color = Color.Black
-        )
-        Icon(
+        Row(verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.SpaceBetween,
+            modifier = Modifier
+                .fillMaxWidth()
+                .border(width = 1.dp,
+                       color = colorResource(id = R.color.primary),
+                       shape = RoundedCornerShape(18.dp))){
+            Icon(
             painter = painterResource(id = item.iconId),
             contentDescription = stringResource(id = item.title),
             modifier= modifier
                 .size(width = 40.dp, height = 40.dp)
-                .padding(vertical = 1.dp)
-                .align(Alignment.CenterHorizontally),
-            tint=Color.Red
-        )
+                .padding(start = dimensionResource(id = R.dimen.spacing_small)),
+                tint = colorResource(id = R.color.primary))
+            Column(horizontalAlignment = Alignment.CenterHorizontally,
+                   modifier = Modifier
+                       .weight(1f)
+                       .padding(dimensionResource(id = R.dimen.spacing_large))){
+                Text(
+                    text = stringResource(id = item.title),
+                    textAlign = TextAlign.Center, // make text center horizontal
+                    fontWeight = FontWeight.Bold,
+                    fontSize = MaterialTheme.typography.titleMedium.fontSize,
+                    color = Color.Black
+                )
+                Text(
+                    text = stringResource(id = desId),
+                    overflow= TextOverflow.Ellipsis,
+                    modifier = Modifier.padding(dimensionResource(id = R.dimen.spacing_small)),
+                    maxLines = 5,
+                    textAlign = TextAlign.Justify,
+                    fontSize = MaterialTheme.typography.bodyMedium.fontSize,
+                    fontStyle = MaterialTheme.typography.bodyMedium.fontStyle,
+                    fontFamily = MaterialTheme.typography.bodyMedium.fontFamily,
+                    fontWeight = MaterialTheme.typography.bodyMedium.fontWeight,
+                    letterSpacing = MaterialTheme.typography.bodyMedium.letterSpacing,
+                    textDecoration = MaterialTheme.typography.bodyMedium.textDecoration)
+            }
+
+            Icon(imageVector = Icons.AutoMirrored.Sharp.ArrowForward,
+                contentDescription =null,
+                modifier=Modifier.size(30.dp))
+            Spacer(modifier = Modifier.width(dimensionResource(id = R.dimen.spacing_tiny)))
+        }
     }
 }
 @OptIn(ExperimentalFoundationApi::class)
