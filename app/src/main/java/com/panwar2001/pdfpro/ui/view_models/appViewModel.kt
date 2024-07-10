@@ -57,6 +57,7 @@ class AppViewModel @Inject constructor(@ApplicationContext val context: Context)
     private val _uiState = MutableStateFlow(AppUiState())
     val uiState: StateFlow<AppUiState> = _uiState.asStateFlow()
     private val mimeType = "application/pdf"
+
     val options= listOf(
         R.string.sort_by_date,
         R.string.sort_by_size,

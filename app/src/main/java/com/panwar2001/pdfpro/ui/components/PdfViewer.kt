@@ -244,7 +244,7 @@ fun PageNumberInputDialog(onDismiss: () -> Unit,
 fun BottomIconButton(onToggle:()->Unit,
                      icon:Any,
                      text:String,
-                     tint:Color=Color.Unspecified,
+                     tint:Color= LocalContentColor.current,
                      highlightButton: Boolean=false
                      ){
     Column(verticalArrangement = Arrangement.Center,

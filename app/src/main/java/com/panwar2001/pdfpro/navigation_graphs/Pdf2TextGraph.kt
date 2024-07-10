@@ -12,7 +12,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.navigation
 import com.panwar2001.pdfpro.R
 import com.panwar2001.pdfpro.data.DataSource
-import com.panwar2001.pdfpro.data.Screens
+import com.panwar2001.pdfpro.Screens
 import com.panwar2001.pdfpro.sharedViewModel
 import com.panwar2001.pdfpro.ui.components.FilePickerScreen
 import com.panwar2001.pdfpro.ui.components.PdfViewer

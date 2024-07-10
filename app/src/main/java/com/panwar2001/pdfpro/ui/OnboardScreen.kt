@@ -5,7 +5,6 @@ import androidx.compose.animation.core.animateDpAsState
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -22,6 +21,7 @@ import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.PagerState
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.text.ClickableText
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.MaterialTheme
@@ -39,9 +39,12 @@ import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.AnnotatedString
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.tooling.preview.PreviewScreenSizes
 import com.panwar2001.pdfpro.R
 import com.panwar2001.pdfpro.ui.components.DevicePreviews
 import com.panwar2001.pdfpro.ui.theme.PDFProTheme
@@ -154,7 +157,6 @@ fun  LandscapeLayout(imageId: Int,
 @Composable
 fun NextButton(textId: Int,
                onNextButtonClick:()->Unit){
-    Row{
         Button(
             onClick = onNextButtonClick,
             modifier = Modifier
@@ -173,7 +175,7 @@ fun NextButton(textId: Int,
                 color = Color.White
             )
         }
-    }
+
 }
 
 /**
@@ -252,19 +254,16 @@ fun Description(descriptionId:Int){
 fun Skip(navigateToHome: () -> Unit){
     Row(horizontalArrangement = Arrangement.End,
         modifier = Modifier.fillMaxWidth()) {
-        Text(
-            text = "${stringResource(id = R.string.skip)}→",
-            fontSize = MaterialTheme.typography.headlineSmall.fontSize,
-            fontStyle = MaterialTheme.typography.headlineSmall.fontStyle,
-            fontFamily = MaterialTheme.typography.headlineSmall.fontFamily,
-            fontWeight = MaterialTheme.typography.headlineSmall.fontWeight,
-            letterSpacing = MaterialTheme.typography.headlineSmall.letterSpacing,
-            textDecoration = MaterialTheme.typography.headlineSmall.textDecoration,
-            modifier = Modifier.clickable {
-                navigateToHome()
-            }
-        )
-        MaterialTheme.colorScheme.background
+        ClickableText(text = AnnotatedString("${stringResource(id = R.string.skip)}→"),
+            style = TextStyle(
+                fontSize = MaterialTheme.typography.headlineSmall.fontSize,
+                fontStyle = MaterialTheme.typography.headlineSmall.fontStyle,
+                fontFamily = MaterialTheme.typography.headlineSmall.fontFamily,
+                fontWeight = MaterialTheme.typography.headlineSmall.fontWeight,
+                letterSpacing = MaterialTheme.typography.headlineSmall.letterSpacing,
+                textDecoration = MaterialTheme.typography.headlineSmall.textDecoration,
+            ),
+            onClick = {navigateToHome()})
     }
 }
 
@@ -313,7 +312,7 @@ fun MaterialTheme.isLight() = this.colorScheme.background.luminance() > 0.5
 
 
 @OptIn(ExperimentalFoundationApi::class)
-@DevicePreviews
+@PreviewScreenSizes
 @Composable
 fun OnBoardingScreenPreview(){
     val pagerState= rememberPagerState {3}

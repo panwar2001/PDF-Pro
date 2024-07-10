@@ -1,15 +1,19 @@
 package com.panwar2001.pdfpro.ui
 
 import android.annotation.SuppressLint
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -17,17 +21,20 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.PagerState
 import androidx.compose.foundation.pager.rememberPagerState
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.sharp.ArrowForward
 import androidx.compose.material.icons.filled.Clear
 import androidx.compose.material.icons.filled.Menu
 import androidx.compose.material.icons.filled.Search
+import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material.icons.filled.Share
 import androidx.compose.material.icons.outlined.CheckCircle
 import androidx.compose.material.icons.outlined.Home
@@ -40,6 +47,7 @@ import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.LocalContentColor
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.RadioButton
@@ -296,52 +304,87 @@ fun Card(item: ToolsData,
             .padding(dimensionResource(id = R.dimen.spacing_large))
             .clickable { navigateTo(item.route) }
         ,colors = CardDefaults.cardColors(
-            containerColor =Color.White,
+            containerColor = Color.White,
         )
     ) {
-        Row(verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.SpaceBetween,
-            modifier = Modifier
-                .fillMaxWidth()
-                .border(width = 1.dp,
-                       color = colorResource(id = R.color.primary),
-                       shape = RoundedCornerShape(18.dp))){
-            Icon(
-            painter = painterResource(id = item.iconId),
-            contentDescription = stringResource(id = item.title),
-            modifier= modifier
-                .size(width = 40.dp, height = 40.dp)
-                .padding(start = dimensionResource(id = R.dimen.spacing_small)),
-                tint = colorResource(id = R.color.primary))
-            Column(horizontalAlignment = Alignment.CenterHorizontally,
-                   modifier = Modifier
-                       .weight(1f)
-                       .padding(dimensionResource(id = R.dimen.spacing_large))){
-                Text(
-                    text = stringResource(id = item.title),
-                    textAlign = TextAlign.Center, // make text center horizontal
-                    fontWeight = FontWeight.Bold,
-                    fontSize = MaterialTheme.typography.titleMedium.fontSize,
-                    color = Color.Black
-                )
-                Text(
-                    text = stringResource(id = desId),
-                    overflow= TextOverflow.Ellipsis,
-                    modifier = Modifier.padding(dimensionResource(id = R.dimen.spacing_small)),
-                    maxLines = 5,
-                    textAlign = TextAlign.Justify,
-                    fontSize = MaterialTheme.typography.bodyMedium.fontSize,
-                    fontStyle = MaterialTheme.typography.bodyMedium.fontStyle,
-                    fontFamily = MaterialTheme.typography.bodyMedium.fontFamily,
-                    fontWeight = MaterialTheme.typography.bodyMedium.fontWeight,
-                    letterSpacing = MaterialTheme.typography.bodyMedium.letterSpacing,
-                    textDecoration = MaterialTheme.typography.bodyMedium.textDecoration)
-            }
+        Column(   modifier = Modifier
+            .fillMaxWidth()
+            .border(
+                width = 1.dp,
+                color = Color.Transparent,
+                shape = RoundedCornerShape(18.dp)
+            )){
+                Box(Modifier.fillMaxWidth(),
+                    contentAlignment = Alignment.Center){
 
-            Icon(imageVector = Icons.AutoMirrored.Sharp.ArrowForward,
-                contentDescription =null,
-                modifier=Modifier.size(30.dp))
-            Spacer(modifier = Modifier.width(dimensionResource(id = R.dimen.spacing_tiny)))
+                    Box(
+                        modifier = Modifier
+                            .size(60.dp)
+                            .aspectRatio(1f)
+                            .background(Color.Blue, shape = CircleShape),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        Icon(
+                            painter = painterResource(id = item.iconId),
+                            contentDescription = stringResource(id = item.title),
+                            modifier = Modifier
+                                .size(width = 30.dp, height = 30.dp)
+                                .align(Alignment.Center),  // Center the icon within the Box
+                            tint = Color.White
+                        )
+                    }
+                    Text(
+                        text = stringResource(id = item.title),
+                        textAlign = TextAlign.Center, // make text center horizontal
+                        fontWeight = FontWeight.Bold,
+                        modifier = Modifier
+                            .wrapContentWidth(Alignment.CenterHorizontally),
+                        fontSize = MaterialTheme.typography.titleMedium.fontSize
+                    )
+                }
+
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.SpaceBetween,
+            ) {
+                Column(
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                    modifier = Modifier
+                        .weight(1f)
+                        .padding(dimensionResource(id = R.dimen.spacing_large))
+                ) {
+                    Text(
+                        text = stringResource(id = desId),
+                        overflow = TextOverflow.Ellipsis,
+                        modifier = Modifier.padding(dimensionResource(id = R.dimen.spacing_small)),
+                        maxLines = 5,
+                        fontSize = MaterialTheme.typography.bodyMedium.fontSize,
+                        fontStyle = MaterialTheme.typography.bodyMedium.fontStyle,
+                        fontFamily = MaterialTheme.typography.bodyMedium.fontFamily,
+                        fontWeight = MaterialTheme.typography.bodyMedium.fontWeight,
+                        letterSpacing = MaterialTheme.typography.bodyMedium.letterSpacing,
+                        textDecoration = MaterialTheme.typography.bodyMedium.textDecoration
+                    )
+                    AssistChip(
+                        onClick = { },
+                        label = { Text("Assist chip") },
+                        leadingIcon = {
+                            Icon(
+                                Icons.Filled.Settings,
+                                contentDescription = "Localized description",
+                                Modifier.size(AssistChipDefaults.IconSize)
+                            )
+                        }
+                    )
+                }
+
+                Icon(
+                    imageVector = Icons.AutoMirrored.Sharp.ArrowForward,
+                    contentDescription = null,
+                    modifier = Modifier.size(30.dp)
+                )
+                Spacer(modifier = Modifier.width(dimensionResource(id = R.dimen.spacing_tiny)))
+            }
         }
     }
 }
