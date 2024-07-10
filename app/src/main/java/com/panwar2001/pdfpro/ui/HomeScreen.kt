@@ -1,12 +1,12 @@
 package com.panwar2001.pdfpro.ui
 
 import android.annotation.SuppressLint
-import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -21,7 +21,6 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.pager.HorizontalPager
@@ -32,12 +31,13 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.sharp.ArrowForward
 import androidx.compose.material.icons.filled.Clear
-import androidx.compose.material.icons.filled.Menu
 import androidx.compose.material.icons.filled.Search
-import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material.icons.filled.Share
 import androidx.compose.material.icons.outlined.CheckCircle
 import androidx.compose.material.icons.outlined.Home
+import androidx.compose.material.icons.outlined.Menu
+import androidx.compose.material.icons.outlined.Search
+import androidx.compose.material.ripple.rememberRipple
 import androidx.compose.material3.AssistChip
 import androidx.compose.material3.AssistChipDefaults
 import androidx.compose.material3.CardDefaults
@@ -47,7 +47,6 @@ import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
-import androidx.compose.material3.LocalContentColor
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.RadioButton
@@ -68,9 +67,9 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -78,6 +77,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.panwar2001.pdfpro.R
@@ -120,7 +120,8 @@ fun HomeScreen(onNavigationIconClick:()->Unit,
     val scrollBehavior = TopAppBarDefaults.exitUntilCollapsedScrollBehavior(rememberTopAppBarState())
     Scaffold(
         modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
-        topBar = {HomeScreenTopAppBar(scrollBehavior)},
+        topBar = {HomeScreenTopAppBar(scrollBehavior,
+            onNavigationIconClick = onNavigationIconClick)},
         bottomBar = { HomeScreenBottomBar(scrollToPage = scrollToPage,
                                           pagerState = pagerState )},
         floatingActionButton = { if(pagerState.currentPage==1)FloatingBottomSheetButton {setBottomSheetState(true)}}
@@ -131,7 +132,6 @@ fun HomeScreen(onNavigationIconClick:()->Unit,
                 .padding(innerPadding)
         ) {
             HomeScreenSearchBar(
-                onNavigationIconClick = onNavigationIconClick,
                 pdfList = pdfList.take(topSearchCount),
                 query = query,
                 onQueryChange = onQueryChange,
@@ -166,7 +166,6 @@ fun HomeScreen(onNavigationIconClick:()->Unit,
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun HomeScreenSearchBar(
-    onNavigationIconClick:()->Unit,
     pdfList: List<PdfRow>,
     query:String,
     onQueryChange:(String)->Unit,
@@ -180,9 +179,16 @@ fun HomeScreenSearchBar(
         onSearch = onSearch,
         active = active,
         onActiveChange = onActiveChange,
-        modifier = Modifier.fillMaxWidth(),
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(dimensionResource(id = R.dimen.spacing_large)),
         placeholder = {Text(text = stringResource(id = R.string.search_placeholder))},
-        leadingIcon = {LeadingIcon(onNavigationIconClick)},
+        leadingIcon = {
+            Icon(
+                imageVector = Icons.Outlined.Search,
+                contentDescription = null
+            )
+        },
         trailingIcon = { TrailingIcon(onSearchTrailingIconClick)}){
         LazyColumn {
             items(pdfList){
@@ -216,16 +222,14 @@ fun HomeScreenSearchBar(
 }
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun HomeScreenTopAppBar(scrollBehavior:TopAppBarScrollBehavior){
-        TopAppBar(title = { Text("Pdf Pro",
-                              color = Color.Red,
+fun HomeScreenTopAppBar(scrollBehavior:TopAppBarScrollBehavior,
+                        onNavigationIconClick :()->Unit){
+        TopAppBar(title = { Text("PdfPro",
                               fontWeight = FontWeight.Bold,
-                              fontSize = 32.sp)},
+                              fontSize = 30.sp)},
             navigationIcon = {
-                Icon(painter = painterResource(id = R.mipmap.launcher_icon_foreground),
-                    modifier = Modifier.size(70.dp),
-                    contentDescription = null,
-                    tint = Color.Red)
+                LeadingIcon(onNavigationIconClick = onNavigationIconClick,
+                    iconImgVec = Icons.Outlined.Menu)
             },
             scrollBehavior=scrollBehavior)
 }
@@ -245,11 +249,15 @@ fun FloatingBottomSheetButton(onClick: () -> Unit){
 }
 
 @Composable
-fun LeadingIcon(onNavigationIconClick: () -> Unit){
+fun LeadingIcon(onNavigationIconClick: () -> Unit,
+                iconImgVec: ImageVector,
+                iconDesc:String?=null,
+                iconSize: Dp=32.dp){
     IconButton(onClick = onNavigationIconClick) {
         Icon(
-            imageVector = Icons.Filled.Menu,
-            contentDescription = stringResource(id = R.string.menu)
+            imageVector = iconImgVec,
+            contentDescription = iconDesc,
+            modifier=Modifier.size(iconSize)
         )
     }
 }
@@ -284,6 +292,27 @@ fun ComposeTools(searchedText:String,
     }
 }
 
+@Composable
+fun CircularIcon(iconResourceId:Int,
+                 backgroundColor: Color=Color.Blue,
+                 iconSize: Dp=30.dp){
+    Box(
+        modifier = Modifier
+            .size(80.dp)
+            .padding(10.dp)
+            .aspectRatio(1f)
+            .background(backgroundColor, shape = CircleShape),
+    ) {
+        Icon(
+            painter = painterResource(id = iconResourceId),
+            contentDescription = null,
+            modifier = Modifier
+                .size(iconSize)
+                .align(Alignment.Center),  // Center the icon within the Box
+            tint = Color.White
+        )
+    }
+}
 
 /**
  * Composable of clickable card which displays tool information to user
@@ -295,14 +324,18 @@ fun Card(item: ToolsData,
          modifier:Modifier=Modifier,
          navigateTo: (String)->Unit){
     val desId=DataSource.getToolData(item.title).toolDescription
-    ElevatedCard(
+    androidx.compose.material3.Card(
         elevation = CardDefaults.cardElevation(
             defaultElevation = 15.dp
         ),
-        modifier = Modifier
+        modifier = modifier
+            .clickable(indication = rememberRipple(),
+                interactionSource = remember {
+                    MutableInteractionSource()
+                },
+                onClick = { navigateTo(item.route) })
             .fillMaxWidth()
             .padding(dimensionResource(id = R.dimen.spacing_large))
-            .clickable { navigateTo(item.route) }
         ,colors = CardDefaults.cardColors(
             containerColor = Color.White,
         )
@@ -313,81 +346,71 @@ fun Card(item: ToolsData,
                 width = 1.dp,
                 color = Color.Transparent,
                 shape = RoundedCornerShape(18.dp)
-            )){
-                Box(Modifier.fillMaxWidth(),
-                    contentAlignment = Alignment.Center){
-
-                    Box(
-                        modifier = Modifier
-                            .size(60.dp)
-                            .aspectRatio(1f)
-                            .background(Color.Blue, shape = CircleShape),
-                        contentAlignment = Alignment.Center
-                    ) {
-                        Icon(
-                            painter = painterResource(id = item.iconId),
-                            contentDescription = stringResource(id = item.title),
-                            modifier = Modifier
-                                .size(width = 30.dp, height = 30.dp)
-                                .align(Alignment.Center),  // Center the icon within the Box
-                            tint = Color.White
-                        )
-                    }
-                    Text(
-                        text = stringResource(id = item.title),
-                        textAlign = TextAlign.Center, // make text center horizontal
-                        fontWeight = FontWeight.Bold,
-                        modifier = Modifier
-                            .wrapContentWidth(Alignment.CenterHorizontally),
-                        fontSize = MaterialTheme.typography.titleMedium.fontSize
-                    )
-                }
-
+            )) {
             Row(
-                verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically,
+                modifier = Modifier.fillMaxWidth()
             ) {
-                Column(
-                    horizontalAlignment = Alignment.CenterHorizontally,
+                CircularIcon(iconResourceId = item.iconId)
+                Text(
+                    text = stringResource(id = item.title),
+                    textAlign = TextAlign.Center, // make text center horizontal
+                    fontWeight = FontWeight.Bold,
+                    fontSize = MaterialTheme.typography.titleMedium.fontSize
+                )
+                Spacer(modifier = Modifier.width(80.dp))
+            }
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 20.dp, vertical = 5.dp),
+            ) {
+                Text(
+                    text = stringResource(id = desId),
+                    overflow = TextOverflow.Ellipsis,
                     modifier = Modifier
-                        .weight(1f)
-                        .padding(dimensionResource(id = R.dimen.spacing_large))
-                ) {
-                    Text(
-                        text = stringResource(id = desId),
-                        overflow = TextOverflow.Ellipsis,
-                        modifier = Modifier.padding(dimensionResource(id = R.dimen.spacing_small)),
-                        maxLines = 5,
-                        fontSize = MaterialTheme.typography.bodyMedium.fontSize,
-                        fontStyle = MaterialTheme.typography.bodyMedium.fontStyle,
-                        fontFamily = MaterialTheme.typography.bodyMedium.fontFamily,
-                        fontWeight = MaterialTheme.typography.bodyMedium.fontWeight,
-                        letterSpacing = MaterialTheme.typography.bodyMedium.letterSpacing,
-                        textDecoration = MaterialTheme.typography.bodyMedium.textDecoration
-                    )
-                    AssistChip(
-                        onClick = { },
-                        label = { Text("Assist chip") },
-                        leadingIcon = {
-                            Icon(
-                                Icons.Filled.Settings,
-                                contentDescription = "Localized description",
-                                Modifier.size(AssistChipDefaults.IconSize)
-                            )
-                        }
-                    )
-                }
-
+                        .padding(dimensionResource(id = R.dimen.spacing_small))
+                        .weight(1f),
+                    maxLines = 5,
+                    fontSize = MaterialTheme.typography.bodyMedium.fontSize,
+                    fontStyle = MaterialTheme.typography.bodyMedium.fontStyle,
+                    fontFamily = MaterialTheme.typography.bodyMedium.fontFamily,
+                    fontWeight = MaterialTheme.typography.bodyMedium.fontWeight,
+                    letterSpacing = MaterialTheme.typography.bodyMedium.letterSpacing,
+                    textDecoration = MaterialTheme.typography.bodyMedium.textDecoration
+                )
                 Icon(
                     imageVector = Icons.AutoMirrored.Sharp.ArrowForward,
                     contentDescription = null,
-                    modifier = Modifier.size(30.dp)
+                    modifier = Modifier.size(40.dp)
                 )
-                Spacer(modifier = Modifier.width(dimensionResource(id = R.dimen.spacing_tiny)))
             }
+//            Row(Modifier.fillMaxWidth(),
+//                horizontalArrangement = Arrangement.End){
+//                Box(
+//                    Modifier
+//                        .border(
+//                            BorderStroke(2.dp, color = Color.Black),
+//                            shape = RoundedCornerShape(15.dp)
+//                        )
+//                        .background(
+//                            color = Color.Red,
+//                            shape = RoundedCornerShape(15.dp)
+//                        )
+//                ) {
+//                    Text(
+//                        text = "Choose a pdf",
+//                        fontSize = 16.sp,
+//                        fontWeight = FontWeight.Bold,
+//                        modifier = Modifier.padding(8.dp),
+//                        color = Color.White
+//                    )
+//                }
+//            }
+        }
         }
     }
-}
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun HomeScreenBottomBar(scrollToPage: (Int) -> Unit,
