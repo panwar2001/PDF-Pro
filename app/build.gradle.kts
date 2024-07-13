@@ -104,6 +104,7 @@ dependencies {
     debugImplementation(libs.androidx.ui.test.manifest)
     implementation(libs.androidx.room.runtime)
     annotationProcessor(libs.androidx.room.compiler)
+    kapt("androidx.room:room-compiler:2.5.0")
 }
 // Allow references to generated code
 kapt {
