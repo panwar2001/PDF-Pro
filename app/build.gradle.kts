@@ -1,7 +1,8 @@
 plugins {
     alias(libs.plugins.androidApplication)
     alias(libs.plugins.jetbrainsKotlinAndroid)
-    id("kotlin-kapt")
+    alias(libs.plugins.compose.compiler)
+    id("com.google.devtools.ksp")
     id("com.google.dagger.hilt.android")
 }
 
@@ -71,11 +72,8 @@ android {
     }
 }
 dependencies {
-
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.lifecycle.runtime.ktx)
-    implementation(libs.androidx.activity.compose)
-    implementation(platform(libs.androidx.compose.bom))
     implementation(libs.androidx.ui)
     implementation(libs.androidx.ui.graphics)
     implementation(libs.androidx.ui.tooling.preview)
@@ -86,28 +84,33 @@ dependencies {
     implementation(libs.androidx.lifecycle.livedata.ktx)
     implementation(libs.androidx.lifecycle.viewmodel.ktx)
     implementation(libs.material)
-    implementation(libs.androidx.navigation.compose)
     implementation(libs.androidx.fragment.ktx)
     implementation(libs.pdfbox.android)
     implementation(libs.android.pdf.viewer)
-    implementation(libs.coil.compose)
     implementation(libs.reorderable)
-    testImplementation(libs.junit)
     implementation(libs.hilt.android)
-    kapt(libs.hilt.compiler)
+    implementation(libs.androidx.room.runtime)
+    annotationProcessor(libs.androidx.room.compiler)
+    ksp(libs.hilt.android.compiler)
+    ksp(libs.androidx.room.compiler)
+    /**
+     * Compose Dependencies
+     */
+    implementation(libs.androidx.activity.compose)
+    implementation(platform(libs.androidx.compose.bom))
+    implementation(libs.androidx.navigation.compose)
+    implementation(libs.coil.compose)
     implementation(libs.androidx.hilt.navigation.compose)
+    /**
+     * Testing dependencies
+     */
     androidTestImplementation(libs.androidx.junit)
+    testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.espresso.core)
     androidTestImplementation(platform(libs.androidx.compose.bom))
     androidTestImplementation(libs.androidx.ui.test.junit4)
     debugImplementation(libs.androidx.ui.tooling)
     debugImplementation(libs.androidx.ui.test.manifest)
-    implementation(libs.androidx.room.runtime)
-    annotationProcessor(libs.androidx.room.compiler)
-    kapt("androidx.room:room-compiler:2.5.0")
 }
-// Allow references to generated code
-kapt {
-    correctErrorTypes = true
-}
+
 
