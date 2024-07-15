@@ -23,7 +23,7 @@
         tools:targetApi="34"
         >
         <activity
-            android:name=".Navigation"
+            android:name=".AppActivity"
             android:exported="true"
             android:localeConfig="@xml/locales_config"
             >

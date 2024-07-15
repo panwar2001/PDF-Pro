@@ -2,7 +2,7 @@ package com.panwar2001.pdfpro
 
 import android.app.Application
 import android.net.Uri
-import com.panwar2001.pdfpro.ui.view_models.Img2pdfViewModel
+import com.panwar2001.pdfpro.view_models.Img2pdfViewModel
 import org.junit.Test
 
 import org.junit.Assert.*

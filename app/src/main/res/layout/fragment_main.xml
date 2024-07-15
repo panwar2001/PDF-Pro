@@ -6,7 +6,7 @@
     android:id="@+id/navigation"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".ui.view_models.NavigationFragment">
+    tools:context=".compose.view_models.NavigationFragment">
 
     <TextView
         android:id="@+id/message"
