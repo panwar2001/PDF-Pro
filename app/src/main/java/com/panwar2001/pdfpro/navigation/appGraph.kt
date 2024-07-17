@@ -34,9 +34,11 @@ fun NavGraphBuilder.appGraph(scope:CoroutineScope,
                 navigateTo = navActions::navigateTo,
                 query = uiState.query,
                 pagerState = pagerState,
-                onQueryChange = { viewModel.setSearchText(it) },
+                onQueryChange = { viewModel.setSearchText(it)
+                    viewModel.searchPdfs()},
                 onSearch = {
                     viewModel.setSearchBarActive(false)
+                    viewModel.setSearchText(it)
                     viewModel.searchPdfs()
                 },
                 active = uiState.searchBarActive,
@@ -62,12 +64,19 @@ fun NavGraphBuilder.appGraph(scope:CoroutineScope,
                         )
                     }
                 },
-                setSortBy = viewModel::setSortOption,
-                toggleSortOrder = viewModel::toggleSortOrder,
+                setSortBy = {
+                    viewModel.setSortOption(it)
+                    viewModel.searchPdfs()
+                },
+                toggleSortOrder = {
+                    viewModel.toggleSortOrder()
+                    viewModel.searchPdfs()
+                },
                 sortBy = uiState.sortOption,
                 onSearchTrailingIconClick = {
                     if (uiState.query.isNotEmpty()) {
                         viewModel.setSearchText("")
+                        viewModel.searchPdfs()
                     } else if (uiState.searchBarActive) {
                         viewModel.setSearchBarActive(false)
                     }

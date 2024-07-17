@@ -43,6 +43,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.panwar2001.pdfpro.R
+import com.panwar2001.pdfpro.compose.CircularIcon
 import com.panwar2001.pdfpro.navigation.Screens
 import com.panwar2001.pdfpro.data.DataSource
 import com.panwar2001.pdfpro.data.ToolsData
@@ -180,10 +181,10 @@ fun NavItem(navigateTo: (String) -> Unit,
             .padding(16.dp),
         verticalAlignment = Alignment.CenterVertically
     ) {
-        Icon(
-            painter = painterResource(id = item.iconId),
-            contentDescription = stringResource(id = item.title),
-            modifier=Modifier.size(30.dp)
+        CircularIcon(iconResourceId = item.iconId,
+                     backgroundColor = item.iconColor,
+                     modifier = Modifier.size(40.dp),
+                     iconSize = 25.dp
         )
         Spacer(modifier = Modifier.width(16.dp))
         Text(

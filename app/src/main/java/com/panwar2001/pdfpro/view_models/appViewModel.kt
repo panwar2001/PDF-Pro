@@ -18,11 +18,13 @@ import com.panwar2001.pdfpro.compose.PdfRow
 import com.panwar2001.pdfpro.data.ToolsRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import java.util.Locale
 import javax.inject.Inject
 
@@ -143,12 +145,14 @@ class AppViewModel @Inject constructor(@ApplicationContext val context: Context,
     }
     fun searchPdfs(){
             viewModelScope.launch {
-                setPdfsList(toolsRepository.searchPdfs(
-                    sortingOrder = uiState.value.sortOption,
-                    ascendingSort = uiState.value.isAscending,
-                    mimeType = "application/pdf",
-                    query = uiState.value.query)
-                )
+                    setPdfsList(
+                        toolsRepository.searchPdfs(
+                            sortingOrder = uiState.value.sortOption,
+                            ascendingSort = uiState.value.isAscending,
+                            mimeType = "application/pdf",
+                            query = uiState.value.query
+                        )
+                    )
             }
     }
 

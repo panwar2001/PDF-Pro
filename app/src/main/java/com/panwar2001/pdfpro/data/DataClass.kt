@@ -1,6 +1,7 @@
 package com.panwar2001.pdfpro.data
 
 import android.net.Uri
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 
@@ -13,7 +14,8 @@ import androidx.compose.ui.unit.dp
 data class ToolsData(
     val iconId: Int,
     val title: Int,
-    val route: String
+    val route: String,
+    val iconColor: Color=Color.Blue
 )
 
 /**

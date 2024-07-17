@@ -69,7 +69,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.input.nestedscroll.nestedScroll
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -81,9 +80,9 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.panwar2001.pdfpro.R
+import com.panwar2001.pdfpro.compose.components.BottomIconButton
 import com.panwar2001.pdfpro.data.DataSource
 import com.panwar2001.pdfpro.data.ToolsData
-import com.panwar2001.pdfpro.compose.components.BottomIconButton
 import kotlinx.coroutines.launch
 
 data class PdfRow(
@@ -132,6 +131,7 @@ fun HomeScreen(onNavigationIconClick:()->Unit,
                 .fillMaxSize()
                 .padding(innerPadding)
         ) {
+            if(pagerState.currentPage==1){
             HomeScreenSearchBar(
                 pdfList = pdfList.take(topSearchCount),
                 query = query,
@@ -140,11 +140,11 @@ fun HomeScreen(onNavigationIconClick:()->Unit,
                 active = active,
                 onActiveChange=onActiveChange,
                 onSearchTrailingIconClick=onSearchTrailingIconClick)
+                }
 
             HorizontalPager(state = pagerState) { currentPage ->
                 if (currentPage == 0) {
-                    ComposeTools(searchedText = query,
-                                 navigateTo=navigateTo)
+                    ComposeTools(navigateTo=navigateTo)
                 }else{
                     PdfFilesScreen(listPDF = pdfList ,
                                    shareFile = shareFile,
@@ -275,19 +275,14 @@ fun TrailingIcon(onClick:()->Unit){
 /**
  *  Composable that iterates through various tools and display them on a card
  *
- *  @param searchedText the tool  searched via SearchView by the user
- *  the list of tools which match with the [searchedText]
  */
 @Composable
-fun ComposeTools(searchedText:String,
-           navigateTo: (String)->Unit) {
-    val context= LocalContext.current
+fun ComposeTools(navigateTo: (String)->Unit) {
     LazyColumn(contentPadding = PaddingValues(20.dp),
         modifier = Modifier.fillMaxSize()
     ) {
-        items(items = DataSource.ToolsList.filter {
-            context.getString(it.title).contains(searchedText, ignoreCase = true)
-        }, key = {it.title}) {item ->
+        items(items = DataSource.ToolsList,
+            key = {it.title}) {item ->
             Card(item =item,navigateTo=navigateTo)
         }
     }
@@ -296,11 +291,10 @@ fun ComposeTools(searchedText:String,
 @Composable
 fun CircularIcon(iconResourceId:Int,
                  backgroundColor: Color=Color.Blue,
-                 iconSize: Dp=30.dp){
+                 iconSize: Dp=30.dp,
+                 modifier: Modifier){
     Box(
-        modifier = Modifier
-            .size(80.dp)
-            .padding(10.dp)
+        modifier = modifier
             .aspectRatio(1f)
             .background(backgroundColor, shape = CircleShape),
     ) {
@@ -338,7 +332,7 @@ fun Card(item: ToolsData,
             .fillMaxWidth()
             .padding(dimensionResource(id = R.dimen.spacing_large))
         ,colors = CardDefaults.cardColors(
-            containerColor = Color.White,
+            containerColor = if(MaterialTheme.isLight())Color.White else Color.Unspecified,
         )
     ) {
         Column(   modifier = Modifier
@@ -353,12 +347,17 @@ fun Card(item: ToolsData,
                 verticalAlignment = Alignment.CenterVertically,
                 modifier = Modifier.fillMaxWidth()
             ) {
-                CircularIcon(iconResourceId = item.iconId)
+                CircularIcon(iconResourceId = item.iconId,
+                             backgroundColor = item.iconColor,
+                             modifier = Modifier
+                                 .size(80.dp)
+                                 .padding(10.dp)
+                )
                 Text(
                     text = stringResource(id = item.title),
                     textAlign = TextAlign.Center, // make text center horizontal
-                    fontWeight = FontWeight.Bold,
-                    fontSize = MaterialTheme.typography.titleMedium.fontSize
+                    fontWeight = FontWeight.ExtraBold,
+                    fontSize = MaterialTheme.typography.titleLarge.fontSize,
                 )
                 Spacer(modifier = Modifier.width(80.dp))
             }
@@ -387,28 +386,6 @@ fun Card(item: ToolsData,
                     modifier = Modifier.size(40.dp)
                 )
             }
-//            Row(Modifier.fillMaxWidth(),
-//                horizontalArrangement = Arrangement.End){
-//                Box(
-//                    Modifier
-//                        .border(
-//                            BorderStroke(2.dp, color = Color.Black),
-//                            shape = RoundedCornerShape(15.dp)
-//                        )
-//                        .background(
-//                            color = Color.Red,
-//                            shape = RoundedCornerShape(15.dp)
-//                        )
-//                ) {
-//                    Text(
-//                        text = "Choose a pdf",
-//                        fontSize = 16.sp,
-//                        fontWeight = FontWeight.Bold,
-//                        modifier = Modifier.padding(8.dp),
-//                        color = Color.White
-//                    )
-//                }
-//            }
         }
         }
     }
@@ -500,7 +477,7 @@ fun PdfFilesScreen(listPDF: List<PdfRow>,
                     .fillMaxWidth()
                     .padding(10.dp)
                     .clickable { onPdfCardClick(pdfItem.id) },
-                colors = CardDefaults.cardColors(containerColor = Color.White)
+                colors = CardDefaults.cardColors(containerColor = if(MaterialTheme.isLight())Color.White else Color.Unspecified)
             ) {
                 Row(Modifier.padding(10.dp),
                     horizontalArrangement = Arrangement.SpaceBetween,
@@ -514,6 +491,7 @@ fun PdfFilesScreen(listPDF: List<PdfRow>,
                             Text(
                                 text = pdfItem.name,
                                 overflow = TextOverflow.Ellipsis,
+                                fontWeight = FontWeight.Bold,
                                 maxLines = 1,
                                 modifier=Modifier.weight(1f))
                             Icon(
