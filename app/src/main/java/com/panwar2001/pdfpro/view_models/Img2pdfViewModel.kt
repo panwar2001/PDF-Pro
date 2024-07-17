@@ -180,5 +180,4 @@ class Img2pdfViewModel @Inject constructor(@ApplicationContext val context: Cont
             inputStream?.close()
         }
     }
-
 }

@@ -70,6 +70,8 @@ android {
             excludes += "/META-INF/{AL2.0,LGPL2.1}"
         }
     }
+    //https://dagger.dev/hilt/gradle-setup#aggregating-task
+    hilt {    enableAggregatingTask = true }
 }
 dependencies {
     implementation(libs.androidx.core.ktx)

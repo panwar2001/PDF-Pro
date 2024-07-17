@@ -1,21 +1,15 @@
 package com.panwar2001.pdfpro.view_models
 
-import android.app.DownloadManager
 import android.app.LocaleManager
 import android.content.ContentUris
 import android.content.Context
 import android.content.Intent
-import android.database.Cursor
-import android.graphics.pdf.PdfRenderer
 import android.net.Uri
 import android.os.Build
-import android.os.Environment
 import android.os.LocaleList
 import android.provider.MediaStore
-import android.provider.OpenableColumns
 import androidx.annotation.WorkerThread
 import androidx.appcompat.app.AppCompatDelegate
-import androidx.compose.runtime.currentCompositionLocalContext
 import androidx.core.os.LocaleListCompat
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -24,17 +18,13 @@ import com.panwar2001.pdfpro.compose.PdfRow
 import com.panwar2001.pdfpro.data.ToolsRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
-import kotlinx.coroutines.currentCoroutineContext
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
-import java.text.SimpleDateFormat
-import java.util.Date
 import java.util.Locale
 import javax.inject.Inject
-import kotlin.coroutines.coroutineContext
 
 /**
  * Data class that represents the current UI state
@@ -108,29 +98,21 @@ class AppViewModel @Inject constructor(@ApplicationContext val context: Context,
         }
     }
  fun setUri(uriId:Long){
-     _uiState.update {
-         val baseUri = MediaStore.Files.getContentUri("external")
-         val uri = ContentUris.withAppendedId(baseUri, uriId)
-         it.copy(pdfUri = uri, numPages = getNumPages(uri), pdfName = getPdfName(uri))
-        }
-    }
-    @WorkerThread
-    private fun getNumPages(uri:Uri): Int{
-        val fileDescriptor = context.contentResolver.openFileDescriptor(uri, "r")
-        fileDescriptor?.use { descriptor ->
-            return PdfRenderer(descriptor).pageCount
-        }
-        return 0
-    }
-    private fun getPdfName(uri:Uri):String{
-        //set file name
-        val returnCursor = context.contentResolver.query(uri, null, null, null, null)
-        returnCursor?.use {
-                val nameIndex = it.getColumnIndex(OpenableColumns.DISPLAY_NAME)
-                it.moveToFirst()
-                return it.getString(nameIndex)
-        }
-        return ""
+     try {
+         viewModelScope.launch {
+             _uiState.update {
+                 val baseUri = MediaStore.Files.getContentUri("external")
+                 val uri = ContentUris.withAppendedId(baseUri, uriId)
+                 it.copy(
+                     pdfUri = uri,
+                     numPages = toolsRepository.getNumPages(uri),
+                     pdfName = toolsRepository.getPdfName(uri)
+                 )
+             }
+         }
+     }catch(e: Exception){
+         e.printStackTrace()
+     }
     }
     fun setBottomSheetVisible(visible:Boolean){
         _uiState.update {
@@ -142,8 +124,9 @@ class AppViewModel @Inject constructor(@ApplicationContext val context: Context,
             it.copy(sortOption = sortOption)
         }
     }
+
     /**
-     * TODO:  check for how to set locale for less than android 13 version
+     * TODO("check for how to set locale for less than android 13 version")
      */
     @WorkerThread
      fun setLocale(localeTag: String) {
