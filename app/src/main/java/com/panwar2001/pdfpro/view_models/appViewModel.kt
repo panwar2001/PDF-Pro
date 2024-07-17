@@ -15,20 +15,26 @@ import android.provider.MediaStore
 import android.provider.OpenableColumns
 import androidx.annotation.WorkerThread
 import androidx.appcompat.app.AppCompatDelegate
+import androidx.compose.runtime.currentCompositionLocalContext
 import androidx.core.os.LocaleListCompat
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import com.panwar2001.pdfpro.R
 import com.panwar2001.pdfpro.compose.PdfRow
+import com.panwar2001.pdfpro.data.ToolsRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
+import kotlinx.coroutines.currentCoroutineContext
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
+import kotlinx.coroutines.launch
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
 import javax.inject.Inject
+import kotlin.coroutines.coroutineContext
 
 /**
  * Data class that represents the current UI state
@@ -47,7 +53,8 @@ data class AppUiState(
 
 
 @HiltViewModel
-class AppViewModel @Inject constructor(@ApplicationContext val context: Context): ViewModel() {
+class AppViewModel @Inject constructor(@ApplicationContext val context: Context,
+                                        private val toolsRepository: ToolsRepository): ViewModel() {
     private val _uiState = MutableStateFlow(AppUiState())
     val uiState: StateFlow<AppUiState> = _uiState.asStateFlow()
     private val mimeType = "application/pdf"
@@ -151,68 +158,15 @@ class AppViewModel @Inject constructor(@ApplicationContext val context: Context)
             )
         }
     }
-    fun saveFileToDownload(uri:Uri,context: Context){
-        val request = DownloadManager.Request(uri)
-        request.setTitle("PDF Download") // Title of the download notification
-        request.setDescription("Downloading PDF") // Description of the download notification
-        request.setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE_NOTIFY_COMPLETED)
-
-        // Set destination in Downloads folder
-        request.setDestinationInExternalPublicDir(Environment.DIRECTORY_DOWNLOADS, "example.pdf")
-
-        // Enqueue the download and get download reference ID
-        val downloadManager = context.getSystemService(Context.DOWNLOAD_SERVICE)  as DownloadManager
-        downloadManager.enqueue(request)
-    }
     fun searchPdfs(){
-        val projection = arrayOf(
-            MediaStore.Files.FileColumns._ID,
-            MediaStore.Files.FileColumns.DATE_MODIFIED,
-            MediaStore.Files.FileColumns.DISPLAY_NAME,
-            MediaStore.Files.FileColumns.SIZE
-        )
-
-        val sortBy=when(uiState.value.sortOption){
-            R.string.sort_by_name -> MediaStore.Files.FileColumns.DISPLAY_NAME
-            R.string.sort_by_size -> MediaStore.Files.FileColumns.SIZE
-            else-> MediaStore.Files.FileColumns.DATE_MODIFIED
-        }
-        val sortOrder= if(uiState.value.isAscending) "ASC" else "DESC"
-        val whereClause = "${MediaStore.Files.FileColumns.MIME_TYPE} IN ('$mimeType') AND ${MediaStore.Files.FileColumns.DISPLAY_NAME} LIKE '%${uiState.value.query}%'"
-        val orderBy = "$sortBy $sortOrder"
-        val cursor: Cursor? = context.contentResolver.query(
-            MediaStore.Files.getContentUri("external"),
-            projection,
-            whereClause,
-            null,
-            orderBy
-        )
-        val listPDF=mutableListOf<PdfRow>()
-
-        cursor?.use {
-            if (it.moveToFirst()) {
-                val idCol = it.getColumnIndexOrThrow(MediaStore.Files.FileColumns._ID)
-                val modifiedCol = it.getColumnIndexOrThrow(MediaStore.Files.FileColumns.DATE_MODIFIED)
-                val nameCol = it.getColumnIndexOrThrow(MediaStore.Files.FileColumns.DISPLAY_NAME)
-                val sizeCol = it.getColumnIndexOrThrow(MediaStore.Files.FileColumns.SIZE)
-                do {
-                    val dateModified = it.getLong(modifiedCol).toTimeDateString()
-                    val name = it.getString(nameCol)
-                    val size = it.getLong(sizeCol).toMB()
-                    val id = it.getLong(idCol)
-                    listPDF.add(PdfRow(dateModified,name,size,id))
-                } while (it.moveToNext())
-                setPdfsList(listPDF)
+            viewModelScope.launch {
+                setPdfsList(toolsRepository.searchPdfs(
+                    sortingOrder = uiState.value.sortOption,
+                    ascendingSort = uiState.value.isAscending,
+                    mimeType = "application/pdf",
+                    query = uiState.value.query)
+                )
             }
-        }
-    }
-    private fun Long.toTimeDateString(): String {
-        val dateTime = Date(this*1000)
-        val format = SimpleDateFormat("dd/MM/yyyy HH:mm:ss", Locale.US)
-        return format.format(dateTime)
-    }
-    private fun Long.toMB():Float{
-        return  Math.round(this*100.0f/1048576)/100f
     }
 
     fun sharePdfFile(id:Long,startActivity:(shareIntent:Intent)->Unit){

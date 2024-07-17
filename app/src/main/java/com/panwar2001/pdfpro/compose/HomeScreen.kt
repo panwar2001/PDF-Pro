@@ -117,6 +117,7 @@ fun HomeScreen(onNavigationIconClick:()->Unit,
                sortBy: Int,
                topSearchCount:Int=7,
                onSearchTrailingIconClick:()->Unit) {
+
     val scrollBehavior = TopAppBarDefaults.exitUntilCollapsedScrollBehavior(rememberTopAppBarState())
     Scaffold(
         modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),

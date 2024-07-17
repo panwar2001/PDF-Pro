@@ -7,5 +7,5 @@ import java.util.Date
 @Entity(tableName = "folders")
 data class Folder(
     @PrimaryKey val id: String,
-    val lastModified: Date
+    val lastModified: Long
 )

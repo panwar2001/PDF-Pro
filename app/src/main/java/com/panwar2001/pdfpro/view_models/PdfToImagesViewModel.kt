@@ -11,13 +11,16 @@ import androidx.compose.ui.graphics.asImageBitmap
 import androidx.core.graphics.drawable.toBitmap
 import androidx.core.graphics.drawable.toDrawable
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import com.panwar2001.pdfpro.R
+import com.panwar2001.pdfpro.data.ToolsRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
+import kotlinx.coroutines.launch
 import java.util.Timer
 import javax.inject.Inject
 import kotlin.concurrent.schedule
@@ -36,7 +39,10 @@ data class PdfToImagesUiState(
 )
 
 @HiltViewModel
-class PdfToImagesViewModel @Inject constructor(@ApplicationContext val context: Context): ViewModel() {
+class PdfToImagesViewModel
+@Inject
+constructor(@ApplicationContext val context: Context,
+            private val toolsRepository: ToolsRepository): ViewModel() {
     private val _uiState = MutableStateFlow(PdfToImagesUiState())
     val uiState: StateFlow<PdfToImagesUiState> = _uiState.asStateFlow()
     /**
@@ -72,46 +78,20 @@ class PdfToImagesViewModel @Inject constructor(@ApplicationContext val context: 
     @WorkerThread
     fun generateThumbnailFromPDF(){
         try {
-            Timer().schedule(1) {
-                val contentResolver = context.contentResolver
-                val fileDescriptor = contentResolver.openFileDescriptor(uiState.value.uri, "r")
-                fileDescriptor?.use { descriptor ->
-                    val pdfRenderer = PdfRenderer(descriptor)
-                    pdfRenderer.use { renderer ->
-                        val page = renderer.openPage(0)
-                        val bitmap = Bitmap.createBitmap(
-                            page.width,
-                            page.height,
-                            Bitmap.Config.ARGB_8888
-                        )
-                        page.render(bitmap, null, null, PdfRenderer.Page.RENDER_MODE_FOR_DISPLAY)
-                        _uiState.update { state ->
-                            state.copy(
-                                thumbnail = bitmap.asImageBitmap(),
-                                numPages = pdfRenderer.pageCount
-                            )
-                        }
-                        setLoading(false)
-                        page.close()
-                    }
-                //set file name
-                val returnCursor =
-                    context.contentResolver.query(uiState.value.uri, null, null, null, null)
-                returnCursor.use {
-                    if (it != null) {
-                        val nameIndex = it.getColumnIndex(OpenableColumns.DISPLAY_NAME)
-                        it.moveToFirst()
-                        val fileName = it.getString(nameIndex)
-                        it.close()
-                        _uiState.update { state ->
-                            state.copy(fileName = fileName)
-                        }
-                    }
+            viewModelScope.launch {
+                _uiState.update { state ->
+                    state.copy(
+                        thumbnail =toolsRepository.getThumbnailOfPdf(uiState.value.uri)!!,
+                        numPages = toolsRepository.getNumPages(uiState.value.uri),
+                        fileName = toolsRepository.getPdfName(uiState.value.uri)
+                    )
                 }
-            }
             }
         } catch (e: Exception) {
             e.printStackTrace()
+        }
+        finally {
+            setLoading(false)
         }
     }
     @WorkerThread

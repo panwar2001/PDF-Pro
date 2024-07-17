@@ -10,7 +10,7 @@ import javax.inject.Singleton
 
 @Module
 @InstallIn(ViewModelComponent::class) // Use ApplicationComponent for Application-scoped bindings
-object AppModule {
+object ContextProviderModule {
     @Provides
     @Singleton
     fun provideApplicationContext(application: Application): Context {
@@ -18,3 +18,4 @@ object AppModule {
     }
 
 }
+

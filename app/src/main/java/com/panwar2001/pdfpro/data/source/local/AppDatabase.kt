@@ -6,7 +6,7 @@ import androidx.room.RoomDatabase
 /**
  *  exportSchema should be true in production databases.
  */
-@Database(entities = [], version = 1, exportSchema = false)
+@Database(entities = [Folder::class], version = 1, exportSchema = false)
 abstract class AppDatabase : RoomDatabase() {
-    abstract fun imagesDao(): ImagesFolderDao
+//    abstract fun imagesDao(): ImagesFolderDao
 }
