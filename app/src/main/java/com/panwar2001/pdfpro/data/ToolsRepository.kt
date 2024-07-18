@@ -9,6 +9,7 @@ import android.net.Uri
 import android.os.Environment
 import android.provider.MediaStore
 import android.provider.OpenableColumns
+import android.util.Log
 import androidx.annotation.WorkerThread
 import androidx.compose.ui.graphics.ImageBitmap
 import androidx.compose.ui.graphics.asImageBitmap
@@ -17,7 +18,9 @@ import com.panwar2001.pdfpro.compose.PdfRow
 import com.tom_roush.pdfbox.pdmodel.PDDocument
 import com.tom_roush.pdfbox.text.PDFTextStripper
 import dagger.hilt.android.qualifiers.ApplicationContext
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.update
+import kotlinx.coroutines.withContext
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
@@ -102,25 +105,25 @@ import kotlin.concurrent.schedule
          return  Math.round(this*100.0f/1048576)/100f
      }
 
-     @WorkerThread
-     override  suspend  fun getThumbnailOfPdf(uri:Uri):ImageBitmap ?{
-         val contentResolver = context.contentResolver
-         val fileDescriptor = contentResolver.openFileDescriptor(uri, "r")
-         fileDescriptor?.use { descriptor ->
-                 PdfRenderer(descriptor).use { renderer ->
-                 val page = renderer.openPage(0)
-                 val bitmap = Bitmap.createBitmap(
-                     page.width,
-                     page.height,
-                     Bitmap.Config.ARGB_8888
-                 )
-                 page.render(bitmap, null, null, PdfRenderer.Page.RENDER_MODE_FOR_DISPLAY)
-                 page.close()
-                 return bitmap.asImageBitmap()
-             }
-         }
-         return null
-     }
+     override  suspend  fun getThumbnailOfPdf(uri:Uri):ImageBitmap?{
+        return withContext(Dispatchers.IO) {
+               val contentResolver = context.contentResolver
+               val fileDescriptor = contentResolver.openFileDescriptor(uri, "r")
+               fileDescriptor?.use { descriptor ->
+                   PdfRenderer(descriptor).use { renderer ->
+                       val page = renderer.openPage(0)
+                       val bitmap = Bitmap.createBitmap(
+                           page.width,
+                           page.height,
+                           Bitmap.Config.ARGB_8888
+                       )
+                       page.render(bitmap, null, null, PdfRenderer.Page.RENDER_MODE_FOR_DISPLAY)
+                       page.close()
+                       bitmap.asImageBitmap()
+                   }
+               }
+           }
+ }
     override suspend fun getNumPages(uri:Uri):Int {
          val contentResolver = context.contentResolver
          val fileDescriptor = contentResolver.openFileDescriptor(uri, "r")
@@ -146,10 +149,12 @@ import kotlin.concurrent.schedule
 
      @WorkerThread
      override suspend fun convertToText(uri: Uri): String {
-         context.contentResolver.openInputStream(uri).use {
-                     PDDocument.load(it).use { doc->
-                         return PDFTextStripper().getText(doc)
-                     }
-               }
+         return withContext(Dispatchers.IO) {
+             context.contentResolver.openInputStream(uri).use {
+                 PDDocument.load(it).use { doc ->
+                      PDFTextStripper().getText(doc)
+                 }
+             }
          }
+      }
     }

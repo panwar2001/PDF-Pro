@@ -1,5 +1,6 @@
 package com.panwar2001.pdfpro.compose.pdfToText
 
+import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.wrapContentSize
@@ -15,8 +16,11 @@ import androidx.compose.ui.unit.dp
 import com.panwar2001.pdfpro.compose.AppBar
 
 @Composable
-fun TextScreen(text:String,onNavigationIconClick:()->Unit){
+fun TextScreen(text:String,onNavigationIconClick:()->Unit, onBackPress:()->Unit={}){
     val scrollState= rememberScrollState()
+    BackHandler {
+        onBackPress()
+    }
     Scaffold(topBar = {
             AppBar(onNavigationIconClick =onNavigationIconClick )
         }){padding->
@@ -27,7 +31,9 @@ fun TextScreen(text:String,onNavigationIconClick:()->Unit){
         ) {
                 Text(
                     text = text,
-                    modifier = Modifier.wrapContentSize().padding(5.dp),
+                    modifier = Modifier
+                        .wrapContentSize()
+                        .padding(5.dp),
                     fontWeight = FontWeight.SemiBold,
                     fontFamily = FontFamily.Monospace
                 )

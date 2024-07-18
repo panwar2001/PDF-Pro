@@ -11,8 +11,11 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.ElevatedButton
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -28,8 +31,11 @@ import com.panwar2001.pdfpro.compose.AppBar
 @Composable
 fun FilePickerScreen(onNavigationIconClick:()->Unit,
                      onClick: () -> Unit,
-                     tool:Tool) {
-    Scaffold(topBar = {
+                     tool:Tool,
+                     snackBarHostState: SnackbarHostState= remember { SnackbarHostState() }
+) {
+    Scaffold(snackbarHost ={ SnackbarHost(hostState = snackBarHostState)},
+        topBar = {
         AppBar(onNavigationIconClick =onNavigationIconClick ) //Appbar scope end
     }) { innerPadding ->
         Column(modifier = Modifier
