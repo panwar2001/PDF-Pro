@@ -15,6 +15,8 @@ import androidx.compose.material.icons.automirrored.filled.ArrowForward
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -28,24 +30,24 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.panwar2001.pdfpro.R
-import com.panwar2001.pdfpro.navigation.Screens
-import com.panwar2001.pdfpro.data.Tool
 import com.panwar2001.pdfpro.compose.AppBar
+import com.panwar2001.pdfpro.data.Tool
 
 @Composable
 fun PreviewFileScreen(onNavigationIconClick:()->Unit,
-                 navigateTo: (String)->Unit,
                   thumbnail:ImageBitmap,
                       fileName:String,
                       setLoading:(Boolean)->Unit,
                       convertToText:()->Unit,
-                      tool: Tool) {
+                      tool: Tool,
+                      snackBarHostState: SnackbarHostState,
+                      navigateToPdfViewer:()->Unit) {
     Scaffold(
+        snackbarHost = { SnackbarHost(hostState = snackBarHostState)},
         floatingActionButton = {
             FloatingActionButton(onClick = {
                 setLoading(true)
                 convertToText()
-                navigateTo(Screens.PdfToText.TextScreen.route)
             },
                 containerColor = Color.Red,
                 contentColor = Color.White,
@@ -77,7 +79,7 @@ fun PreviewFileScreen(onNavigationIconClick:()->Unit,
                 Box(modifier= Modifier
                     .background(color = Color.LightGray)
                     .clickable {
-                        navigateTo(Screens.PdfToText.PdfViewer.route)
+                        navigateToPdfViewer()
                     }){
                     Column(
                         horizontalAlignment = Alignment.CenterHorizontally,
