@@ -107,7 +107,7 @@ constructor(private val toolsRepository: ToolsInterfaceRepository): ViewModel() 
                 setPdfText(toolsRepository.convertToText(uri = uiState.value.uri))
             }catch (e: Exception){
                 e.printStackTrace()
-                state="failure"
+                state="error"
                 setSnackBarMessage(R.string.error_message)
             }finally {
                 setState(state)

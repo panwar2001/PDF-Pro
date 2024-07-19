@@ -74,8 +74,27 @@ internal class Pdf2txtViewModelTest {
         advanceUntilIdle()// Ensures all pending coroutines are executed
         assertEquals(pdf2txtViewModel.uiState.value.state,"success")
     }
-//    @Test
-//    fun testConvertToText(){
-//    }
+    @Test
+    fun testConvertToText()= runTest{
+        val uri= mock(Uri::class.java)
+        Mockito.`when`(toolsRepository.convertToText(any())).thenAnswer{ invocation->
+            val t=invocation.getArgument(0) as Uri
+            if(t==uri){
+                throw Exception("Exception check")
+            }
+            return@thenAnswer "returned text"
+        }
+        pdf2txtViewModel.setUri(uri)
+        pdf2txtViewModel.convertToText()
+        advanceUntilIdle()// Ensures all pending coroutines are executed
+        assertEquals(pdf2txtViewModel.uiState.value.state,"error")
+
+        val uri2=mock(Uri::class.java)
+        pdf2txtViewModel.setUri(uri2)
+        pdf2txtViewModel.convertToText()
+        advanceUntilIdle()// Ensures all pending coroutines are executed
+        assertEquals(pdf2txtViewModel.uiState.value.state,"success")
+        assertEquals(pdf2txtViewModel.uiState.value.text,"returned text")
+    }
 
 }
