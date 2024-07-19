@@ -7,6 +7,9 @@ import android.content.Context
 import android.database.Cursor
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
+import android.graphics.Canvas
+import android.graphics.Color
+import android.graphics.Paint
 import android.graphics.pdf.PdfDocument
 import android.graphics.pdf.PdfDocument.PageInfo
 import android.graphics.pdf.PdfRenderer
@@ -18,8 +21,6 @@ import android.provider.MediaStore
 import android.provider.OpenableColumns
 import androidx.annotation.WorkerThread
 import androidx.appcompat.app.AppCompatDelegate
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.Paint
 import androidx.core.content.FileProvider
 import androidx.core.os.LocaleListCompat
 import androidx.documentfile.provider.DocumentFile
@@ -214,7 +215,7 @@ import javax.inject.Singleton
                  val page = document.startPage(pageInfo)
                  val canvas = page.canvas
                  val paint = Paint()
-                 paint.color = Color.White
+                 paint.color = Color.WHITE
                  canvas.drawBitmap(bitmap, 0f, 0f, null)
                  document.finishPage(page)
                  _progress.value=i * 1.0f / length
@@ -258,7 +259,6 @@ import javax.inject.Singleton
              type = docFile?.type?:"",
              size = docFile?.length()?.toMB() ?: 0f)
      }
-
      override suspend fun pdfToImages(uri: Uri): List<Bitmap> {
          val contentResolver = context.contentResolver
          val fileDescriptor = contentResolver.openFileDescriptor(uri, "r")
@@ -277,6 +277,10 @@ import javax.inject.Singleton
                          page.height,
                          Bitmap.Config.ARGB_8888
                      )
+                     val canvas = Canvas(bitmap)
+                     val paint =Paint().apply { color= Color.WHITE}
+                     canvas.drawRect(0f, 0f, page.width.toFloat(), page.height.toFloat(), paint)
+
                      page.render(
                          bitmap,
                          null,
