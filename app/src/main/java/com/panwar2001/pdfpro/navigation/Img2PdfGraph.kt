@@ -87,9 +87,9 @@ fun NavGraphBuilder.img2PdfGraph(scope: CoroutineScope,
         composable(route= Screens.Img2Pdf.SavePdfScreen.route){ backStackEntry->
             val viewModel = navActions.sharedViewModel<Img2pdfViewModel>(backStackEntry)
             val uiState by viewModel.uiState.collectAsState()
-
+            val progress by viewModel.progress.collectAsState()
             if (uiState.isLoading) {
-                DeterminateIndicator(uiState.progress)
+                DeterminateIndicator(progress)
             } else {
                     SavePdfScreen(
                 backNavigate = navActions::navigateBack,

@@ -1,6 +1,7 @@
 package com.panwar2001.pdfpro.navigation
 
-import android.content.Intent
+import android.content.ContentUris
+import android.provider.MediaStore
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.runtime.collectAsState
@@ -12,6 +13,7 @@ import androidx.navigation.navigation
 import com.panwar2001.pdfpro.compose.HomeScreen
 import com.panwar2001.pdfpro.compose.LanguagePickerScreen
 import com.panwar2001.pdfpro.compose.components.PdfViewer
+import com.panwar2001.pdfpro.compose.components.sharePdfFile
 import com.panwar2001.pdfpro.view_models.AppViewModel
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
@@ -47,9 +49,8 @@ fun NavGraphBuilder.appGraph(scope:CoroutineScope,
                 showBottomSheet = uiState.isBottomSheetVisible,
                 setBottomSheetState = viewModel::setBottomSheetVisible,
                 shareFile = {
-                    viewModel.sharePdfFile(it) { intent ->
-                        context.startActivity(Intent.createChooser(intent, "Share PDF"))
-                    }
+                    val baseUri = MediaStore.Files.getContentUri("external")
+                    sharePdfFile(context,ContentUris.withAppendedId(baseUri, it),"application/pdf")
                 },
                 onPdfCardClick = {
                     viewModel.setUri(it)

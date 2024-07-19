@@ -79,12 +79,11 @@ fun NavGraphBuilder.pdf2ImgGraph(scope: CoroutineScope,
         composable(route= Screens.PdfToImage.ImageScreen.route) { backStackEntry->
             val viewModel = navActions.sharedViewModel<PdfToImagesViewModel>(backStackEntry)
             val uiState by viewModel.uiState.collectAsState()
-            if (uiState.isLoading) {
-                DeterminateIndicator(uiState.progress)
+            val progress by viewModel.progress.collectAsState()
+
+            if (uiState.isLoading || uiState.images.isEmpty()) {
+                DeterminateIndicator(progress)
             } else {
-                if (uiState.images.isEmpty()) {
-                    DeterminateIndicator(uiState.progress)
-                } else {
                     ImagesScreen(images = uiState.images,
                         onNavigationIconClick = navActions::toggleDrawer
                     )
@@ -92,4 +91,3 @@ fun NavGraphBuilder.pdf2ImgGraph(scope: CoroutineScope,
             }
         }
     }
-}

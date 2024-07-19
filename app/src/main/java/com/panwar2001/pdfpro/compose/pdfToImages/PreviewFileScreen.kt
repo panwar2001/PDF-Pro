@@ -1,6 +1,6 @@
 package com.panwar2001.pdfpro.compose.pdfToImages
 
-import androidx.compose.foundation.Image
+import android.graphics.Bitmap
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -20,22 +20,22 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.ImageBitmap
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.panwar2001.pdfpro.navigation.Screens
-import com.panwar2001.pdfpro.data.Tool
-import com.panwar2001.pdfpro.compose.AppBar
+import coil.compose.AsyncImage
 import com.panwar2001.pdfpro.R
+import com.panwar2001.pdfpro.compose.AppBar
+import com.panwar2001.pdfpro.data.Tool
+import com.panwar2001.pdfpro.navigation.Screens
 
 @Composable
 fun PreviewFileScreen(onNavigationIconClick:()->Unit,
                       navigateTo: (String)->Unit,
-                      thumbnail:ImageBitmap,
+                      thumbnail: Bitmap,
                       fileName:String,
                       setLoading:(Boolean)->Unit,
                       convertToImages:()->Unit,
@@ -92,11 +92,10 @@ fun PreviewFileScreen(onNavigationIconClick:()->Unit,
                     Column(
                         horizontalAlignment = Alignment.CenterHorizontally,
                     ){
-                        Image(
-                            bitmap = thumbnail,
+                        AsyncImage(model = thumbnail,
                             contentDescription = stringResource(id = R.string.pdf2img),
-                            modifier=Modifier.padding(5.dp)
-                        )
+                            modifier=Modifier.padding(5.dp))
+
                         Text(text = fileName,
                             modifier=Modifier.wrapContentSize(),
                             color = Color.Black,

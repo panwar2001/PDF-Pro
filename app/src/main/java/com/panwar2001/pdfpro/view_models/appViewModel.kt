@@ -15,16 +15,14 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.panwar2001.pdfpro.R
 import com.panwar2001.pdfpro.compose.PdfRow
-import com.panwar2001.pdfpro.data.ToolsRepository
+import com.panwar2001.pdfpro.data.ToolsInterfaceRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 import java.util.Locale
 import javax.inject.Inject
 
@@ -46,7 +44,7 @@ data class AppUiState(
 
 @HiltViewModel
 class AppViewModel @Inject constructor(@ApplicationContext val context: Context,
-                                        private val toolsRepository: ToolsRepository): ViewModel() {
+                                        private val toolsRepository: ToolsInterfaceRepository): ViewModel() {
     private val _uiState = MutableStateFlow(AppUiState())
     val uiState: StateFlow<AppUiState> = _uiState.asStateFlow()
     private val mimeType = "application/pdf"
@@ -73,11 +71,7 @@ class AppViewModel @Inject constructor(@ApplicationContext val context: Context,
     }
     @WorkerThread
      fun getCurrentLocale(): String {
-        return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-            context.getSystemService(LocaleManager::class.java).applicationLocales.toLanguageTags()
-        } else {
-            AppCompatDelegate.getApplicationLocales().toLanguageTags()
-        }
+         return toolsRepository.getAppLocale()
     }
     fun setSearchText(query: String){
         _uiState.update {
@@ -103,8 +97,7 @@ class AppViewModel @Inject constructor(@ApplicationContext val context: Context,
      try {
          viewModelScope.launch {
              _uiState.update {
-                 val baseUri = MediaStore.Files.getContentUri("external")
-                 val uri = ContentUris.withAppendedId(baseUri, uriId)
+                 val uri=toolsRepository.getUriFromMediaId(uriId)
                  it.copy(
                      pdfUri = uri,
                      numPages = toolsRepository.getNumPages(uri),
@@ -127,22 +120,11 @@ class AppViewModel @Inject constructor(@ApplicationContext val context: Context,
         }
     }
 
-    /**
-     * TODO("check for how to set locale for less than android 13 version")
-     */
-    @WorkerThread
      fun setLocale(localeTag: String) {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-            context.getSystemService(LocaleManager::class.java).applicationLocales=  LocaleList(
-                Locale.forLanguageTag(localeTag))
-        } else {
-            AppCompatDelegate.setApplicationLocales(
-                LocaleListCompat.forLanguageTags(
-                    localeTag
-                )
-            )
+        viewModelScope.launch {
+            toolsRepository.setAppLocale(localeTag)
         }
-    }
+     }
     fun searchPdfs(){
             viewModelScope.launch {
                     setPdfsList(
@@ -156,16 +138,4 @@ class AppViewModel @Inject constructor(@ApplicationContext val context: Context,
             }
     }
 
-    fun sharePdfFile(id:Long,startActivity:(shareIntent:Intent)->Unit){
-        val baseUri = MediaStore.Files.getContentUri("external")
-        val fileUri= ContentUris.withAppendedId(baseUri, id)
-        val shareIntent= Intent().apply {
-            action= Intent.ACTION_SEND
-            type= mimeType
-            addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-            putExtra(Intent.EXTRA_STREAM,fileUri)
-            addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
-        }
-        startActivity(shareIntent)
-    }
 }
