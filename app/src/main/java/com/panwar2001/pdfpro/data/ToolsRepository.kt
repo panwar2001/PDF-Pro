@@ -26,6 +26,7 @@ import androidx.core.os.LocaleListCompat
 import androidx.documentfile.provider.DocumentFile
 import com.panwar2001.pdfpro.R
 import com.panwar2001.pdfpro.compose.PdfRow
+import com.panwar2001.pdfpro.view_models.PdfToTextUiState
 import com.tom_roush.pdfbox.pdmodel.PDDocument
 import com.tom_roush.pdfbox.text.PDFTextStripper
 import dagger.hilt.android.qualifiers.ApplicationContext
@@ -179,16 +180,15 @@ import javax.inject.Singleton
              }
          }
       }
-
+// TODO("check for how to set locale for less than android 13 version")
      override fun getAppLocale(): String {
          return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
              context.getSystemService(LocaleManager::class.java).applicationLocales.toLanguageTags()
          } else {
              AppCompatDelegate.getApplicationLocales().toLanguageTags()
-             TODO("check for how to set locale for less than android 13 version")
          }
      }
-
+//TODO("check for how to set locale for less than android 13 version")
      override suspend fun setAppLocale(localeTag: String) {
          if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
              context.getSystemService(LocaleManager::class.java).applicationLocales=  LocaleList(
@@ -200,7 +200,6 @@ import javax.inject.Singleton
                  )
              )
          }
-         TODO("check for how to set locale for less than android 13 version")
      }
 
      @WorkerThread
@@ -303,5 +302,17 @@ import javax.inject.Singleton
      override fun getUriFromMediaId(id: Long): Uri {
          val baseUri = MediaStore.Files.getContentUri("external")
          return ContentUris.withAppendedId(baseUri, id)
+     }
+
+     override fun initPdfToTextUiState(): PdfToTextUiState {
+         return PdfToTextUiState(
+              uri=Uri.EMPTY,
+              isLoading=false,
+              thumbnail=getDefaultThumbnail(),
+              fileName="file.pdf",
+              text= "",
+              numPages=0,
+              userMessage=0,
+              state="")
      }
  }

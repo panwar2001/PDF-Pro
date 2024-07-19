@@ -19,14 +19,14 @@ import javax.inject.Inject
  * Data class that represents the current UI state in terms of  and [uri]
  */
 data class PdfToTextUiState(
-    val uri: Uri=Uri.EMPTY,
-    val isLoading:Boolean=false,
+    val uri: Uri,
+    val isLoading:Boolean,
     val thumbnail: Bitmap,
-    val fileName: String="file.pdf",
-    val text: String= "",
-    val numPages:Int=0,
-    val userMessage: Int=0,
-    val state: String=""
+    val fileName: String,
+    val text: String,
+    val numPages:Int,
+    val userMessage: Int,
+    val state: String
 )
 
 @HiltViewModel
@@ -34,9 +34,7 @@ class PdfToTextViewModel
 @Inject
 constructor(private val toolsRepository: ToolsInterfaceRepository): ViewModel() {
 
-    private val _uiState = MutableStateFlow(PdfToTextUiState(
-        thumbnail = toolsRepository.getDefaultThumbnail()
-    ))
+    private val _uiState = MutableStateFlow(toolsRepository.initPdfToTextUiState())
     val uiState: StateFlow<PdfToTextUiState> = _uiState.asStateFlow()
     /**
      * Set the [uri] of a file for the current ui state.

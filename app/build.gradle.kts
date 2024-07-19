@@ -95,6 +95,8 @@ dependencies {
     annotationProcessor(libs.androidx.room.compiler)
     ksp(libs.hilt.android.compiler)
     ksp(libs.androidx.room.compiler)
+//    implementation(libs.kotlinx.coroutines.core)
+
     /**
      * Compose Dependencies
      */
@@ -111,7 +113,14 @@ dependencies {
     androidTestImplementation(libs.androidx.espresso.core)
     androidTestImplementation(platform(libs.androidx.compose.bom))
     androidTestImplementation(libs.androidx.ui.test.junit4)
+    testImplementation(libs.mockito.kotlin)
+    testImplementation(libs.powermock.api.mockito)
+    testImplementation(libs.powermock.module.junit4)
+    testImplementation(libs.kotlinx.coroutines.core)
+    //https://kotlinlang.org/api/kotlinx.coroutines/kotlinx-coroutines-test/
+    testImplementation(libs.kotlinx.coroutines.test)
     debugImplementation(libs.androidx.ui.tooling)
+
     debugImplementation(libs.androidx.ui.test.manifest)
 }
 

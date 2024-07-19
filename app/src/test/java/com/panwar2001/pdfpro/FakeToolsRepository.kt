@@ -2,16 +2,23 @@ package com.panwar2001.pdfpro
 
 import android.content.Context
 import android.graphics.Bitmap
-import android.graphics.BitmapFactory
 import android.net.Uri
-import androidx.compose.ui.graphics.ImageBitmap
-import androidx.compose.ui.graphics.asImageBitmap
+import androidx.core.graphics.createBitmap
 import com.panwar2001.pdfpro.compose.PdfRow
 import com.panwar2001.pdfpro.data.ImageInfo
 import com.panwar2001.pdfpro.data.ToolsInterfaceRepository
+import com.panwar2001.pdfpro.view_models.PdfToTextUiState
+import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import org.mockito.Mockito.mock
+import org.powermock.api.mockito.PowerMockito
 
-class FakeToolsRepository(override val progress: StateFlow<Float>) : ToolsInterfaceRepository {
+
+
+class FakeToolsRepository() : ToolsInterfaceRepository {
+    private val _progress = MutableStateFlow(0f)
+    override val progress: StateFlow<Float> get() = _progress
+
     override suspend fun saveFileToDownload(uri: Uri, context: Context) {
         TODO("Not yet implemented")
     }
@@ -28,10 +35,10 @@ class FakeToolsRepository(override val progress: StateFlow<Float>) : ToolsInterf
     }
 
     override suspend fun getThumbnailOfPdf(uri: Uri): Bitmap {
-        if(uri==Uri.EMPTY){
             throw Exception("The uri is Empty")
-        }
-        TODO("test")
+//        else{
+//            throw Exception("done")
+//        }
     }
 
     override suspend fun getNumPages(uri: Uri): Int {
@@ -67,8 +74,23 @@ class FakeToolsRepository(override val progress: StateFlow<Float>) : ToolsInterf
     }
 
     override fun getDefaultThumbnail(): Bitmap {
+        val bitmap: Bitmap = mock(Bitmap::class.java)
+        return bitmap
+    }
+
+    override fun getUriFromMediaId(id: Long): Uri {
         TODO("Not yet implemented")
     }
 
-
+    override fun initPdfToTextUiState(): PdfToTextUiState {
+        return PdfToTextUiState(
+            uri=mock(Uri::class.java),
+            isLoading=false,
+            thumbnail=getDefaultThumbnail(),
+            fileName="file.pdf",
+            text= "",
+            numPages=0,
+            userMessage=0,
+            state="")
+    }
 }
