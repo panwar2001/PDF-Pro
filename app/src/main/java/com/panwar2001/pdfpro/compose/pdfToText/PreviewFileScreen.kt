@@ -12,6 +12,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowForward
+import androidx.compose.material3.Button
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Scaffold
@@ -41,7 +42,8 @@ fun PreviewFileScreen(onNavigationIconClick:()->Unit,
                       convertToText:()->Unit,
                       tool: Tool,
                       snackBarHostState: SnackbarHostState,
-                      navigateToPdfViewer:()->Unit) {
+                      navigateToPdfViewer:()->Unit,
+                      viewTextFiles:()->Unit) {
     Scaffold(
         snackbarHost = { SnackbarHost(hostState = snackBarHostState)},
         floatingActionButton = {
@@ -72,6 +74,9 @@ fun PreviewFileScreen(onNavigationIconClick:()->Unit,
             horizontalAlignment = Alignment.CenterHorizontally
         ){
             ToolDescription(description = stringResource(id = tool.toolDescription))
+            Button(onClick = viewTextFiles) {
+                Text(text = "View Text Files")
+            }
             Row(
                 modifier = Modifier.padding(100.dp),
                 horizontalArrangement = Arrangement.Center

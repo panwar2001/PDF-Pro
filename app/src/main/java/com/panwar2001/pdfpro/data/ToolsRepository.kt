@@ -26,6 +26,9 @@ import androidx.core.os.LocaleListCompat
 import androidx.documentfile.provider.DocumentFile
 import com.panwar2001.pdfpro.R
 import com.panwar2001.pdfpro.compose.PdfRow
+import com.panwar2001.pdfpro.view_models.AppUiState
+import com.panwar2001.pdfpro.view_models.Img2PdfUiState
+import com.panwar2001.pdfpro.view_models.PdfToImagesUiState
 import com.panwar2001.pdfpro.view_models.PdfToTextUiState
 import com.tom_roush.pdfbox.pdmodel.PDDocument
 import com.tom_roush.pdfbox.text.PDFTextStripper
@@ -304,15 +307,38 @@ import javax.inject.Singleton
          return ContentUris.withAppendedId(baseUri, id)
      }
 
-     override fun initPdfToTextUiState(): PdfToTextUiState {
-         return PdfToTextUiState(
+     override fun initPdfToImagesUiState(): PdfToImagesUiState {
+         return PdfToImagesUiState(
               uri=Uri.EMPTY,
               isLoading=false,
               thumbnail=getDefaultThumbnail(),
               fileName="file.pdf",
-              text= "",
-              numPages=0,
-              userMessage=0,
-              state="")
+              images= listOf(),
+              numPages=0
+         )
+     }
+
+     override fun initAppUiState(): AppUiState {
+         return AppUiState(
+             text="",
+             query="",
+             isAscending=false,
+             sortOption=R.string.sort_by_date,
+             pdfsList = listOf(),
+             searchBarActive= false,
+             isBottomSheetVisible=false,
+             pdfUri=Uri.EMPTY,
+             pdfName="",
+             numPages=0)
+     }
+
+     override fun initImg2PdfUiState(): Img2PdfUiState {
+         return  Img2PdfUiState(
+              imageList = listOf(),
+              isLoading = false,
+              fileName  = "file",
+              fileUri   = Uri.EMPTY,
+              numPages   =0
+         )
      }
  }

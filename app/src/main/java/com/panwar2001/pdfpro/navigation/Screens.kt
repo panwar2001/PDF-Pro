@@ -13,6 +13,7 @@ sealed class Screens(val route : String) {
         data object PreviewFile : Screens("Pdf2txt_Preview")
         data object TextScreen: Screens("textScreen")
         data object PdfViewer: Screens("pdf2txt_pdfViewer")
+        data object TextFilesScreen: Screens("textFiles_screen")
     }
     data object PdfToImage: Screens("Pdf2Img") {
         data object PreviewFile : Screens("Pdf2img_Preview")

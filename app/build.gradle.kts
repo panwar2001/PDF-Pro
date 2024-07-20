@@ -155,6 +155,7 @@ dependencies {
     implementation(libs.reorderable)
     implementation(libs.hilt.android)
     implementation(libs.androidx.room.runtime)
+    implementation(libs.androidx.room.ktx)
     annotationProcessor(libs.androidx.room.compiler)
     ksp(libs.hilt.android.compiler)
     ksp(libs.androidx.room.compiler)

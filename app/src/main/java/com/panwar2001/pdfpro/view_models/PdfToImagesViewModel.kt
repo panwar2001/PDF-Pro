@@ -19,21 +19,19 @@ import javax.inject.Inject
  * Data class that represents the current UI state in terms of  and [uri]
  */
 data class PdfToImagesUiState(
-    val uri: Uri=Uri.EMPTY,
-    val isLoading:Boolean=false,
+    val uri: Uri,
+    val isLoading:Boolean,
     val thumbnail: Bitmap,
-    val fileName: String="file.pdf",
-    val images:List<Bitmap> = listOf(),
-    val numPages:Int=0
+    val fileName: String,
+    val images:List<Bitmap> ,
+    val numPages:Int
 )
 
 @HiltViewModel
 class PdfToImagesViewModel
 @Inject
 constructor(private val toolsRepository: ToolsInterfaceRepository): ViewModel() {
-    private val _uiState = MutableStateFlow(PdfToImagesUiState(
-        thumbnail = toolsRepository.getDefaultThumbnail()
-    ))
+    private val _uiState = MutableStateFlow(toolsRepository.initPdfToImagesUiState())
     val uiState: StateFlow<PdfToImagesUiState> = _uiState.asStateFlow()
 
     val progress: StateFlow<Float> = toolsRepository.progress

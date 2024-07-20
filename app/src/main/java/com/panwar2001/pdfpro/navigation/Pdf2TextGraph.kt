@@ -18,6 +18,7 @@ import com.panwar2001.pdfpro.compose.components.FilePickerScreen
 import com.panwar2001.pdfpro.compose.components.PdfViewer
 import com.panwar2001.pdfpro.compose.components.ProgressIndicator
 import com.panwar2001.pdfpro.compose.pdfToText.PreviewFileScreen
+import com.panwar2001.pdfpro.compose.pdfToText.TextFilesScreen
 import com.panwar2001.pdfpro.compose.pdfToText.TextScreen
 import com.panwar2001.pdfpro.data.DataSource
 import com.panwar2001.pdfpro.view_models.PdfToTextViewModel
@@ -80,7 +81,6 @@ fun NavGraphBuilder.pdf2txtGraph(scope:CoroutineScope,
             val viewModel = navActions.sharedViewModel<PdfToTextViewModel>(backStackEntry)
             val uiState by viewModel.uiState.collectAsState()
             val snackBarHostState = remember { SnackbarHostState() }
-
             // Check for user messages to display on the screen
             if(uiState.isLoading) {
                 ProgressIndicator(modifier = Modifier)
@@ -114,10 +114,20 @@ fun NavGraphBuilder.pdf2txtGraph(scope:CoroutineScope,
                             viewModel.convertToText()
                         },
                         tool = DataSource.getToolData(R.string.pdf2text),
-                        snackBarHostState = snackBarHostState
+                        snackBarHostState = snackBarHostState,
+                        viewTextFiles = {
+                            navActions.navigateToScreen(Screens.PdfToText.TextFilesScreen.route)
+                        }
                     )
                 }
             }
+        }
+        composable(route= Screens.PdfToText.TextFilesScreen.route){ backStackEntry->
+            val viewModel = navActions.sharedViewModel<PdfToTextViewModel>(backStackEntry)
+            val filesInfo= viewModel.allFilesInfo.collectAsState(initial = listOf()).value
+            TextFilesScreen(filesInfo = filesInfo,
+                            navigateBack =  navActions::navigateBack,
+                            deleteFile = viewModel::deleteFile)
         }
         composable(route= Screens.PdfToText.PdfViewer.route){ backStackEntry->
             val viewModel = navActions.sharedViewModel<PdfToTextViewModel>(backStackEntry)

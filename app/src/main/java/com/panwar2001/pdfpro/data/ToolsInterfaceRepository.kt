@@ -5,6 +5,9 @@ import android.graphics.Bitmap
 import android.net.Uri
 import androidx.compose.ui.graphics.ImageBitmap
 import com.panwar2001.pdfpro.compose.PdfRow
+import com.panwar2001.pdfpro.view_models.AppUiState
+import com.panwar2001.pdfpro.view_models.Img2PdfUiState
+import com.panwar2001.pdfpro.view_models.PdfToImagesUiState
 import com.panwar2001.pdfpro.view_models.PdfToTextUiState
 import kotlinx.coroutines.flow.StateFlow
 
@@ -37,5 +40,9 @@ interface ToolsInterfaceRepository {
 
  fun getUriFromMediaId(id: Long): Uri
 
- fun initPdfToTextUiState():PdfToTextUiState
+ fun initPdfToImagesUiState():PdfToImagesUiState
+
+ fun initAppUiState(): AppUiState
+
+ fun initImg2PdfUiState(): Img2PdfUiState
 }

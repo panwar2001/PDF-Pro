@@ -30,22 +30,22 @@ import javax.inject.Inject
  * Data class that represents the current UI state
  */
 data class AppUiState(
-    val text:String="",
-    val query:String="",
-    val isAscending: Boolean=false,
-    val sortOption:Int=R.string.sort_by_date,
-    val pdfsList:List<PdfRow> = listOf(),
-    val searchBarActive:Boolean= false,
-    val isBottomSheetVisible:Boolean=false,
-    val pdfUri:Uri=Uri.EMPTY,
-    val pdfName:String="",
-    val numPages:Int=0)
+    val text:String,
+    val query:String,
+    val isAscending: Boolean,
+    val sortOption:Int,
+    val pdfsList:List<PdfRow> ,
+    val searchBarActive:Boolean,
+    val isBottomSheetVisible:Boolean,
+    val pdfUri:Uri,
+    val pdfName:String,
+    val numPages:Int)
 
 
 @HiltViewModel
 class AppViewModel @Inject constructor(@ApplicationContext val context: Context,
                                         private val toolsRepository: ToolsInterfaceRepository): ViewModel() {
-    private val _uiState = MutableStateFlow(AppUiState())
+    private val _uiState = MutableStateFlow(toolsRepository.initAppUiState())
     val uiState: StateFlow<AppUiState> = _uiState.asStateFlow()
     val options= listOf(
         R.string.sort_by_date,
@@ -60,12 +60,6 @@ class AppViewModel @Inject constructor(@ApplicationContext val context: Context,
 
     init {
         searchPdfs()
-    }
-    /**
-     * Reset the order state
-     */
-    fun resetState() {
-        _uiState.value = AppUiState()
     }
     @WorkerThread
      fun getCurrentLocale(): String {

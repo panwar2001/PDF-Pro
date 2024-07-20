@@ -6,6 +6,8 @@ import androidx.compose.ui.graphics.ImageBitmap
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.panwar2001.pdfpro.R
+import com.panwar2001.pdfpro.data.Pdf2TextRepository
+import com.panwar2001.pdfpro.data.TextFileInfo
 import com.panwar2001.pdfpro.data.ToolsInterfaceRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -26,16 +28,19 @@ data class PdfToTextUiState(
     val text: String,
     val numPages:Int,
     val userMessage: Int,
-    val state: String
+    val state: String,
 )
 
 @HiltViewModel
 class PdfToTextViewModel
 @Inject
-constructor(private val toolsRepository: ToolsInterfaceRepository): ViewModel() {
+constructor(private val toolsRepository: ToolsInterfaceRepository,
+            private val pdf2TextRepository: Pdf2TextRepository): ViewModel() {
 
-    private val _uiState = MutableStateFlow(toolsRepository.initPdfToTextUiState())
+    private val _uiState = MutableStateFlow(pdf2TextRepository.initPdfToTextUiState())
     val uiState: StateFlow<PdfToTextUiState> = _uiState.asStateFlow()
+
+    val allFilesInfo=pdf2TextRepository.getAllTextFiles()
     /**
      * Set the [uri] of a file for the current ui state.
      */
@@ -104,7 +109,9 @@ constructor(private val toolsRepository: ToolsInterfaceRepository): ViewModel() 
         var state="success"
         viewModelScope.launch {
             try {
-                setPdfText(toolsRepository.convertToText(uri = uiState.value.uri))
+                val text=toolsRepository.convertToText(uri = uiState.value.uri)
+                setPdfText(text)
+                pdf2TextRepository.createTextFile(text,uiState.value.fileName)
             }catch (e: Exception){
                 e.printStackTrace()
                 state="error"
@@ -114,6 +121,16 @@ constructor(private val toolsRepository: ToolsInterfaceRepository): ViewModel() 
                 setLoading(false)
             }
         }
+    }
+    fun deleteFile(id: Long){
+        viewModelScope.launch {
+            try {
+                pdf2TextRepository.deleteTextFile(id)
+            }catch (e:Exception){
+                e.printStackTrace()
+            }
+        }
+
     }
 }
 

@@ -9,3 +9,9 @@ data class Folder(
     @PrimaryKey val id: String,
     val lastModified: Long
 )
+
+@Entity(tableName = "textFiles")
+data class TextFile(
+    @PrimaryKey(autoGenerate = true) val id: Long,
+    val filePath: String
+)

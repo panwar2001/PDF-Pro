@@ -18,16 +18,16 @@ import javax.inject.Inject
  * represents the current UI state
  */
 data class Img2PdfUiState(
-    val imageList: List<ImageInfo> = listOf(),
-    val isLoading:Boolean=false,
-    val fileName: String="file",
-    val fileUri:Uri=Uri.EMPTY,
-    val numPages:Int=0
+    val imageList: List<ImageInfo> ,
+    val isLoading:Boolean,
+    val fileName: String,
+    val fileUri:Uri,
+    val numPages:Int
 )
 
 @HiltViewModel
 class Img2pdfViewModel @Inject constructor(private val toolsRepository: ToolsInterfaceRepository): ViewModel() {
-    private val _uiState = MutableStateFlow(Img2PdfUiState())
+    private val _uiState = MutableStateFlow(toolsRepository.initImg2PdfUiState())
     val uiState: StateFlow<Img2PdfUiState> = _uiState.asStateFlow()
 
     val progress: StateFlow<Float> = toolsRepository.progress
@@ -44,14 +44,6 @@ class Img2pdfViewModel @Inject constructor(private val toolsRepository: ToolsInt
 
     fun setLoading(isLoading:Boolean){
         _uiState.update {it.copy(isLoading = isLoading)}
-    }
-
-
-    /**
-     * Reset the UI state
-     */
-    fun resetState() {
-        _uiState.value = Img2PdfUiState()
     }
 
     /**
