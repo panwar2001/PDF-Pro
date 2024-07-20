@@ -1,3 +1,5 @@
+import org.gradle.api.tasks.testing.TestResult.ResultType
+
 plugins {
     alias(libs.plugins.androidApplication)
     alias(libs.plugins.jetbrainsKotlinAndroid)
@@ -51,22 +53,31 @@ android {
             )
         }
     }
+    sourceSets{
+        named("test"){
+            java.srcDir("src/test/java")
+        }
+    }
     // Always show the result of every unit test, even if it passes.
+
     testOptions.unitTests {
         isIncludeAndroidResources = true
 
         all { test ->
+
             with(test) {
                 testLogging {
+                    showCauses=false
+                    showExceptions=false
+                    showStackTraces=false
+                    showStandardStreams=false
                     events = setOf(
                         org.gradle.api.tasks.testing.logging.TestLogEvent.PASSED,
                         org.gradle.api.tasks.testing.logging.TestLogEvent.SKIPPED,
-                        org.gradle.api.tasks.testing.logging.TestLogEvent.FAILED,
-                        org.gradle.api.tasks.testing.logging.TestLogEvent.STANDARD_OUT,
-                        org.gradle.api.tasks.testing.logging.TestLogEvent.STANDARD_ERROR,
+                        org.gradle.api.tasks.testing.logging.TestLogEvent.FAILED
                     )
-                }
 
+                }
                 addTestListener(object : TestListener {
                     override fun beforeSuite(suite: TestDescriptor) {
                         // No action needed before suite
@@ -76,9 +87,6 @@ android {
                         if (suite.parent == null) {
                             // Print results after suite
                             println("Test suite '${suite.name}' finished")
-                            println("Total tests: ${result.testCount}")
-                            println("Passed tests: ${result.successfulTestCount}")
-                            println("Failed tests: ${result.failedTestCount}")
                             val output = "Results: ${result.resultType} (${result.testCount} tests, ${result.successfulTestCount} passed, ${result.failedTestCount} failed, ${result.skippedTestCount} skipped)"
                             val startItem = "|  "
                             val endItem = "  |"
@@ -97,8 +105,11 @@ android {
                         // Optionally, you could use this method to track individual test results
                     }
                 })
+
             }
+
         }
+
     }
 
     compileOptions {
@@ -122,7 +133,9 @@ android {
     }
     //https://dagger.dev/hilt/gradle-setup#aggregating-task
     hilt {    enableAggregatingTask = true }
+
 }
+
 dependencies {
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.lifecycle.runtime.ktx)
