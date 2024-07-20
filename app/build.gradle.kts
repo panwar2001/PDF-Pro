@@ -51,6 +51,56 @@ android {
             )
         }
     }
+    // Always show the result of every unit test, even if it passes.
+    testOptions.unitTests {
+        isIncludeAndroidResources = true
+
+        all { test ->
+            with(test) {
+                testLogging {
+                    events = setOf(
+                        org.gradle.api.tasks.testing.logging.TestLogEvent.PASSED,
+                        org.gradle.api.tasks.testing.logging.TestLogEvent.SKIPPED,
+                        org.gradle.api.tasks.testing.logging.TestLogEvent.FAILED,
+                        org.gradle.api.tasks.testing.logging.TestLogEvent.STANDARD_OUT,
+                        org.gradle.api.tasks.testing.logging.TestLogEvent.STANDARD_ERROR,
+                    )
+                }
+
+                addTestListener(object : TestListener {
+                    override fun beforeSuite(suite: TestDescriptor) {
+                        // No action needed before suite
+                    }
+
+                    override fun afterSuite(suite: TestDescriptor, result: TestResult) {
+                        if (suite.parent == null) {
+                            // Print results after suite
+                            println("Test suite '${suite.name}' finished")
+                            println("Total tests: ${result.testCount}")
+                            println("Passed tests: ${result.successfulTestCount}")
+                            println("Failed tests: ${result.failedTestCount}")
+                            val output = "Results: ${result.resultType} (${result.testCount} tests, ${result.successfulTestCount} passed, ${result.failedTestCount} failed, ${result.skippedTestCount} skipped)"
+                            val startItem = "|  "
+                            val endItem = "  |"
+                            val repeatLength = startItem.length + output.length + endItem.length
+                            val line = "-".repeat(repeatLength)
+                            println("\n$line\n$startItem$output$endItem\n$line")
+                        }
+
+                    }
+
+                    override fun beforeTest(testDescriptor: TestDescriptor) {
+                        // No action needed before each test
+                    }
+
+                    override fun afterTest(testDescriptor: TestDescriptor, result: TestResult) {
+                        // Optionally, you could use this method to track individual test results
+                    }
+                })
+            }
+        }
+    }
+
     compileOptions {
         // enable java 8 in the project
         sourceCompatibility = JavaVersion.VERSION_1_8

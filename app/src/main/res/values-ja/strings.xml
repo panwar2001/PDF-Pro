@@ -34,6 +34,15 @@
     <string name="select_images">画像を選択</string>
     <string name="page_number">ページ番号</string>
     <string name="language">言語</string>
+    <string name="delete">削除</string>
+    <string name="add_more">もっと追加</string>
+    <string name="capture">キャプチャ</string>
+    <string name="sort_by_date">日付でソート</string>
+    <string name="sort_by_size">サイズでソート</string>
+    <string name="sort_by_name">名前でソート</string>
+    <string name="change_order">ファイルの順序を変更</string>
+    <string name="sort_options">ソートオプション</string>
+    <string name="share">共有</string>
     <string name="ocr_description">光学式文字認識の可能性を解き放ち、テキスト抽出を効率化します。</string>
     <string name="compress_pdf_description">品質を保ちつつファイルサイズを縮小する直感的な圧縮ツールで、PDFファイルを簡単に圧縮します</string>
     <string name="lock_description">機密情報を保護するために、パスワード保護でPDFを安全にします。</string>

@@ -34,6 +34,15 @@
     <string name="select_images">चित्र चुनें</string>
     <string name="page_number">पेज नंबर</string>
     <string name="language">भाषा</string>
+    <string name="delete">हटाएँ</string>
+    <string name="add_more">अधिक जोड़ें</string>
+    <string name="capture">कैप्चर करें</string>
+    <string name="sort_by_date">तिथि द्वारा क्रमबद्ध करें</string>
+    <string name="sort_by_size">आकार द्वारा क्रमबद्ध करें</string>
+    <string name="sort_by_name">नाम द्वारा क्रमबद्ध करें</string>
+    <string name="change_order">फाइलों का क्रम बदलें</string>
+    <string name="sort_options">क्रमबद्ध विकल्प</string>
+    <string name="share">साझा करें</string>
     <string name="ocr_description">स्ट्रीमलाइन टेक्स्ट एक्सट्रैक्शन के लिए ऑप्टिकल कैरेक्टर रिकॉग्निशन की संभावनाओं को अनलॉक करें।</string>
     <string name="compress_pdf_description">गुणवत्ता को बनाए रखते हुए और फ़ाइल आकार को कम करते हुए हमारे सहज संपीड़न उपकरण के साथ आसानी से पीडीएफ फाइलें संकुचित करें</string>
     <string name="lock_description">संवेदनशील जानकारी की सुरक्षा के लिए अपने पीडीएफ को पासवर्ड सुरक्षा के साथ सुरक्षित करें।</string>

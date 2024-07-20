@@ -34,6 +34,16 @@
     <string name="select_images">Sélectionner des images</string>
     <string name="page_number">Numéro de page</string>
     <string name="language">Langue</string>
+    <string name="delete">Supprimer</string>
+    <string name="add_more">Ajouter plus</string>
+    <string name="capture">Capturer</string>
+    <string name="sort_by_date">Trier par date</string>
+    <string name="sort_by_size">Trier par taille</string>
+    <string name="sort_by_name">Trier par nom</string>
+    <string name="change_order">Changer l\'ordre des fichiers</string>
+    <string name="sort_options">Options de tri</string>
+    <string name="share">Partager</string>
+
     <string name="ocr_description">Libérez le potentiel de la reconnaissance optique de caractères pour une extraction de texte simplifiée.</string>
     <string name="compress_pdf_description">Compressez facilement les fichiers PDF tout en préservant la qualité et en réduisant la taille du fichier avec notre outil de compression intuitif.</string>
     <string name="lock_description">Sécurisez votre PDF avec une protection par mot de passe pour protéger les informations sensibles.</string>

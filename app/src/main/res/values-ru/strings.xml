@@ -34,6 +34,15 @@
     <string name="select_images">Выбрать изображения</string>
     <string name="page_number">Номер страницы</string>
     <string name="language">Язык</string>
+    <string name="delete">Удалить</string>
+    <string name="add_more">Добавить больше</string>
+    <string name="capture">Сделать снимок</string>
+    <string name="sort_by_date">Сортировать по дате</string>
+    <string name="sort_by_size">Сортировать по размеру</string>
+    <string name="sort_by_name">Сортировать по имени</string>
+    <string name="change_order">Изменить порядок файлов</string>
+    <string name="sort_options">Опции сортировки</string>
+    <string name="share">Поделиться</string>
     <string name="ocr_description">Откройте возможности оптического распознавания символов для упрощенного извлечения текста.</string>
     <string name="compress_pdf_description">Легко сжимайте PDF файлы, сохраняя качество и уменьшая размер файла с помощью нашего интуитивного инструмента сжатия.</string>
     <string name="lock_description">Защитите свой PDF паролем для защиты конфиденциальной информации.</string>
