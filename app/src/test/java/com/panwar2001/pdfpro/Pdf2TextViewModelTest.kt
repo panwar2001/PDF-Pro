@@ -2,7 +2,9 @@ package com.panwar2001.pdfpro
 
 import android.graphics.Bitmap
 import android.net.Uri
+import com.panwar2001.pdfpro.data.Pdf2TextRepository
 import com.panwar2001.pdfpro.data.ToolsInterfaceRepository
+import com.panwar2001.pdfpro.data.ToolsRepository
 import com.panwar2001.pdfpro.view_models.PdfToTextUiState
 import com.panwar2001.pdfpro.view_models.PdfToTextViewModel
 import junit.framework.TestCase.assertEquals
@@ -23,17 +25,20 @@ import org.mockito.MockitoAnnotations
 import org.mockito.kotlin.any
 
 @ExperimentalCoroutinesApi
-internal class Pdf2txtViewModelTest {
+class Pdf2txtViewModelTest {
 
     private lateinit var pdf2txtViewModel:PdfToTextViewModel
     @Mock
-    private lateinit var toolsRepository: ToolsInterfaceRepository
+    private lateinit var toolsRepository: ToolsRepository
+    @Mock
+    private lateinit var pdf2textRepository: Pdf2TextRepository
+
 
     @Before
     fun setup() {
         Dispatchers.setMain(StandardTestDispatcher())
         MockitoAnnotations.openMocks(this)
-        Mockito.`when`(toolsRepository.initPdfToTextUiState()).thenReturn(
+        Mockito.`when`(pdf2textRepository.initPdfToTextUiState()).thenReturn(
             PdfToTextUiState(
                 uri=mock(Uri::class.java),
                 isLoading=false,
@@ -42,9 +47,10 @@ internal class Pdf2txtViewModelTest {
                 text= "",
                 numPages=0,
                 userMessage=0,
-                state="")
+                state="",
+                fileUniqueId = -1)
         )
-        pdf2txtViewModel= PdfToTextViewModel(toolsRepository)
+        pdf2txtViewModel= PdfToTextViewModel(toolsRepository,pdf2textRepository)
     }
     @After
     fun tearDown() {

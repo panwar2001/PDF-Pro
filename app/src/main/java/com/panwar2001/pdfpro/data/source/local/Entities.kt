@@ -12,6 +12,6 @@ data class Folder(
 
 @Entity(tableName = "textFiles")
 data class TextFile(
-    @PrimaryKey(autoGenerate = true) val id: Long,
+    @PrimaryKey(autoGenerate = true) val id: Long=0,
     val filePath: String
 )

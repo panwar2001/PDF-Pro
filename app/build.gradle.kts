@@ -181,6 +181,7 @@ dependencies {
     testImplementation(libs.powermock.api.mockito)
     testImplementation(libs.powermock.module.junit4)
     testImplementation(libs.kotlinx.coroutines.core)
+    testImplementation(libs.mockito.inline.v2130)
     //https://kotlinlang.org/api/kotlinx.coroutines/kotlinx-coroutines-test/
     testImplementation(libs.kotlinx.coroutines.test)
     debugImplementation(libs.androidx.ui.tooling)

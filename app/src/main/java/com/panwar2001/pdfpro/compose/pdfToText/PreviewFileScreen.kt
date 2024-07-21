@@ -32,6 +32,7 @@ import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
 import com.panwar2001.pdfpro.R
 import com.panwar2001.pdfpro.compose.AppBar
+import com.panwar2001.pdfpro.compose.MenuItem
 import com.panwar2001.pdfpro.data.Tool
 
 @Composable
@@ -43,7 +44,8 @@ fun PreviewFileScreen(onNavigationIconClick:()->Unit,
                       tool: Tool,
                       snackBarHostState: SnackbarHostState,
                       navigateToPdfViewer:()->Unit,
-                      viewTextFiles:()->Unit) {
+                      menuItems: List<MenuItem> = listOf()
+) {
     Scaffold(
         snackbarHost = { SnackbarHost(hostState = snackBarHostState)},
         floatingActionButton = {
@@ -66,7 +68,8 @@ fun PreviewFileScreen(onNavigationIconClick:()->Unit,
             }
         },
         topBar = {
-        AppBar(onNavigationIconClick =onNavigationIconClick ) //Appbar scope end
+        AppBar(onNavigationIconClick =onNavigationIconClick,
+               menuItems = menuItems) //Appbar scope end
     }) { innerPadding ->
         Column(  modifier = Modifier
             .padding(innerPadding)
@@ -74,9 +77,6 @@ fun PreviewFileScreen(onNavigationIconClick:()->Unit,
             horizontalAlignment = Alignment.CenterHorizontally
         ){
             ToolDescription(description = stringResource(id = tool.toolDescription))
-            Button(onClick = viewTextFiles) {
-                Text(text = "View Text Files")
-            }
             Row(
                 modifier = Modifier.padding(100.dp),
                 horizontalArrangement = Arrangement.Center

@@ -2,12 +2,10 @@ package com.panwar2001.pdfpro.view_models
 
 import android.graphics.Bitmap
 import android.net.Uri
-import androidx.compose.ui.graphics.ImageBitmap
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.panwar2001.pdfpro.R
 import com.panwar2001.pdfpro.data.Pdf2TextRepository
-import com.panwar2001.pdfpro.data.TextFileInfo
 import com.panwar2001.pdfpro.data.ToolsInterfaceRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -29,6 +27,7 @@ data class PdfToTextUiState(
     val numPages:Int,
     val userMessage: Int,
     val state: String,
+    val fileUniqueId: Long
 )
 
 @HiltViewModel
@@ -76,7 +75,11 @@ constructor(private val toolsRepository: ToolsInterfaceRepository,
         }
     }
 
-
+   private fun setFileName(text: String){
+       _uiState.update { state ->
+           state.copy(fileName = text)
+       }
+   }
     /**
      * using pdf-box to generate thumbnail of pdf (Bitmap of first page of pdf using it's uri)
      */
@@ -110,8 +113,14 @@ constructor(private val toolsRepository: ToolsInterfaceRepository,
         viewModelScope.launch {
             try {
                 val text=toolsRepository.convertToText(uri = uiState.value.uri)
-                setPdfText(text)
-                pdf2TextRepository.createTextFile(text,uiState.value.fileName)
+                val info= pdf2TextRepository.createTextFile(text,uiState.value.fileName)
+                _uiState.update {
+                    it.copy(
+                        text=text,
+                        fileUniqueId = info.first,
+                        fileName = info.second
+                    )
+                }
             }catch (e: Exception){
                 e.printStackTrace()
                 state="error"
@@ -130,7 +139,31 @@ constructor(private val toolsRepository: ToolsInterfaceRepository,
                 e.printStackTrace()
             }
         }
-
+    }
+    fun readTextFromFile(id: Long){
+        viewModelScope.launch {
+            try {
+                val fileDetails= pdf2TextRepository.getTextAndNameFromFile(id)
+                _uiState.update {
+                    it.copy(text = fileDetails.first,
+                            fileName = fileDetails.second,
+                            fileUniqueId = id)
+                }
+            }
+            catch (e:Exception){
+                e.printStackTrace()
+            }
+        }
+    }
+    fun modifyFileName(name: String){
+        viewModelScope.launch {
+            try {
+                pdf2TextRepository.modifyName(uiState.value.fileUniqueId,name)
+                setFileName(name)
+            }catch (e: Exception){
+                e.printStackTrace()
+            }
+        }
     }
 }
 

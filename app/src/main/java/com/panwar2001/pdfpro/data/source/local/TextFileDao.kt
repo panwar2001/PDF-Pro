@@ -1,13 +1,15 @@
 package com.panwar2001.pdfpro.data.source.local
 
 import androidx.room.Dao
+import androidx.room.Insert
 import androidx.room.Query
+import androidx.room.Update
 import kotlinx.coroutines.flow.Flow
 
 @Dao
 interface TextFileDao {
-    @Query("insert into textFiles(filePath) values(:path)")
-    suspend fun insertPath(path:String)
+    @Insert
+    suspend fun insertPath(path: TextFile): Long
 
     @Query("delete from textFiles where id=:id")
     suspend fun deletePath(id: Long)
@@ -17,4 +19,7 @@ interface TextFileDao {
 
     @Query("select filePath from textFiles where id=:id")
     suspend fun getFilePath(id:Long): String
+
+    @Query("update textFiles set filePath=:path where id= :id")
+    suspend fun updatePath(id:Long, path: String)
 }

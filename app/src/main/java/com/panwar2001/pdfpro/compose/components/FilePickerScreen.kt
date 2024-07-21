@@ -26,17 +26,23 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.panwar2001.pdfpro.data.Tool
 import com.panwar2001.pdfpro.compose.AppBar
+import com.panwar2001.pdfpro.compose.MenuItem
 
 
 @Composable
 fun FilePickerScreen(onNavigationIconClick:()->Unit,
                      onClick: () -> Unit,
                      tool:Tool,
-                     snackBarHostState: SnackbarHostState= remember { SnackbarHostState() }
+                     snackBarHostState: SnackbarHostState= remember { SnackbarHostState() },
+                     menuItems: List<MenuItem> = listOf()
 ) {
     Scaffold(snackbarHost ={ SnackbarHost(hostState = snackBarHostState)},
         topBar = {
-        AppBar(onNavigationIconClick =onNavigationIconClick ) //Appbar scope end
+        AppBar(onNavigationIconClick =onNavigationIconClick,
+            menuItems = menuItems,
+            titleComposable = {
+                Text(text = "Pdf File Picker")
+            }) //Appbar scope end
     }) { innerPadding ->
         Column(modifier = Modifier
             .padding(innerPadding)

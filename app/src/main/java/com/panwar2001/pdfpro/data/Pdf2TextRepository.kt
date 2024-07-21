@@ -3,7 +3,8 @@ package com.panwar2001.pdfpro.data
 import android.content.Context
 import android.graphics.Bitmap
 import android.net.Uri
-import androidx.core.net.toUri
+import androidx.core.content.FileProvider
+import com.panwar2001.pdfpro.data.source.local.TextFile
 import com.panwar2001.pdfpro.data.source.local.TextFileDao
 import com.panwar2001.pdfpro.view_models.PdfToTextUiState
 import dagger.hilt.android.qualifiers.ApplicationContext
@@ -19,39 +20,55 @@ import javax.inject.Singleton
 interface Pdf2TextInterface {
     fun initPdfToTextUiState(): PdfToTextUiState
 
-    suspend fun createTextFile(text:String,fileName: String)
+    suspend fun createTextFile(text:String,fileName: String): Pair<Long,String>
 
     suspend fun deleteTextFile(id: Long)
 
     fun getAllTextFiles(): Flow<List<TextFileInfo>>
+
+    suspend fun getTextAndNameFromFile(id: Long): Pair<String,String>
+
+    suspend fun modifyName(id: Long, name: String)
 }
 
 @Singleton
 class Pdf2TextRepository @Inject
 constructor(@ApplicationContext private val context: Context,
-            private val textFileDao: TextFileDao):Pdf2TextInterface{
+            private val textFileDao: TextFileDao):Pdf2TextInterface {
+    override suspend fun modifyName(id: Long, name: String) {
+        val directory = File(context.filesDir, "TEXT_FILES_DIR")
+        val path= textFileDao.getFilePath(id)
+        val oldFile=File(path)
+        val newFile=createFileWithUniqueName(directory,name)
+        if(!oldFile.renameTo(newFile)){
+            throw Exception("Failed to rename file")
+        }else{
+            textFileDao.updatePath(id,newFile.path)
+        }
+    }
 
     override fun initPdfToTextUiState(): PdfToTextUiState {
         return PdfToTextUiState(
-            uri=Uri.EMPTY,
-            isLoading=false,
-            thumbnail=getDefaultThumbnail(),
-            fileName="file.pdf",
-            text= "",
-            numPages=0,
-            userMessage=0,
-            state=""
+            uri = Uri.EMPTY,
+            isLoading = false,
+            thumbnail = getDefaultThumbnail(),
+            fileName = "file.pdf",
+            text = "",
+            numPages = 0,
+            userMessage = 0,
+            state = "",
+            fileUniqueId = -1
         )
     }
 
     private fun getDefaultThumbnail(): Bitmap {
-        return Bitmap.createBitmap(1,1, Bitmap.Config.ARGB_8888)
+        return Bitmap.createBitmap(1, 1, Bitmap.Config.ARGB_8888)
     }
 
-    override  suspend fun createTextFile(text: String,fileName: String) {
-        val directory = File(context.filesDir, "TEXT_FILES_DIR")
-        withContext(Dispatchers.IO) {
-            // Create or get the directory
+    override suspend fun createTextFile(text: String,
+                                        fileName: String)=withContext(Dispatchers.IO) {
+           val directory = File(context.filesDir, "TEXT_FILES_DIR")
+           // Create or get the directory
             if (!directory.exists()) {
                 directory.mkdir()
             }
@@ -60,11 +77,12 @@ constructor(@ApplicationContext private val context: Context,
             FileOutputStream(newFile).use { outputStream ->
                 outputStream.write(text.toByteArray())
             }
-            textFileDao.insertPath(newFile.absolutePath)
+            Pair(textFileDao.insertPath(TextFile(filePath =  newFile.absolutePath)),
+                newFile.name)
         }
-    }
-   private fun createFileWithUniqueName(directory: File, fileName: String): File {
-        val name=fileName.substringBeforeLast('.')
+
+    private fun createFileWithUniqueName(directory: File, fileName: String): File {
+        val name = fileName.substringBeforeLast('.')
         var file = File(directory, "$name.txt")
         var count = 0
         while (file.exists()) {
@@ -73,35 +91,59 @@ constructor(@ApplicationContext private val context: Context,
         }
         return file
     }
+
     override suspend fun deleteTextFile(id: Long) {
-        withContext(Dispatchers.IO){
+        withContext(Dispatchers.IO) {
             val path = textFileDao.getFilePath(id)
             File(path).delete()
             textFileDao.deletePath(id)
         }
     }
 
+    override suspend fun getTextAndNameFromFile(id: Long): Pair<String,String> {
+        return withContext(Dispatchers.IO) {
+            val file = File(textFileDao.getFilePath(id))
+            Pair(file.readText(),file.name)
+        }
+    }
 
-     override fun getAllTextFiles(): Flow<List<TextFileInfo>> {
+    override fun getAllTextFiles(): Flow<List<TextFileInfo>> {
         return textFileDao.getAllFilePaths()
             .map { filePath ->
                 withContext(Dispatchers.IO) {
-                    filePath.map{
+                    filePath.map {
                         val file = File(it.filePath)
                         TextFileInfo(
                             fileName = file.name,
                             id = it.id,
-                            uri = file.toUri()
+                            uri = FileProvider.getUriForFile(
+                                context,
+                                context.packageName + ".fileprovider",
+                                file
+                            ),
+                            fileSize = getFileSize(file.length())
                         )
                     }
                 }
             }
-          }
-       }
+    }
+
+    fun getFileSize(len: Long): String{
+        val mb= len / 1048576.0
+        val kb= len / 1024.0
+        if(mb>=1.0){
+            return "%.1f MB".format(mb)
+        }else if(kb>=1.0){
+            return "%.1f KB".format(kb)
+        }
+        return "$len Byte"
+    }
+}
 
 
 data class TextFileInfo(
     val fileName: String,
     val id: Long,
-    val uri: Uri
+    val uri: Uri,
+    val fileSize:String
 )

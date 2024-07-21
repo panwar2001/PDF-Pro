@@ -9,14 +9,17 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.composable
 import androidx.navigation.navigation
 import com.panwar2001.pdfpro.R
+import com.panwar2001.pdfpro.compose.MenuItem
 import com.panwar2001.pdfpro.compose.components.FilePickerScreen
 import com.panwar2001.pdfpro.compose.components.PdfViewer
 import com.panwar2001.pdfpro.compose.components.ProgressIndicator
+import com.panwar2001.pdfpro.compose.components.sharePdfFile
 import com.panwar2001.pdfpro.compose.pdfToText.PreviewFileScreen
 import com.panwar2001.pdfpro.compose.pdfToText.TextFilesScreen
 import com.panwar2001.pdfpro.compose.pdfToText.TextScreen
@@ -32,6 +35,9 @@ fun NavGraphBuilder.pdf2txtGraph(scope:CoroutineScope,
             val viewModel = navActions.sharedViewModel<PdfToTextViewModel>(backStackEntry)
             val uiState by viewModel.uiState.collectAsState()
             val snackBarHostState = remember { SnackbarHostState() }
+            val menuItems= remember{ mutableListOf(MenuItem("Text Files Log") {
+                navActions.navigateToScreen(Screens.PdfToText.TextFilesScreen.route)
+            }) }
             val pdfPickerLauncher= rememberLauncherForActivityResult(
                 contract = ActivityResultContracts.OpenDocument(),
                 onResult = {uri->
@@ -71,16 +77,22 @@ fun NavGraphBuilder.pdf2txtGraph(scope:CoroutineScope,
                             pdfPickerLauncher.launch(arrayOf("application/pdf"))
                         },
                         tool = DataSource.getToolData(R.string.pdf2text),
-                        snackBarHostState
+                        snackBarHostState,
+                        menuItems
                     )
                 }
                 }
             }
         }
         composable(route= Screens.PdfToText.PreviewFile.route) { backStackEntry->
+            val menuItems= remember{ mutableListOf(MenuItem("Text Files Log") {
+                navActions.navigateToScreen(Screens.PdfToText.TextFilesScreen.route)
+            }) }
+
             val viewModel = navActions.sharedViewModel<PdfToTextViewModel>(backStackEntry)
             val uiState by viewModel.uiState.collectAsState()
             val snackBarHostState = remember { SnackbarHostState() }
+
             // Check for user messages to display on the screen
             if(uiState.isLoading) {
                 ProgressIndicator(modifier = Modifier)
@@ -115,9 +127,7 @@ fun NavGraphBuilder.pdf2txtGraph(scope:CoroutineScope,
                         },
                         tool = DataSource.getToolData(R.string.pdf2text),
                         snackBarHostState = snackBarHostState,
-                        viewTextFiles = {
-                            navActions.navigateToScreen(Screens.PdfToText.TextFilesScreen.route)
-                        }
+                        menuItems=menuItems
                     )
                 }
             }
@@ -125,9 +135,17 @@ fun NavGraphBuilder.pdf2txtGraph(scope:CoroutineScope,
         composable(route= Screens.PdfToText.TextFilesScreen.route){ backStackEntry->
             val viewModel = navActions.sharedViewModel<PdfToTextViewModel>(backStackEntry)
             val filesInfo= viewModel.allFilesInfo.collectAsState(initial = listOf()).value
+            val context= LocalContext.current
             TextFilesScreen(filesInfo = filesInfo,
                             navigateBack =  navActions::navigateBack,
-                            deleteFile = viewModel::deleteFile)
+                            deleteFile = viewModel::deleteFile,
+                            share={
+                                sharePdfFile(context,it,"text/plain")
+                            },
+                            viewTextFile = {
+                                viewModel.readTextFromFile(it)
+                                navActions.navigateToScreen(Screens.PdfToText.TextScreen.route)
+                            })
         }
         composable(route= Screens.PdfToText.PdfViewer.route){ backStackEntry->
             val viewModel = navActions.sharedViewModel<PdfToTextViewModel>(backStackEntry)
@@ -145,7 +163,9 @@ fun NavGraphBuilder.pdf2txtGraph(scope:CoroutineScope,
                         onBackPress = {
                             viewModel.setPdfText("")
                             navActions.navigateBack()
-                        }
+                        },
+                        fileName=uiState.fileName,
+                        modifyFileName=viewModel::modifyFileName,
                     )
             }
     }

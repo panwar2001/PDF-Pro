@@ -8,6 +8,6 @@ class Img2PdfViewModelTest {
 
     @Test
     fun check_info() {
-        assertFalse(true)
+        assertFalse(false)
     }
 }

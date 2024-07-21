@@ -3,6 +3,7 @@ package com.panwar2001.pdfpro.compose.components
 import android.content.Context
 import android.content.Intent
 import android.net.Uri
+import androidx.core.content.FileProvider
 
 fun sharePdfFile(context:Context,
               fileURI:Uri,
