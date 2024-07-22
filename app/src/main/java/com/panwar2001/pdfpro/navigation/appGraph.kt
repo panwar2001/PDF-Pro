@@ -22,9 +22,9 @@ import kotlinx.coroutines.launch
 @OptIn(ExperimentalFoundationApi::class)
 fun NavGraphBuilder.appGraph(scope:CoroutineScope,
                              navActions: NavigationActions){
+
     navigation(route= Screens.Home.route,
         startDestination= Screens.Home.HomeScreen.route) {
-
         composable(route = Screens.Home.HomeScreen.route) { backStackEntry ->
             val viewModel = navActions.sharedViewModel<AppViewModel>(backStackEntry)
             val uiState by viewModel.uiState.collectAsState()

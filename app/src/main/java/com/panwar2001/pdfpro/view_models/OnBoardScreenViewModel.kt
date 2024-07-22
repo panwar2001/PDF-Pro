@@ -12,9 +12,7 @@ data class OnBoardData(
     val title:Int,
     val description:Int
 )
-
 class OnBoardScreenViewModel: ViewModel(){
-
     val onBoardList= listOf(
         OnBoardData(icon= R.drawable.ocr,
             title= R.string.ocr_pdf,

@@ -3,6 +3,7 @@ package com.panwar2001.pdfpro.navigation
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.PickVisualMediaRequest
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.navigation.NavGraphBuilder
@@ -43,7 +44,8 @@ fun NavGraphBuilder.img2PdfGraph(scope: CoroutineScope,
                     )
                 },
                 tool= DataSource.getToolData(R.string.img2pdf),
-                )
+                snackBarHostState = SnackbarHostState()
+            )
         }
         composable(route= Screens.Img2Pdf.ReorderScreen.route) { backStackEntry ->
             val viewModel = navActions.sharedViewModel<Img2pdfViewModel>(backStackEntry)

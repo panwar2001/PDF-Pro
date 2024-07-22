@@ -8,6 +8,7 @@ import com.panwar2001.pdfpro.data.ToolsRepository
 import com.panwar2001.pdfpro.view_models.PdfToTextUiState
 import com.panwar2001.pdfpro.view_models.PdfToTextViewModel
 import junit.framework.TestCase.assertEquals
+import junit.framework.TestCase.assertNotSame
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.StandardTestDispatcher
@@ -73,7 +74,7 @@ class Pdf2txtViewModelTest {
         pdf2txtViewModel.generateThumbnailFromPDF()
         advanceUntilIdle()// Ensures all pending coroutines are executed
         assertEquals(pdf2txtViewModel.uiState.value.state,"error")
-
+        assertNotSame(pdf2txtViewModel.uiState.value.numPages,2)
         val uri2=mock(Uri::class.java)
         pdf2txtViewModel.setUri(uri2)
         pdf2txtViewModel.generateThumbnailFromPDF()
@@ -90,6 +91,10 @@ class Pdf2txtViewModelTest {
             }
             return@thenAnswer "returned text"
         }
+        Mockito.`when`(pdf2textRepository.createTextFile(any(),any())).thenReturn(
+            Pair(0,"file name")
+        )
+
         pdf2txtViewModel.setUri(uri)
         pdf2txtViewModel.convertToText()
         advanceUntilIdle()// Ensures all pending coroutines are executed

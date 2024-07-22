@@ -18,7 +18,7 @@
     <string name="ocr_pdf">OCR PDF</string>
     <string name="compress_pdf">Compresser PDF</string>
     <string name="lock_pdf">Protéger PDF</string>
-    <string name="pdf_files_tab" translatable="false">Fichiers PDF</string>
+    <string name="pdf_files_tab" >Fichiers PDF</string>
     <string name="convert_to_text">Convertir en texte</string>
     <string name="convert_to_images">Convertir en images</string>
     <string name="close">Fermer</string>

@@ -62,7 +62,7 @@ fun TextScreen(text:String,
                           horizontalArrangement = Arrangement.SpaceBetween,
                           modifier = Modifier.fillMaxWidth()){
                           Text(
-                              text = fileName,
+                              text = "$fileName.txt",
                               overflow = TextOverflow.Ellipsis,
                               maxLines = 1,
                               modifier = Modifier.weight(1f)

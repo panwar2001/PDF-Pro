@@ -18,7 +18,7 @@
     <string name="ocr_pdf">ओसीआर पीडीएफ</string>
     <string name="compress_pdf">पीडीएफ संकुचित करें</string>
     <string name="lock_pdf">पीडीएफ लॉक करें</string>
-    <string name="pdf_files_tab" translatable="false">पीडीएफ फाइलें</string>
+    <string name="pdf_files_tab" >पीडीएफ फाइलें</string>
     <string name="convert_to_text">टेक्स्ट में बदलें</string>
     <string name="convert_to_images">चित्र में बदलें</string>
     <string name="close">बंद करें</string>

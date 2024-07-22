@@ -70,7 +70,6 @@ fun PDFProTheme(
             WindowCompat.getInsetsController(window, view).isAppearanceLightNavigationBars = !darkTheme
         }
     }
-
     MaterialTheme(
         colorScheme = colorScheme,
         content = content

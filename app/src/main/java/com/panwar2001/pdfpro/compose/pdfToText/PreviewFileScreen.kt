@@ -1,6 +1,7 @@
 package com.panwar2001.pdfpro.compose.pdfToText
 
 import android.graphics.Bitmap
+import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -12,7 +13,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowForward
-import androidx.compose.material3.Button
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Scaffold
@@ -39,23 +40,23 @@ import com.panwar2001.pdfpro.data.Tool
 fun PreviewFileScreen(onNavigationIconClick:()->Unit,
                       thumbnail:Bitmap,
                       fileName:String,
-                      setLoading:(Boolean)->Unit,
                       convertToText:()->Unit,
                       tool: Tool,
-                      snackBarHostState: SnackbarHostState,
                       navigateToPdfViewer:()->Unit,
-                      menuItems: List<MenuItem> = listOf()
+                      menuItems: List<MenuItem> = listOf(),
+                      isLoading: Boolean,
+                      snackBarHostState: SnackbarHostState
 ) {
     Scaffold(
         snackbarHost = { SnackbarHost(hostState = snackBarHostState)},
         floatingActionButton = {
             FloatingActionButton(onClick = {
-                setLoading(true)
                 convertToText()
             },
                 containerColor = Color.Red,
                 contentColor = Color.White,
-                ) {
+                modifier = Modifier.clickable(enabled = !isLoading){
+                }) {
                 Row(verticalAlignment = Alignment.CenterVertically,
                     modifier = Modifier.padding(5.dp)
                 ){
@@ -76,6 +77,11 @@ fun PreviewFileScreen(onNavigationIconClick:()->Unit,
             .fillMaxHeight(),
             horizontalAlignment = Alignment.CenterHorizontally
         ){
+            AnimatedVisibility(visible = isLoading) {
+                CircularProgressIndicator(
+                    modifier = Modifier.padding(bottom = 16.dp)
+                )
+            }
             ToolDescription(description = stringResource(id = tool.toolDescription))
             Row(
                 modifier = Modifier.padding(100.dp),

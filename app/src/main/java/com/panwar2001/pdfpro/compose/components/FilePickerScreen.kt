@@ -1,5 +1,6 @@
 package com.panwar2001.pdfpro.compose.components
 
+import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -9,32 +10,39 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ElevatedButton
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.panwar2001.pdfpro.data.Tool
+import com.panwar2001.pdfpro.R
 import com.panwar2001.pdfpro.compose.AppBar
 import com.panwar2001.pdfpro.compose.MenuItem
+import com.panwar2001.pdfpro.data.Tool
 
 
 @Composable
 fun FilePickerScreen(onNavigationIconClick:()->Unit,
                      onClick: () -> Unit,
                      tool:Tool,
-                     snackBarHostState: SnackbarHostState= remember { SnackbarHostState() },
-                     menuItems: List<MenuItem> = listOf()
+                     menuItems: List<MenuItem> = listOf(),
+                     isLoading:Boolean=false,
+                     snackBarHostState: SnackbarHostState
 ) {
     Scaffold(snackbarHost ={ SnackbarHost(hostState = snackBarHostState)},
         topBar = {
@@ -51,13 +59,20 @@ fun FilePickerScreen(onNavigationIconClick:()->Unit,
             verticalArrangement = Arrangement.SpaceBetween
         )
         {
+            AnimatedVisibility(visible = isLoading) {
+                CircularProgressIndicator(
+                    modifier = Modifier.padding(bottom = 16.dp)
+                )
+            }
             ToolDescription(stringResource(id = tool.toolDescription))
             Row(
                 modifier = Modifier.fillMaxSize(),
                 horizontalArrangement = Arrangement.Center
             )
             {
-              Button(buttonText = stringResource(id = tool.buttonDescription), onClick = onClick)
+                Button(buttonText = stringResource(id = tool.buttonDescription),
+                  onClick = onClick,
+                  enabled = !isLoading)
             }
         }
     } //Scaffold scope end
@@ -65,9 +80,10 @@ fun FilePickerScreen(onNavigationIconClick:()->Unit,
 
 
 @Composable
-fun Button(buttonText:String,onClick:()->Unit){
+fun Button(buttonText:String,onClick:()->Unit,enabled: Boolean){
     ElevatedButton(
         onClick = onClick,
+        enabled=enabled,
         colors = ButtonDefaults.buttonColors(
             containerColor = Color.Red,
             contentColor = Color.White
@@ -99,3 +115,18 @@ fun ToolDescription(description:String){
 }
 
 
+@Composable
+@Preview
+fun PrevFilePickerScreen(){
+    var loading by remember {
+        mutableStateOf(false)
+    }
+    val snackbarHostState= remember {
+        SnackbarHostState()
+    }
+    FilePickerScreen(onNavigationIconClick = { /*TODO*/ },
+        onClick = { loading=!loading},
+        tool = Tool(R.string.img2pdf_description,R.string.sort_by_size),
+        isLoading = loading,
+        snackBarHostState = SnackbarHostState())
+}

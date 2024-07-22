@@ -37,13 +37,26 @@ constructor(@ApplicationContext private val context: Context,
             private val textFileDao: TextFileDao):Pdf2TextInterface {
     override suspend fun modifyName(id: Long, name: String) {
         val directory = File(context.filesDir, "TEXT_FILES_DIR")
-        val path= textFileDao.getFilePath(id)
-        val oldFile=File(path)
-        val newFile=createFileWithUniqueName(directory,name)
-        if(!oldFile.renameTo(newFile)){
+        val path = textFileDao.getFilePath(id)
+        val oldFile = File(path)
+        val newFile = toRenameCreateFileWithUniqueName(directory, name)
+        if (!oldFile.renameTo(newFile)) {
             throw Exception("Failed to rename file")
+        } else {
+            textFileDao.updatePath(id, newFile.path)
+        }
+    }
+    private  fun toRenameCreateFileWithUniqueName(directory: File, name: String): File{
+        var count = 0
+        var file = File(directory, name)
+        while (file.exists()) {
+            count++
+            file = File(directory, "${name}_$count.txt")
+        }
+        return if(count<=1){
+            file
         }else{
-            textFileDao.updatePath(id,newFile.path)
+            File(directory, "${name}_${count-1}.txt")
         }
     }
 
@@ -52,12 +65,13 @@ constructor(@ApplicationContext private val context: Context,
             uri = Uri.EMPTY,
             isLoading = false,
             thumbnail = getDefaultThumbnail(),
-            fileName = "file.pdf",
+            pdfFileName = "file.pdf",
+            textFileName = "file.txt",
             text = "",
             numPages = 0,
-            userMessage = 0,
-            state = "",
-            fileUniqueId = -1
+            userMessage = null,
+            fileUniqueId = -1,
+            triggerSuccess = false
         )
     }
 
@@ -65,24 +79,28 @@ constructor(@ApplicationContext private val context: Context,
         return Bitmap.createBitmap(1, 1, Bitmap.Config.ARGB_8888)
     }
 
-    override suspend fun createTextFile(text: String,
-                                        fileName: String)=withContext(Dispatchers.IO) {
-           val directory = File(context.filesDir, "TEXT_FILES_DIR")
-           // Create or get the directory
-            if (!directory.exists()) {
-                directory.mkdir()
-            }
-            val newFile = createFileWithUniqueName(directory, fileName)
-            // Write the content to the file
-            FileOutputStream(newFile).use { outputStream ->
-                outputStream.write(text.toByteArray())
-            }
-            Pair(textFileDao.insertPath(TextFile(filePath =  newFile.absolutePath)),
-                newFile.name)
+    override suspend fun createTextFile(
+        text: String,
+        fileName: String
+    ) = withContext(Dispatchers.IO) {
+        val directory = File(context.filesDir, "TEXT_FILES_DIR")
+        // Create or get the directory
+        if (!directory.exists()) {
+            directory.mkdir()
         }
+        val newFile = createFileWithUniqueName(directory, fileName)
+        // Write the content to the file
+        FileOutputStream(newFile).use { outputStream ->
+            outputStream.write(text.toByteArray())
+        }
+        Pair(
+            textFileDao.insertPath(TextFile(filePath = newFile.absolutePath)),
+            newFile.name.substringBeforeLast('.')
+        )
+    }
 
     private fun createFileWithUniqueName(directory: File, fileName: String): File {
-        val name = fileName.substringBeforeLast('.')
+        val name = fileName.substringBeforeLast(".pdf")
         var file = File(directory, "$name.txt")
         var count = 0
         while (file.exists()) {
@@ -100,10 +118,10 @@ constructor(@ApplicationContext private val context: Context,
         }
     }
 
-    override suspend fun getTextAndNameFromFile(id: Long): Pair<String,String> {
+    override suspend fun getTextAndNameFromFile(id: Long): Pair<String, String> {
         return withContext(Dispatchers.IO) {
             val file = File(textFileDao.getFilePath(id))
-            Pair(file.readText(),file.name)
+            Pair(file.readText(), file.name.substringBeforeLast('.'))
         }
     }
 
@@ -128,22 +146,15 @@ constructor(@ApplicationContext private val context: Context,
             }
     }
 
-    fun getFileSize(len: Long): String{
-        val mb= len / 1048576.0
-        val kb= len / 1024.0
-        if(mb>=1.0){
-            return "%.1f MB".format(mb)
-        }else if(kb>=1.0){
-            return "%.1f KB".format(kb)
+    fun getFileSize(len: Long)= when {
+            len < 1024 -> "$len Byte"
+            len < 1048576 -> "%.1f KB".format(len / 1024.0)
+            else -> "%.1f MB".format(len / 1048576.0)
         }
-        return "$len Byte"
-    }
 }
-
 
 data class TextFileInfo(
     val fileName: String,
     val id: Long,
     val uri: Uri,
-    val fileSize:String
-)
+    val fileSize:String)

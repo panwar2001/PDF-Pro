@@ -1,7 +1,9 @@
 package com.panwar2001.pdfpro.navigation
 
+import android.util.Log
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
@@ -26,15 +28,15 @@ fun NavGraphBuilder.pdf2ImgGraph(scope: CoroutineScope,
                startDestination= Screens.FilePicker.route){
         composable(route= Screens.FilePicker.route){ backStackEntry->
             val viewModel = navActions.sharedViewModel<PdfToImagesViewModel>(backStackEntry)
+            val uiState by viewModel.uiState.collectAsState()
+
             val pdfPickerLauncher=rememberLauncherForActivityResult(
                 contract = ActivityResultContracts.OpenDocument(),
                 onResult = {uri->
                     if(uri!=null){
                         viewModel.setLoading(true)
                         viewModel.setUri(uri)
-                        scope.launch {
-                            viewModel.generateThumbnailFromPDF()
-                        }
+                        viewModel.generateThumbnailFromPDF()
                         navActions.navigateToScreen(Screens.PdfToImage.PreviewFile.route)
                     }
                 })
@@ -44,15 +46,16 @@ fun NavGraphBuilder.pdf2ImgGraph(scope: CoroutineScope,
                 onClick = {
                     pdfPickerLauncher.launch(arrayOf("application/pdf"))
                 },
-                tool= DataSource.getToolData(R.string.pdf2img))
+                tool= DataSource.getToolData(R.string.pdf2img),
+                isLoading = uiState.isLoading,
+                snackBarHostState = SnackbarHostState()
+            )
         }
         composable(route= Screens.PdfToImage.PreviewFile.route) { backStackEntry->
             val viewModel = navActions.sharedViewModel<PdfToImagesViewModel>(backStackEntry)
             val uiState by viewModel.uiState.collectAsState()
+            Log.e("destination: ", backStackEntry.destination.parent?.route.toString())
 
-            if (uiState.isLoading) {
-                ProgressIndicator(modifier = Modifier)
-            } else {
                 PreviewFileScreen(
                     onNavigationIconClick = navActions::toggleDrawer,
                     navigateTo = navActions::navigateToScreen,
@@ -60,13 +63,10 @@ fun NavGraphBuilder.pdf2ImgGraph(scope: CoroutineScope,
                     fileName = uiState.fileName,
                     setLoading={loading:Boolean->viewModel.setLoading(loading)},
                     convertToImages={
-                        scope.launch {
                             viewModel.generateImages()
-                        }
                     },
-                    tool= DataSource.getToolData(R.string.pdf2img)
+                    tool= DataSource.getToolData(R.string.pdf2img),
                 )
-            }
         }
         composable(route= Screens.PdfToImage.PdfViewer.route){ backStackEntry->
             val viewModel = navActions.sharedViewModel<PdfToImagesViewModel>(backStackEntry)

@@ -19,7 +19,6 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.DrawerState
 import androidx.compose.material3.HorizontalDivider
-import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalDrawerSheet
 import androidx.compose.material3.ModalNavigationDrawer
@@ -44,9 +43,9 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.panwar2001.pdfpro.R
 import com.panwar2001.pdfpro.compose.CircularIcon
-import com.panwar2001.pdfpro.navigation.Screens
 import com.panwar2001.pdfpro.data.DataSource
 import com.panwar2001.pdfpro.data.ToolsData
+import com.panwar2001.pdfpro.navigation.Screens
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 

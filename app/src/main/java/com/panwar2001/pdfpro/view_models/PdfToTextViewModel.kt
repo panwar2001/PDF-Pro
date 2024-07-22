@@ -2,6 +2,10 @@ package com.panwar2001.pdfpro.view_models
 
 import android.graphics.Bitmap
 import android.net.Uri
+import androidx.compose.material3.SnackbarDuration
+import androidx.compose.material3.SnackbarHostState
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.ui.res.stringResource
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.panwar2001.pdfpro.R
@@ -16,18 +20,19 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 /**
- * Data class that represents the current UI state in terms of  and [uri]
+ * Data class that represents the current UI state
  */
 data class PdfToTextUiState(
     val uri: Uri,
     val isLoading:Boolean,
     val thumbnail: Bitmap,
-    val fileName: String,
+    val pdfFileName: String,
+    val textFileName: String,
     val text: String,
     val numPages:Int,
-    val userMessage: Int,
-    val state: String,
-    val fileUniqueId: Long
+    val userMessage: Int?,
+    val fileUniqueId: Long,
+    val triggerSuccess: Boolean
 )
 
 @HiltViewModel
@@ -38,132 +43,157 @@ constructor(private val toolsRepository: ToolsInterfaceRepository,
 
     private val _uiState = MutableStateFlow(pdf2TextRepository.initPdfToTextUiState())
     val uiState: StateFlow<PdfToTextUiState> = _uiState.asStateFlow()
+    val allFilesInfo = pdf2TextRepository.getAllTextFiles()
+    val snackBarHostState= SnackbarHostState()
 
-    val allFilesInfo=pdf2TextRepository.getAllTextFiles()
-    /**
-     * Set the [uri] of a file for the current ui state.
-     */
-    fun setUri(uri: Uri) {
-        _uiState.update {
-            it.copy(
-                uri = uri,
-                fileName = "",
-                text = "",
-                numPages = 0
-            )
-        }
-    }
-    fun setLoading(isLoading: Boolean) {
+    private fun setLoading(isLoading: Boolean) {
         _uiState.update {
             it.copy(isLoading = isLoading)
         }
     }
 
-    fun setState(state:String){
-        _uiState.update {
-            it.copy(state = state)
-        }
-    }
-     fun setSnackBarMessage(message: Int) {
-        _uiState.update {
-            it.copy(userMessage = message)
-        }
-    }
-    fun setPdfText(text: String){
+    fun setPdfText(text: String) {
         _uiState.update { state ->
             state.copy(text = text)
         }
     }
 
-   private fun setFileName(text: String){
-       _uiState.update { state ->
-           state.copy(fileName = text)
-       }
-   }
+    fun setTriggerSuccess(success: Boolean) {
+        _uiState.update {
+            it.copy(triggerSuccess = success)
+        }
+    }
+
+    private fun setTextFileName(text: String) {
+        _uiState.update { state ->
+            state.copy(textFileName = text)
+        }
+    }
+    private fun emitSnackBarMessage(message: String){
+        viewModelScope.launch {
+            snackBarHostState.showSnackbar(message, duration = SnackbarDuration.Short)
+        }
+    }
+
     /**
      * using pdf-box to generate thumbnail of pdf (Bitmap of first page of pdf using it's uri)
      */
 
-    fun generateThumbnailFromPDF() {
-        var state="success"
+    fun pickPdf(uri: Uri) {
+        var isSuccess = true
+        var thumbnail = toolsRepository.getDefaultThumbnail()
+        var numPages = 0
+        var fileName = ""
         viewModelScope.launch {
             try {
-                _uiState.update { state ->
-                    state.copy(
-                        thumbnail =toolsRepository.getThumbnailOfPdf(uiState.value.uri),
-                        numPages = toolsRepository.getNumPages(uiState.value.uri),
-                        fileName = toolsRepository.getPdfName(uiState.value.uri)
-                    )
-                }
-            }
-    catch (e: Exception){
-        state="error"
-        e.printStackTrace()
-        setSnackBarMessage(R.string.error_message)
-    }
-    finally {
-        setState(state)
-        setLoading(false)
-    }
-     }
-    }
-
-     fun convertToText(){
-        var state="success"
-        viewModelScope.launch {
-            try {
-                val text=toolsRepository.convertToText(uri = uiState.value.uri)
-                val info= pdf2TextRepository.createTextFile(text,uiState.value.fileName)
-                _uiState.update {
-                    it.copy(
-                        text=text,
-                        fileUniqueId = info.first,
-                        fileName = info.second
-                    )
-                }
-            }catch (e: Exception){
+                setLoading(true)
+                thumbnail = toolsRepository.getThumbnailOfPdf(uri)
+                numPages = toolsRepository.getNumPages(uri)
+                fileName = toolsRepository.getPdfName(uri)
+            } catch (e: Exception) {
+                isSuccess = false
+                emitSnackBarMessage(e.message?:"error")
                 e.printStackTrace()
-                state="error"
-                setSnackBarMessage(R.string.error_message)
-            }finally {
-                setState(state)
+            } finally {
+                if (isSuccess) {
+                    emitSnackBarMessage("Success")
+                    _uiState.update { state ->
+                        state.copy(
+                            thumbnail = thumbnail,
+                            numPages = numPages,
+                            pdfFileName = fileName,
+                            uri = uri,
+                            triggerSuccess = true
+                        )
+                    }
+                }
                 setLoading(false)
             }
         }
     }
-    fun deleteFile(id: Long){
+
+    fun convertToText() {
+        var isSuccess = true
+        var text = ""
+        var info = Pair(0L, "")
+        viewModelScope.launch {
+            try {
+                setLoading(true)
+                text = toolsRepository.convertToText(uri = uiState.value.uri)
+                info = pdf2TextRepository.createTextFile(text, uiState.value.pdfFileName)
+            } catch (e: Exception) {
+                e.printStackTrace()
+                isSuccess = false
+                emitSnackBarMessage(e.message?:"error")
+            } finally {
+                if (isSuccess) {
+                    emitSnackBarMessage("success")
+                    setTriggerSuccess(true)
+                    _uiState.update {
+                        it.copy(
+                            text = text,
+                            fileUniqueId = info.first,
+                            textFileName = info.second,
+                            triggerSuccess = true
+                        )
+                    }
+                }
+                setLoading(false)
+            }
+        }
+    }
+
+    fun deleteFile(id: Long) {
         viewModelScope.launch {
             try {
                 pdf2TextRepository.deleteTextFile(id)
-            }catch (e:Exception){
+            } catch (e: Exception) {
                 e.printStackTrace()
             }
         }
     }
-    fun readTextFromFile(id: Long){
+
+    fun readTextFromFile(id: Long) {
+        var text = ""
+        var textFileName = ""
+
         viewModelScope.launch {
+            var isSuccess = true
             try {
-                val fileDetails= pdf2TextRepository.getTextAndNameFromFile(id)
-                _uiState.update {
-                    it.copy(text = fileDetails.first,
-                            fileName = fileDetails.second,
-                            fileUniqueId = id)
+                setLoading(true)
+                val fileDetails = pdf2TextRepository.getTextAndNameFromFile(id)
+                text = fileDetails.first
+                textFileName = fileDetails.second
+            } catch (e: Exception) {
+                e.printStackTrace()
+                emitSnackBarMessage(e.message?:"error")
+                isSuccess = false
+            } finally {
+                if (isSuccess) {
+                    _uiState.update {
+                        it.copy(
+                            text = text,
+                            textFileName = textFileName,
+                            fileUniqueId = id,
+                            triggerSuccess = true
+                        )
+                    }
+                    setTriggerSuccess(true)
+                    emitSnackBarMessage("success")
                 }
-            }
-            catch (e:Exception){
-                e.printStackTrace()
+                setLoading(false)
             }
         }
     }
-    fun modifyFileName(name: String){
+
+    fun modifyFileName(name: String) {
         viewModelScope.launch {
             try {
-                pdf2TextRepository.modifyName(uiState.value.fileUniqueId,name)
-                setFileName(name)
-            }catch (e: Exception){
+                pdf2TextRepository.modifyName(uiState.value.fileUniqueId, "$name.txt")
+                setTextFileName(name)
+            } catch (e: Exception) {
                 e.printStackTrace()
             }
         }
     }
 }
-

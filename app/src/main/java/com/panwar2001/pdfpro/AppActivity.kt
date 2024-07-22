@@ -37,39 +37,38 @@ class AppActivity : AppCompatActivity() {
         }
     }
 
-    private fun pdfProContent(){
-        setContent{
-            val theme= remember {
+    private fun pdfProContent() {
+        setContent {
+            val theme = remember {
                 mutableStateOf(isDarkTheme())
             }
-            PDFProTheme(darkTheme =theme.value) {
-                // A surface container using the 'background' color from the theme
-                Surface(
-                    modifier = Modifier.fillMaxSize(),
-                    color = MaterialTheme.colorScheme.background
-                ) {
 
-                    NavigationController(
-                        startDestination = getStartDestination(),
-                        setOnboardingFinished = {
-                            val sharedPreferences = this.getSharedPreferences("onBoarding", MODE_PRIVATE)
-                            val editor = sharedPreferences.edit()
-                            editor.putBoolean("isFinished", true)
-                            editor.apply()
-                        },
-                        setTheme={
-                            val sharedPreferences = this.getSharedPreferences("Theme", MODE_PRIVATE)
-                            val editor = sharedPreferences.edit()
-                            editor.putBoolean("theme", it)
-                            editor.apply()
-                            theme.value=it
-                        },
-                        currentTheme=theme.value)
+                PDFProTheme(darkTheme = theme.value) {
+                    // A surface container using the 'background' color from the theme
+                    Surface(
+                        modifier = Modifier.fillMaxSize(),
+                        color = MaterialTheme.colorScheme.background
+                    ) {
+                        NavigationController(
+                            startDestination = getStartDestination(),
+                            setOnboardingFinished = {
+                                this.getSharedPreferences("onBoarding", MODE_PRIVATE)
+                                    .edit().putBoolean("isFinished", true).apply()
+                            },
+                            setTheme = {
+                                val sharedPreferences =
+                                    this.getSharedPreferences("Theme", MODE_PRIVATE)
+                                val editor = sharedPreferences.edit()
+                                editor.putBoolean("theme", it)
+                                editor.apply()
+                                theme.value = it
+                            },
+                            currentTheme = theme.value
+                        )
+                    }
                 }
             }
         }
-    }
-
     /**
      * If onboarding is done once when app is run for first time then always
      * home screen is opened after splash screen.

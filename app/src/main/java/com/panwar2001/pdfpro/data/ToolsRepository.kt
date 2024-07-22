@@ -170,7 +170,7 @@ import javax.inject.Singleton
                  return fileName
              }
          }
-         return ""
+         throw NullPointerException("Could not get pdf file name")
      }
 
      @WorkerThread

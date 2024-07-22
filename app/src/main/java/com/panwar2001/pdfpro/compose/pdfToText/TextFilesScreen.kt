@@ -1,6 +1,7 @@
 package com.panwar2001.pdfpro.compose.pdfToText
 
 import android.net.Uri
+import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -16,11 +17,14 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.outlined.Delete
 import androidx.compose.material.icons.outlined.Share
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
@@ -40,8 +44,14 @@ fun TextFilesScreen(filesInfo:List<TextFileInfo>,
                     navigateBack:()->Unit,
                     deleteFile:(id: Long)->Unit,
                     share:(Uri)->Unit,
-                    viewTextFile:(Long)->Unit){
-        Scaffold(topBar = {
+                    viewTextFile:(Long)->Unit,
+                    isLoading:Boolean,
+                    snackBarHostState: SnackbarHostState){
+        Scaffold(
+            snackbarHost = {
+                 SnackbarHost(hostState = snackBarHostState)
+            },
+            topBar = {
             TopAppBar(
                 title = { Text(text = "Text Files Log")},
                 navigationIcon = {
@@ -55,6 +65,13 @@ fun TextFilesScreen(filesInfo:List<TextFileInfo>,
                 })
         }){padding->
         LazyColumn(Modifier.padding(padding)){
+            item {
+                AnimatedVisibility(visible = isLoading) {
+                    CircularProgressIndicator(
+                        modifier = Modifier.padding(bottom = 16.dp)
+                    )
+                }
+            }
             items(filesInfo) {
                 Spacer(modifier = Modifier.width(dimensionResource(id = R.dimen.spacing_tiny)))
                 Row(
@@ -98,5 +115,8 @@ fun PreviewTextFilesScreen(){
     val filesInfo= mutableListOf<TextFileInfo>()
     filesInfo.add(TextFileInfo("file name  file name file name file name file name file name file name",3, Uri.EMPTY, fileSize = "0.4"))
     TextFilesScreen(filesInfo = filesInfo, navigateBack = { /*TODO*/ },
-        viewTextFile = {}, share = {}, deleteFile = {})
+        viewTextFile = {}, share = {}, deleteFile = {},
+        isLoading = true,
+        snackBarHostState = SnackbarHostState()
+    )
 }

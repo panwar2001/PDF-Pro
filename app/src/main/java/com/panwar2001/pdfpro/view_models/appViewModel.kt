@@ -1,29 +1,18 @@
 package com.panwar2001.pdfpro.view_models
 
-import android.app.LocaleManager
-import android.content.ContentUris
-import android.content.Context
-import android.content.Intent
 import android.net.Uri
-import android.os.Build
-import android.os.LocaleList
-import android.provider.MediaStore
 import androidx.annotation.WorkerThread
-import androidx.appcompat.app.AppCompatDelegate
-import androidx.core.os.LocaleListCompat
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.panwar2001.pdfpro.R
 import com.panwar2001.pdfpro.compose.PdfRow
 import com.panwar2001.pdfpro.data.ToolsInterfaceRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
-import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
-import java.util.Locale
 import javax.inject.Inject
 
 /**
@@ -43,8 +32,7 @@ data class AppUiState(
 
 
 @HiltViewModel
-class AppViewModel @Inject constructor(@ApplicationContext val context: Context,
-                                        private val toolsRepository: ToolsInterfaceRepository): ViewModel() {
+class AppViewModel @Inject constructor(private val toolsRepository: ToolsInterfaceRepository): ViewModel() {
     private val _uiState = MutableStateFlow(toolsRepository.initAppUiState())
     val uiState: StateFlow<AppUiState> = _uiState.asStateFlow()
     val options= listOf(
