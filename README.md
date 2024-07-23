@@ -1,7 +1,9 @@
 # <img src="./app/src/main/launcher_icon-playstore.png" style="border-radius: 20px;" width="35px" alt="" /> PDF Pro 
 
+### PDF PRO APP
+![Home Screen](/Screenshots/home%20screen.jpg)
 
-
+![navigation bar](/Screenshots/navigation%20bar.jpg)
 
 ### Contribution Guide
 
