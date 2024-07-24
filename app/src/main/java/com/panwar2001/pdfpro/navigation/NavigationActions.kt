@@ -1,26 +1,37 @@
 package com.panwar2001.pdfpro.navigation
 
 import androidx.compose.material3.DrawerState
+import androidx.compose.material3.DrawerValue
+import androidx.compose.material3.rememberDrawerState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.ViewModel
 import androidx.navigation.NavBackStackEntry
-import androidx.navigation.NavController
 import androidx.navigation.NavGraph.Companion.findStartDestination
+import androidx.navigation.NavHostController
+import androidx.navigation.compose.rememberNavController
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 
-class NavigationActions(val navController: NavController,
-                        private val drawerState: DrawerState,
-                        private val scope: CoroutineScope){
+@Composable
+fun rememberNavActions(
+    navController: NavHostController= rememberNavController(),
+    scope: CoroutineScope = rememberCoroutineScope(),
+    drawerState: DrawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
+): NavigationActions{
+    return remember(navController,scope,drawerState) {
+        NavigationActions(navController,scope,drawerState)
+    }
+}
+class NavigationActions(val navController: NavHostController,
+                        val scope: CoroutineScope,
+                        val drawerState: DrawerState){
     fun navigateToHome()= navController.navigate(Screens.Home.route) {
                    navController.popBackStack()
                 }
     fun navigateTo(screen:String) = navController.navigate(screen){
-            if (drawerState.isOpen) {
-                scope.launch { drawerState.apply { close() } }
-            }
             // Pop up to the start destination of the graph to
             // avoid building up a large stack of destinations
             // on the back stack as users select items
@@ -33,21 +44,12 @@ class NavigationActions(val navController: NavController,
             // Restore state when selecting a previously selected item
             restoreState = true
         }
-    fun navigateToScreen(screen: String)=navController.navigate(screen){
-        closeDrawer()
-    }
-   private fun closeDrawer(){
-        if (drawerState.isOpen) {
-            scope.launch { drawerState.apply { close() } }
-        }
-    }
-    fun toggleDrawer()=scope.launch {
-        drawerState.apply {
-            if (isClosed) open() else close()
-        }
-    }
+    fun navigateToScreen(screen: String)=navController.navigate(screen)
 
     fun navigateBack()=  navController.navigateUp()
+    fun openDrawer()=scope.launch {
+        drawerState.apply { open() }
+    }
 
     /**
      *  create sharedViewModel Instance with it with navBackStackEntry.

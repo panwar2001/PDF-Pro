@@ -3,10 +3,8 @@ package com.panwar2001.pdfpro.navigation
 import android.util.Log
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
-import androidx.compose.material3.SnackbarHostState
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.ui.Modifier
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.composable
 import androidx.navigation.navigation
@@ -14,16 +12,12 @@ import com.panwar2001.pdfpro.R
 import com.panwar2001.pdfpro.compose.components.DeterminateIndicator
 import com.panwar2001.pdfpro.compose.components.FilePickerScreen
 import com.panwar2001.pdfpro.compose.components.PdfViewer
-import com.panwar2001.pdfpro.compose.components.ProgressIndicator
 import com.panwar2001.pdfpro.compose.pdfToImages.ImagesScreen
 import com.panwar2001.pdfpro.compose.pdfToImages.PreviewFileScreen
 import com.panwar2001.pdfpro.data.DataSource
 import com.panwar2001.pdfpro.view_models.PdfToImagesViewModel
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.launch
 
-fun NavGraphBuilder.pdf2ImgGraph(scope: CoroutineScope,
-                                 navActions: NavigationActions){
+fun NavGraphBuilder.pdf2ImgGraph(navActions: NavigationActions){
     navigation(route= Screens.PdfToImage.route,
                startDestination= Screens.FilePicker.route){
         composable(route= Screens.FilePicker.route){ backStackEntry->
@@ -42,13 +36,15 @@ fun NavGraphBuilder.pdf2ImgGraph(scope: CoroutineScope,
                 })
 
 
-            FilePickerScreen(onNavigationIconClick = navActions::toggleDrawer,
+            FilePickerScreen(onNavigationIconClick = navActions::openDrawer,
                 onClick = {
                     pdfPickerLauncher.launch(arrayOf("application/pdf"))
                 },
                 tool= DataSource.getToolData(R.string.pdf2img),
                 isLoading = uiState.isLoading,
-                snackBarHostState = SnackbarHostState()
+                userMessage = null,
+                snackBarMessageShown = {},
+                isError = false
             )
         }
         composable(route= Screens.PdfToImage.PreviewFile.route) { backStackEntry->
@@ -57,7 +53,7 @@ fun NavGraphBuilder.pdf2ImgGraph(scope: CoroutineScope,
             Log.e("destination: ", backStackEntry.destination.parent?.route.toString())
 
                 PreviewFileScreen(
-                    onNavigationIconClick = navActions::toggleDrawer,
+                    onNavigationIconClick = navActions::openDrawer,
                     navigateTo = navActions::navigateToScreen,
                     thumbnail = uiState.thumbnail,
                     fileName = uiState.fileName,
@@ -85,7 +81,7 @@ fun NavGraphBuilder.pdf2ImgGraph(scope: CoroutineScope,
                 DeterminateIndicator(progress)
             } else {
                     ImagesScreen(images = uiState.images,
-                        onNavigationIconClick = navActions::toggleDrawer
+                        onNavigationIconClick = navActions::openDrawer
                     )
                 }
             }

@@ -15,13 +15,11 @@ import com.panwar2001.pdfpro.compose.LanguagePickerScreen
 import com.panwar2001.pdfpro.compose.components.PdfViewer
 import com.panwar2001.pdfpro.compose.components.sharePdfFile
 import com.panwar2001.pdfpro.view_models.AppViewModel
-import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 
 
 @OptIn(ExperimentalFoundationApi::class)
-fun NavGraphBuilder.appGraph(scope:CoroutineScope,
-                             navActions: NavigationActions){
+fun NavGraphBuilder.appGraph(navActions: NavigationActions){
 
     navigation(route= Screens.Home.route,
         startDestination= Screens.Home.HomeScreen.route) {
@@ -31,7 +29,7 @@ fun NavGraphBuilder.appGraph(scope:CoroutineScope,
             val pagerState = rememberPagerState { 2 }
             val context = LocalContext.current
             HomeScreen(
-                onNavigationIconClick = navActions::toggleDrawer,
+                onNavigationIconClick = navActions::openDrawer,
                 pdfList = uiState.pdfsList,
                 navigateTo = navActions::navigateTo,
                 query = uiState.query,
@@ -58,7 +56,7 @@ fun NavGraphBuilder.appGraph(scope:CoroutineScope,
                 },
                 options = viewModel.options,
                 scrollToPage = {
-                    if (it != pagerState.currentPage) scope.launch {
+                    if (it != pagerState.currentPage) navActions.scope.launch {
                         viewModel.setSearchBarActive(false)
                         pagerState.animateScrollToPage(
                             it

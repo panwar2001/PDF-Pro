@@ -2,10 +2,7 @@ package com.panwar2001.pdfpro.view_models
 
 import android.graphics.Bitmap
 import android.net.Uri
-import androidx.compose.material3.SnackbarDuration
-import androidx.compose.material3.SnackbarHostState
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.ui.res.stringResource
+import androidx.annotation.StringRes
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.panwar2001.pdfpro.R
@@ -30,6 +27,7 @@ data class PdfToTextUiState(
     val textFileName: String,
     val text: String,
     val numPages:Int,
+    val isError: Boolean,
     val userMessage: Int?,
     val fileUniqueId: Long,
     val triggerSuccess: Boolean
@@ -44,7 +42,6 @@ constructor(private val toolsRepository: ToolsInterfaceRepository,
     private val _uiState = MutableStateFlow(pdf2TextRepository.initPdfToTextUiState())
     val uiState: StateFlow<PdfToTextUiState> = _uiState.asStateFlow()
     val allFilesInfo = pdf2TextRepository.getAllTextFiles()
-    val snackBarHostState= SnackbarHostState()
 
     private fun setLoading(isLoading: Boolean) {
         _uiState.update {
@@ -65,16 +62,18 @@ constructor(private val toolsRepository: ToolsInterfaceRepository,
     }
 
     private fun setTextFileName(text: String) {
-        _uiState.update { state ->
-            state.copy(textFileName = text)
+        _uiState.update {
+            it.copy(textFileName = text)
         }
     }
-    private fun emitSnackBarMessage(message: String){
-        viewModelScope.launch {
-            snackBarHostState.showSnackbar(message, duration = SnackbarDuration.Short)
+    private fun setUserMessage(@StringRes message: Int?,isError:Boolean=false){
+        _uiState.update {
+            it.copy(userMessage = message, isError = isError)
         }
     }
-
+    fun snackBarMessageShown(){
+        setUserMessage(null)
+    }
     /**
      * using pdf-box to generate thumbnail of pdf (Bitmap of first page of pdf using it's uri)
      */
@@ -91,12 +90,11 @@ constructor(private val toolsRepository: ToolsInterfaceRepository,
                 numPages = toolsRepository.getNumPages(uri)
                 fileName = toolsRepository.getPdfName(uri)
             } catch (e: Exception) {
-                isSuccess = false
-                emitSnackBarMessage(e.message?:"error")
                 e.printStackTrace()
+                isSuccess = false
+                setUserMessage(R.string.error_message, isError = true)
             } finally {
                 if (isSuccess) {
-                    emitSnackBarMessage("Success")
                     _uiState.update { state ->
                         state.copy(
                             thumbnail = thumbnail,
@@ -124,11 +122,9 @@ constructor(private val toolsRepository: ToolsInterfaceRepository,
             } catch (e: Exception) {
                 e.printStackTrace()
                 isSuccess = false
-                emitSnackBarMessage(e.message?:"error")
+                setUserMessage(R.string.error_message, isError = true)
             } finally {
                 if (isSuccess) {
-                    emitSnackBarMessage("success")
-                    setTriggerSuccess(true)
                     _uiState.update {
                         it.copy(
                             text = text,
@@ -145,10 +141,19 @@ constructor(private val toolsRepository: ToolsInterfaceRepository,
 
     fun deleteFile(id: Long) {
         viewModelScope.launch {
+            var isSuccess=true
             try {
+                setLoading(true)
                 pdf2TextRepository.deleteTextFile(id)
             } catch (e: Exception) {
                 e.printStackTrace()
+                isSuccess=false
+                setUserMessage(R.string.error_message, isError = true)
+            }finally{
+//                if(isSuccess){
+//                    setUserMessage("Removed!")
+//                }
+                setLoading(false)
             }
         }
     }
@@ -166,7 +171,7 @@ constructor(private val toolsRepository: ToolsInterfaceRepository,
                 textFileName = fileDetails.second
             } catch (e: Exception) {
                 e.printStackTrace()
-                emitSnackBarMessage(e.message?:"error")
+                setUserMessage(R.string.error_message, isError = true)
                 isSuccess = false
             } finally {
                 if (isSuccess) {
@@ -179,7 +184,6 @@ constructor(private val toolsRepository: ToolsInterfaceRepository,
                         )
                     }
                     setTriggerSuccess(true)
-                    emitSnackBarMessage("success")
                 }
                 setLoading(false)
             }
@@ -188,11 +192,18 @@ constructor(private val toolsRepository: ToolsInterfaceRepository,
 
     fun modifyFileName(name: String) {
         viewModelScope.launch {
+            var isSuccess = true
             try {
                 pdf2TextRepository.modifyName(uiState.value.fileUniqueId, "$name.txt")
                 setTextFileName(name)
             } catch (e: Exception) {
+                isSuccess=false
+                setUserMessage(R.string.error_message, isError = true)
                 e.printStackTrace()
+            }finally {
+//                if(isSuccess){
+//                    setUserMessage(R.str, isError = true)
+//                }
             }
         }
     }

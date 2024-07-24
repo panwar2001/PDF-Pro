@@ -1,5 +1,6 @@
 package com.panwar2001.pdfpro.compose.components
 
+import androidx.annotation.StringRes
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.Arrangement
@@ -17,9 +18,11 @@ import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -34,6 +37,9 @@ import com.panwar2001.pdfpro.R
 import com.panwar2001.pdfpro.compose.AppBar
 import com.panwar2001.pdfpro.compose.MenuItem
 import com.panwar2001.pdfpro.data.Tool
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.launch
+import java.lang.Error
 
 
 @Composable
@@ -42,9 +48,19 @@ fun FilePickerScreen(onNavigationIconClick:()->Unit,
                      tool:Tool,
                      menuItems: List<MenuItem> = listOf(),
                      isLoading:Boolean=false,
-                     snackBarHostState: SnackbarHostState
+                     isError: Boolean,
+                     snackBarHostState: SnackbarHostState= remember {SnackbarHostState()},
+                     @StringRes userMessage: Int?,
+                     snackBarMessageShown:()->Unit,
 ) {
-    Scaffold(snackbarHost ={ SnackbarHost(hostState = snackBarHostState)},
+    userMessage?.let{ message->
+        val snackBarText = stringResource(message)
+        LaunchedEffect( message, snackBarText) {
+                snackBarHostState.showSnackbar(snackBarText)
+                snackBarMessageShown()
+        }
+    }
+    Scaffold(snackbarHost ={ SnackBarHost(snackBarHostState,isError)},
         topBar = {
         AppBar(onNavigationIconClick =onNavigationIconClick,
             menuItems = menuItems,
@@ -121,12 +137,11 @@ fun PrevFilePickerScreen(){
     var loading by remember {
         mutableStateOf(false)
     }
-    val snackbarHostState= remember {
-        SnackbarHostState()
-    }
     FilePickerScreen(onNavigationIconClick = { /*TODO*/ },
         onClick = { loading=!loading},
         tool = Tool(R.string.img2pdf_description,R.string.sort_by_size),
         isLoading = loading,
-        snackBarHostState = SnackbarHostState())
+        snackBarMessageShown = {},
+        userMessage = null,
+        isError = true)
 }

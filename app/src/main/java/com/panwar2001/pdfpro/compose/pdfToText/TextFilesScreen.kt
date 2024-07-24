@@ -23,11 +23,11 @@ import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -36,6 +36,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.panwar2001.pdfpro.R
+import com.panwar2001.pdfpro.compose.components.SnackBarHost
 import com.panwar2001.pdfpro.data.TextFileInfo
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -46,10 +47,11 @@ fun TextFilesScreen(filesInfo:List<TextFileInfo>,
                     share:(Uri)->Unit,
                     viewTextFile:(Long)->Unit,
                     isLoading:Boolean,
-                    snackBarHostState: SnackbarHostState){
+                    snackBarHostState: SnackbarHostState= remember {SnackbarHostState()}
+){
         Scaffold(
             snackbarHost = {
-                 SnackbarHost(hostState = snackBarHostState)
+                 SnackBarHost(snackBarHostState,isError = false)
             },
             topBar = {
             TopAppBar(
@@ -83,9 +85,10 @@ fun TextFilesScreen(filesInfo:List<TextFileInfo>,
                     verticalAlignment = Alignment.CenterVertically,
                     horizontalArrangement = Arrangement.SpaceBetween
                 ) {
-                    Column(Modifier
-                        .padding(horizontal = dimensionResource(id = R.dimen.spacing_large))
-                        .weight(1f)){
+                    Column(
+                        Modifier
+                            .padding(horizontal = dimensionResource(id = R.dimen.spacing_large))
+                            .weight(1f)){
                         Text(text = it.fileName,
                             fontWeight = FontWeight.SemiBold
                         )
@@ -117,6 +120,5 @@ fun PreviewTextFilesScreen(){
     TextFilesScreen(filesInfo = filesInfo, navigateBack = { /*TODO*/ },
         viewTextFile = {}, share = {}, deleteFile = {},
         isLoading = true,
-        snackBarHostState = SnackbarHostState()
     )
 }

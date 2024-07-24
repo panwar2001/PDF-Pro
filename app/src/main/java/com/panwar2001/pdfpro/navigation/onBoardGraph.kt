@@ -10,8 +10,7 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalFoundationApi::class)
-fun NavGraphBuilder.onBoardGraph(scope: CoroutineScope,
-                                 navActions: NavigationActions,
+fun NavGraphBuilder.onBoardGraph(navActions: NavigationActions,
                                  setOnboardingFinished:()->Unit ) {
     composable(route = Screens.OnBoard.route) {
         val viewModel = OnBoardScreenViewModel()
@@ -33,7 +32,7 @@ fun NavGraphBuilder.onBoardGraph(scope: CoroutineScope,
                     navActions.navigateToHome()
                     setOnboardingFinished()
                 } else {
-                    scope.launch {
+                    navActions.scope.launch {
                         pagerState.animateScrollToPage(pagerState.currentPage + 1)
                     }
                 }

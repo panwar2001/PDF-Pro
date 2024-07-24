@@ -71,7 +71,8 @@ constructor(@ApplicationContext private val context: Context,
             numPages = 0,
             userMessage = null,
             fileUniqueId = -1,
-            triggerSuccess = false
+            triggerSuccess = false,
+            isError = false
         )
     }
 

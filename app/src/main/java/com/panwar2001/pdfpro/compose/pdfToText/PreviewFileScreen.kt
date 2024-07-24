@@ -21,6 +21,7 @@ import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -34,6 +35,7 @@ import coil.compose.AsyncImage
 import com.panwar2001.pdfpro.R
 import com.panwar2001.pdfpro.compose.AppBar
 import com.panwar2001.pdfpro.compose.MenuItem
+import com.panwar2001.pdfpro.compose.components.SnackBarHost
 import com.panwar2001.pdfpro.data.Tool
 
 @Composable
@@ -45,10 +47,11 @@ fun PreviewFileScreen(onNavigationIconClick:()->Unit,
                       navigateToPdfViewer:()->Unit,
                       menuItems: List<MenuItem> = listOf(),
                       isLoading: Boolean,
-                      snackBarHostState: SnackbarHostState
+                      snackBarHostState: SnackbarHostState= remember {SnackbarHostState()}
 ) {
+
     Scaffold(
-        snackbarHost = { SnackbarHost(hostState = snackBarHostState)},
+        snackbarHost = {SnackBarHost(snackBarHostState,false)},
         floatingActionButton = {
             FloatingActionButton(onClick = {
                 convertToText()

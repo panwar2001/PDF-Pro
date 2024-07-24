@@ -2,9 +2,8 @@
 
 ### PDF PRO APP
 
-[//]: # (![Home_Screen]&#40;/Screenshots/home%20screen.jpg&#41;)
-
 <img src="/Screenshots/home%20screen.jpg" alt="drawing" width="200" height="400"/>
+
 ![navigation bar](/Screenshots/navigation%20bar.jpg)
 
 ### Contribution Guide

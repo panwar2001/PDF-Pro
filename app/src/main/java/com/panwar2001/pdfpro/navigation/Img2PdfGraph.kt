@@ -3,7 +3,6 @@ package com.panwar2001.pdfpro.navigation
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.PickVisualMediaRequest
 import androidx.activity.result.contract.ActivityResultContracts
-import androidx.compose.material3.SnackbarHostState
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.navigation.NavGraphBuilder
@@ -18,11 +17,8 @@ import com.panwar2001.pdfpro.compose.images2pdf.ReorderScreen
 import com.panwar2001.pdfpro.compose.images2pdf.SavePdfScreen
 import com.panwar2001.pdfpro.data.DataSource
 import com.panwar2001.pdfpro.view_models.Img2pdfViewModel
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.launch
 
-fun NavGraphBuilder.img2PdfGraph(scope: CoroutineScope,
-                                 navActions: NavigationActions){
+fun NavGraphBuilder.img2PdfGraph(navActions: NavigationActions){
 
     navigation(route= Screens.Img2Pdf.route,
                startDestination= Screens.FilePicker.route){
@@ -37,15 +33,16 @@ fun NavGraphBuilder.img2PdfGraph(scope: CoroutineScope,
                         viewModel.setLoading(true)
                         navActions.navigateToScreen(Screens.Img2Pdf.ImagesViewScreen.route)
                     } })
-            FilePickerScreen(onNavigationIconClick = navActions::toggleDrawer,
+            FilePickerScreen(onNavigationIconClick = navActions::openDrawer,
                 onClick = {
                     imagesPickerLauncher.launch(
                         PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly)
                     )
                 },
                 tool= DataSource.getToolData(R.string.img2pdf),
-                snackBarHostState = SnackbarHostState()
-            )
+                userMessage = null,
+                snackBarMessageShown = {},
+                isError = false)
         }
         composable(route= Screens.Img2Pdf.ReorderScreen.route) { backStackEntry ->
             val viewModel = navActions.sharedViewModel<Img2pdfViewModel>(backStackEntry)
@@ -69,10 +66,8 @@ fun NavGraphBuilder.img2PdfGraph(scope: CoroutineScope,
                 deleteImages =viewModel::deleteImages,
                 convertToPdf = {
                     viewModel.setLoading(true)
-                    scope.launch {
-                        navActions.navigateToScreen(Screens.Img2Pdf.SavePdfScreen.route)
-                        viewModel.convert2Pdf()
-                    }
+                    navActions.navigateToScreen(Screens.Img2Pdf.SavePdfScreen.route)
+                    viewModel.convert2Pdf()
                 }
             )
         }

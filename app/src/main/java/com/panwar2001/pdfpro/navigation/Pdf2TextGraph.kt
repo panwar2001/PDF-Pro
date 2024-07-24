@@ -20,17 +20,15 @@ import com.panwar2001.pdfpro.compose.pdfToText.TextFilesScreen
 import com.panwar2001.pdfpro.compose.pdfToText.TextScreen
 import com.panwar2001.pdfpro.data.DataSource
 import com.panwar2001.pdfpro.view_models.PdfToTextViewModel
-import kotlinx.coroutines.CoroutineScope
 
-fun NavGraphBuilder.pdf2txtGraph(scope:CoroutineScope,
-                                 navActions: NavigationActions){
+fun NavGraphBuilder.pdf2txtGraph(navActions: NavigationActions){
     navigation(route= Screens.PdfToText.route,startDestination= Screens.FilePicker.route) {
-        composable(route = Screens.FilePicker.route) { backStackEntry ->
-
+        composable(route = Screens.FilePicker.route,) { backStackEntry ->
             val viewModel = navActions.sharedViewModel<PdfToTextViewModel>(backStackEntry)
             val uiState by viewModel.uiState.collectAsState()
             val menuItems = remember {
                 mutableListOf(MenuItem("Text Files Log") {
+                    viewModel.snackBarMessageShown()
                     navActions.navigateToScreen(Screens.PdfToText.TextFilesScreen.route)
                 })
             }
@@ -41,21 +39,25 @@ fun NavGraphBuilder.pdf2txtGraph(scope:CoroutineScope,
                         viewModel.pickPdf(uri)
                     }
                 })
+
             if(uiState.triggerSuccess){
                 LaunchedEffect(Unit) {
-                    navActions.navigateToScreen(Screens.PdfToText.PreviewFile.route)
+                    viewModel.snackBarMessageShown()
                     viewModel.setTriggerSuccess(false)
+                    navActions.navigateToScreen(Screens.PdfToText.PreviewFile.route)
                 }
             }
             FilePickerScreen(
-                onNavigationIconClick = navActions::toggleDrawer,
+                onNavigationIconClick = navActions::openDrawer,
                 onClick = {
                     pdfPickerLauncher.launch(arrayOf("application/pdf"))
                 },
                 tool = DataSource.getToolData(R.string.pdf2text),
                 menuItems,
                 isLoading = uiState.isLoading,
-                snackBarHostState = viewModel.snackBarHostState
+                userMessage= uiState.userMessage,
+                snackBarMessageShown = viewModel::snackBarMessageShown,
+                isError = uiState.isError
             )
         }
         composable(route = Screens.PdfToText.PreviewFile.route) { backStackEntry ->
@@ -77,17 +79,16 @@ fun NavGraphBuilder.pdf2txtGraph(scope:CoroutineScope,
             }
 
             PreviewFileScreen(
-                onNavigationIconClick = navActions::toggleDrawer,
+                onNavigationIconClick = navActions::openDrawer,
                 thumbnail = uiState.thumbnail,
                 fileName = uiState.pdfFileName,
-                navigateToPdfViewer = { navActions.navigateToScreen(Screens.PdfToText.PdfViewer.route) },
+                navigateToPdfViewer = { navActions.navigateToScreen(Screens.PdfToText.PdfViewer.route)},
                 convertToText = {
                     viewModel.convertToText()
                 },
                 tool = DataSource.getToolData(R.string.pdf2text),
                 menuItems = menuItems,
-                isLoading = uiState.isLoading,
-                snackBarHostState = viewModel.snackBarHostState
+                isLoading = uiState.isLoading
             )
 
         }
@@ -115,8 +116,7 @@ fun NavGraphBuilder.pdf2txtGraph(scope:CoroutineScope,
                 viewTextFile = {
                     viewModel.readTextFromFile(it)
                 },
-                isLoading = uiState.isLoading,
-                snackBarHostState = viewModel.snackBarHostState
+                isLoading = uiState.isLoading
             )
         }
         composable(route = Screens.PdfToText.PdfViewer.route) { backStackEntry ->
@@ -134,7 +134,7 @@ fun NavGraphBuilder.pdf2txtGraph(scope:CoroutineScope,
             val uiState by viewModel.uiState.collectAsState()
             TextScreen(
                 text = uiState.text,
-                onNavigationIconClick = navActions::toggleDrawer,
+                onNavigationIconClick = navActions::openDrawer,
                 onBackPress = {
                     viewModel.setPdfText("")
                     navActions.navigateBack()
