@@ -28,7 +28,6 @@ fun NavGraphBuilder.pdf2txtGraph(navActions: NavigationActions){
             val uiState by viewModel.uiState.collectAsState()
             val menuItems = remember {
                 mutableListOf(MenuItem("Text Files Log") {
-                    viewModel.snackBarMessageShown()
                     navActions.navigateToScreen(Screens.PdfToText.TextFilesScreen.route)
                 })
             }
@@ -42,18 +41,15 @@ fun NavGraphBuilder.pdf2txtGraph(navActions: NavigationActions){
 
             if(uiState.triggerSuccess){
                 LaunchedEffect(Unit) {
-                    viewModel.snackBarMessageShown()
                     viewModel.setTriggerSuccess(false)
                     navActions.navigateToScreen(Screens.PdfToText.PreviewFile.route)
                 }
             }
             FilePickerScreen(
                 onNavigationIconClick = navActions::openDrawer,
-                onClick = {
-                    pdfPickerLauncher.launch(arrayOf("application/pdf"))
-                },
+                onClick = {pdfPickerLauncher.launch(arrayOf("application/pdf"))},
                 tool = DataSource.getToolData(R.string.pdf2text),
-                menuItems,
+                menuItems= menuItems,
                 isLoading = uiState.isLoading,
                 userMessage= uiState.userMessage,
                 snackBarMessageShown = viewModel::snackBarMessageShown,
@@ -83,12 +79,13 @@ fun NavGraphBuilder.pdf2txtGraph(navActions: NavigationActions){
                 thumbnail = uiState.thumbnail,
                 fileName = uiState.pdfFileName,
                 navigateToPdfViewer = { navActions.navigateToScreen(Screens.PdfToText.PdfViewer.route)},
-                convertToText = {
-                    viewModel.convertToText()
-                },
+                convertToText = {viewModel.convertToText()},
                 tool = DataSource.getToolData(R.string.pdf2text),
                 menuItems = menuItems,
-                isLoading = uiState.isLoading
+                isLoading = uiState.isLoading,
+                snackBarMessageShown = viewModel::snackBarMessageShown,
+                isError = uiState.isError,
+                userMessage = uiState.userMessage
             )
 
         }
@@ -113,10 +110,11 @@ fun NavGraphBuilder.pdf2txtGraph(navActions: NavigationActions){
                 share = {
                     sharePdfFile(context, it, "text/plain")
                 },
-                viewTextFile = {
-                    viewModel.readTextFromFile(it)
-                },
-                isLoading = uiState.isLoading
+                viewTextFile = {viewModel.readTextFromFile(it)},
+                isLoading = uiState.isLoading,
+                snackBarMessageShown = viewModel::snackBarMessageShown,
+                isError = uiState.isError,
+                userMessage = uiState.userMessage
             )
         }
         composable(route = Screens.PdfToText.PdfViewer.route) { backStackEntry ->

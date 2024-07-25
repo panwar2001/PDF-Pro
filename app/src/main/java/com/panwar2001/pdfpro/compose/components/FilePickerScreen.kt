@@ -55,9 +55,9 @@ fun FilePickerScreen(onNavigationIconClick:()->Unit,
 ) {
     userMessage?.let{ message->
         val snackBarText = stringResource(message)
-        LaunchedEffect( message, snackBarText) {
-                snackBarHostState.showSnackbar(snackBarText)
-                snackBarMessageShown()
+        LaunchedEffect(Unit) {
+            snackBarHostState.showSnackbar(snackBarText, withDismissAction = true)
+            snackBarMessageShown()
         }
     }
     Scaffold(snackbarHost ={ SnackBarHost(snackBarHostState,isError)},

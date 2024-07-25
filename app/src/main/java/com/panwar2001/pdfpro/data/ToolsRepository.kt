@@ -19,6 +19,7 @@ import android.os.Environment
 import android.os.LocaleList
 import android.provider.MediaStore
 import android.provider.OpenableColumns
+import android.util.Size
 import androidx.annotation.WorkerThread
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.core.content.FileProvider
@@ -129,7 +130,7 @@ import javax.inject.Singleton
      }
 
      override  suspend  fun getThumbnailOfPdf(uri:Uri):Bitmap{
-        return withContext(Dispatchers.IO) {
+          return withContext(Dispatchers.IO) {
                val contentResolver = context.contentResolver
                val fileDescriptor = contentResolver.openFileDescriptor(uri, "r")
                fileDescriptor.use { descriptor ->

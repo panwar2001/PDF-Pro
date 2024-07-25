@@ -151,7 +151,7 @@ constructor(private val toolsRepository: ToolsInterfaceRepository,
                 setUserMessage(R.string.error_message, isError = true)
             }finally{
 //                if(isSuccess){
-//                    setUserMessage("Removed!")
+//                    setUserMessage()
 //                }
                 setLoading(false)
             }

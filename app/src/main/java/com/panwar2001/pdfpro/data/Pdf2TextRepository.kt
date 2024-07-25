@@ -3,6 +3,7 @@ package com.panwar2001.pdfpro.data
 import android.content.Context
 import android.graphics.Bitmap
 import android.net.Uri
+import android.provider.DocumentsContract
 import androidx.core.content.FileProvider
 import com.panwar2001.pdfpro.data.source.local.TextFile
 import com.panwar2001.pdfpro.data.source.local.TextFileDao
@@ -44,6 +45,7 @@ constructor(@ApplicationContext private val context: Context,
             throw Exception("Failed to rename file")
         } else {
             textFileDao.updatePath(id, newFile.path)
+            DocumentsContract.deleteDocument(context.contentResolver,Uri.EMPTY)
         }
     }
     private  fun toRenameCreateFileWithUniqueName(directory: File, name: String): File{

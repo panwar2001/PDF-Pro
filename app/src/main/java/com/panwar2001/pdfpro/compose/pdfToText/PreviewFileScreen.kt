@@ -1,6 +1,7 @@
 package com.panwar2001.pdfpro.compose.pdfToText
 
 import android.graphics.Bitmap
+import androidx.annotation.StringRes
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -21,6 +22,7 @@ import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -47,15 +49,23 @@ fun PreviewFileScreen(onNavigationIconClick:()->Unit,
                       navigateToPdfViewer:()->Unit,
                       menuItems: List<MenuItem> = listOf(),
                       isLoading: Boolean,
-                      snackBarHostState: SnackbarHostState= remember {SnackbarHostState()}
+                      snackBarHostState: SnackbarHostState= remember {SnackbarHostState()},
+                      @StringRes userMessage: Int?,
+                      snackBarMessageShown:()->Unit,
+                      isError: Boolean
 ) {
+    userMessage?.let{ message->
+        val snackBarText = stringResource(message)
+        LaunchedEffect(Unit) {
+            snackBarHostState.showSnackbar(snackBarText, withDismissAction = true)
+            snackBarMessageShown()
+        }
+    }
 
     Scaffold(
-        snackbarHost = {SnackBarHost(snackBarHostState,false)},
+        snackbarHost = {SnackBarHost(snackBarHostState,isError)},
         floatingActionButton = {
-            FloatingActionButton(onClick = {
-                convertToText()
-            },
+            FloatingActionButton(onClick = {convertToText()},
                 containerColor = Color.Red,
                 contentColor = Color.White,
                 modifier = Modifier.clickable(enabled = !isLoading){
