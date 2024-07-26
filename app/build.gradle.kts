@@ -8,15 +8,16 @@ plugins {
 
 android {
     namespace = "com.panwar2001.pdfpro"
-    compileSdk = 34
+    compileSdk = 35
 
     androidResources{
+        @file:Suppress("UnstableApiUsage")
         generateLocaleConfig = true
     }
     defaultConfig {
         applicationId = "com.panwar2001.pdfpro"
         minSdk = 24
-        targetSdk = 34
+        targetSdk = 35
         versionCode = 1
         versionName = "1.0"
 

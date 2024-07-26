@@ -40,9 +40,7 @@ interface ToolsInterfaceRepository {
 
  fun getUriFromMediaId(id: Long): Uri
 
- fun initPdfToImagesUiState():PdfToImagesUiState
-
  fun initAppUiState(): AppUiState
 
- fun initImg2PdfUiState(): Img2PdfUiState
+ suspend fun saveFileToDevice(oldFileUri: Uri,newUri:Uri, fileName: String)
 }

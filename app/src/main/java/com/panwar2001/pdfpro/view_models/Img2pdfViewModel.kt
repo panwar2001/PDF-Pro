@@ -5,6 +5,7 @@ import androidx.annotation.WorkerThread
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.panwar2001.pdfpro.data.ImageInfo
+import com.panwar2001.pdfpro.data.Img2PdfRepository
 import com.panwar2001.pdfpro.data.ToolsInterfaceRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -26,8 +27,9 @@ data class Img2PdfUiState(
 )
 
 @HiltViewModel
-class Img2pdfViewModel @Inject constructor(private val toolsRepository: ToolsInterfaceRepository): ViewModel() {
-    private val _uiState = MutableStateFlow(toolsRepository.initImg2PdfUiState())
+class Img2pdfViewModel @Inject constructor(private val toolsRepository: ToolsInterfaceRepository,
+                                           private val img2PdfRepository: Img2PdfRepository): ViewModel() {
+    private val _uiState = MutableStateFlow(img2PdfRepository.initImg2PdfUiState())
     val uiState: StateFlow<Img2PdfUiState> = _uiState.asStateFlow()
 
     val progress: StateFlow<Float> = toolsRepository.progress
@@ -85,6 +87,7 @@ class Img2pdfViewModel @Inject constructor(private val toolsRepository: ToolsInt
     fun convert2Pdf(){
          viewModelScope.launch {
              try {
+                 setLoading(true)
                  _uiState.update {
                      it.copy(
                          fileUri = toolsRepository.images2Pdf(uiState.value.imageList)
@@ -96,5 +99,18 @@ class Img2pdfViewModel @Inject constructor(private val toolsRepository: ToolsInt
                  setLoading(false)
              }
          }
+    }
+
+    fun savePdfToExternalStorage(externalStoragePdfUri:Uri,internalStoragePdfUri: Uri){
+        viewModelScope.launch {
+            try{
+                setLoading(true)
+                img2PdfRepository.savePdfToExternalStorage(externalStoragePdfUri,internalStoragePdfUri)
+            }catch (e: Exception){
+                e.printStackTrace()
+            }finally {
+                setLoading(false)
+            }
+        }
     }
 }

@@ -23,6 +23,7 @@ import android.util.Size
 import androidx.annotation.WorkerThread
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.core.content.FileProvider
+import androidx.core.net.toFile
 import androidx.core.os.LocaleListCompat
 import androidx.documentfile.provider.DocumentFile
 import com.panwar2001.pdfpro.R
@@ -308,17 +309,6 @@ import javax.inject.Singleton
          return ContentUris.withAppendedId(baseUri, id)
      }
 
-     override fun initPdfToImagesUiState(): PdfToImagesUiState {
-         return PdfToImagesUiState(
-              uri=Uri.EMPTY,
-              isLoading=false,
-              thumbnail=getDefaultThumbnail(),
-              fileName="file.pdf",
-              images= listOf(),
-              numPages=0
-         )
-     }
-
      override fun initAppUiState(): AppUiState {
          return AppUiState(
              text="",
@@ -333,13 +323,9 @@ import javax.inject.Singleton
              numPages=0)
      }
 
-     override fun initImg2PdfUiState(): Img2PdfUiState {
-         return  Img2PdfUiState(
-              imageList = listOf(),
-              isLoading = false,
-              fileName  = "file",
-              fileUri   = Uri.EMPTY,
-              numPages   =0
-         )
+     override suspend fun saveFileToDevice(oldFileUri: Uri,newUri:Uri, fileName: String) {
+         val file= oldFileUri.toFile()
+         val newFile= File(newUri.toFile(),fileName)
+         file.copyTo(newFile)
      }
  }

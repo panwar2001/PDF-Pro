@@ -38,7 +38,6 @@ fun NavGraphBuilder.pdf2txtGraph(navActions: NavigationActions){
                         viewModel.pickPdf(uri)
                     }
                 })
-
             if(uiState.triggerSuccess){
                 LaunchedEffect(Unit) {
                     viewModel.setTriggerSuccess(false)

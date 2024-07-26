@@ -89,12 +89,11 @@ fun NavGraphBuilder.img2PdfGraph(navActions: NavigationActions){
                 DeterminateIndicator(progress)
             } else {
                     SavePdfScreen(
-                backNavigate = navActions::navigateBack,
-                navigateToPdfViewer = {
-                    navActions.navigateToScreen(Screens.Img2Pdf.PdfViewer.route)
-                },
-                fileName = uiState.fileName,
-                uri = uiState.imageList.first().uri
+                        backNavigate = navActions::navigateBack,
+                        navigateToPdfViewer = {navActions.navigateToScreen(Screens.Img2Pdf.PdfViewer.route)},
+                        fileName = uiState.fileName,
+                        uri = uiState.imageList.first().uri,
+                        savePdfToExternalStorage = viewModel::savePdfToExternalStorage
             )
         }
     }

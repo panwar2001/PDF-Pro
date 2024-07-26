@@ -8,6 +8,7 @@ import androidx.compose.ui.graphics.ImageBitmap
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.panwar2001.pdfpro.R
+import com.panwar2001.pdfpro.data.Pdf2ImgRepository
 import com.panwar2001.pdfpro.data.ToolsInterfaceRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -32,8 +33,9 @@ data class PdfToImagesUiState(
 @HiltViewModel
 class PdfToImagesViewModel
 @Inject
-constructor(private val toolsRepository: ToolsInterfaceRepository): ViewModel() {
-    private val _uiState = MutableStateFlow(toolsRepository.initPdfToImagesUiState())
+constructor(private val toolsRepository: ToolsInterfaceRepository,
+            pdf2ImgRepository: Pdf2ImgRepository): ViewModel() {
+    private val _uiState = MutableStateFlow(pdf2ImgRepository.initPdfToImagesUiState())
     val uiState: StateFlow<PdfToImagesUiState> = _uiState.asStateFlow()
 
     val progress: StateFlow<Float> = toolsRepository.progress

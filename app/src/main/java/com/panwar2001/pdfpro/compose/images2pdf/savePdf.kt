@@ -1,6 +1,8 @@
 package com.panwar2001.pdfpro.compose.images2pdf
 
 import android.net.Uri
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -35,23 +37,21 @@ import com.panwar2001.pdfpro.R
 fun SavePdfScreen(backNavigate:()->Unit,
                       navigateToPdfViewer: ()->Unit,
                       fileName:String,
-                      uri:Uri) {
+                      uri:Uri,
+                      savePdfToExternalStorage:(externalStoragePdfUri:Uri,internalStoragePdfUri: Uri)->Unit) {
+    val savePdf = rememberLauncherForActivityResult(
+        contract= ActivityResultContracts.CreateDocument("application/pdf"),
+        onResult = {
+            if(it!=null) {
+                savePdfToExternalStorage(it,uri)
+            }
+        }
+    )
     Scaffold(
         floatingActionButton = {
-            FloatingActionButton(onClick = {
-            },
-                containerColor = Color.Red,
-                contentColor = Color.White,
-            ) {
-                Row(verticalAlignment = Alignment.CenterVertically,
-                    modifier = Modifier.padding(5.dp)
-                ){
-                    Text(text = stringResource(id = R.string.convert_to_images),
-                        fontSize = 20.sp)
-                    Icon(
-                        Icons.AutoMirrored.Filled.ArrowBack,
-                        stringResource(id = R.string.next))
-                }
+            FloatingActionButton(onClick = {savePdf.launch("name")}){
+                    Text(text = "Save To Device")
+//                    Text(text = stringResource(id = R.string.convert_to_images),fontSize = 20.sp)
             }
         },
         topBar = {
@@ -68,7 +68,7 @@ fun SavePdfScreen(backNavigate:()->Unit,
             ){
                 Box(modifier= Modifier
                     .background(color = Color.LightGray)
-                    .clickable {navigateToPdfViewer()}){
+                    .clickable { navigateToPdfViewer() }){
                     Column(
                         horizontalAlignment = Alignment.CenterHorizontally,
                     ){
