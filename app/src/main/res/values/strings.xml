@@ -23,6 +23,7 @@
     <string name="pdf_files_tab" >PDF Files</string>
     <string name="convert_to_text">Convert To Text</string>
     <string name="convert_to_images">Convert To Images</string>
+    <string name="save_to_storage" translatable="false">Save to device</string>
     <string name="close">Close</string>
     <string name="reorder">Reorder</string>
     <string name="light_mode">Light Mode</string>

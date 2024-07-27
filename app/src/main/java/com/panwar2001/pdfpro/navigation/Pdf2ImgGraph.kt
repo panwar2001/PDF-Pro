@@ -81,8 +81,7 @@ fun NavGraphBuilder.pdf2ImgGraph(navActions: NavigationActions){
                 DeterminateIndicator(progress)
             } else {
                     ImagesScreen(images = uiState.images,
-                        onNavigationIconClick = navActions::openDrawer
-                    )
+                        onNavigationIconClick = navActions::openDrawer)
                 }
             }
         }

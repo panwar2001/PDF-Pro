@@ -1,6 +1,7 @@
 package com.panwar2001.pdfpro.view_models
 
 import android.net.Uri
+import android.util.Log
 import androidx.annotation.WorkerThread
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -96,6 +97,7 @@ class Img2pdfViewModel @Inject constructor(private val toolsRepository: ToolsInt
              }catch (e: Exception){
                  e.printStackTrace()
              }finally {
+                 Log.e("tag",uiState.value.fileUri.toString())
                  setLoading(false)
              }
          }

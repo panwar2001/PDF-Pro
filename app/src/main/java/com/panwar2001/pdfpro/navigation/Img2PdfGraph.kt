@@ -93,6 +93,7 @@ fun NavGraphBuilder.img2PdfGraph(navActions: NavigationActions){
                         navigateToPdfViewer = {navActions.navigateToScreen(Screens.Img2Pdf.PdfViewer.route)},
                         fileName = uiState.fileName,
                         uri = uiState.imageList.first().uri,
+                        fileUri=uiState.fileUri,
                         savePdfToExternalStorage = viewModel::savePdfToExternalStorage
             )
         }

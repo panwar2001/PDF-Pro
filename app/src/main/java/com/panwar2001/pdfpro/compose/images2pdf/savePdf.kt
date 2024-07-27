@@ -1,6 +1,7 @@
 package com.panwar2001.pdfpro.compose.images2pdf
 
 import android.net.Uri
+import android.util.Log
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.background
@@ -14,8 +15,11 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.filled.Create
+import androidx.compose.material3.ExtendedFloatingActionButton
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -37,22 +41,25 @@ import com.panwar2001.pdfpro.R
 fun SavePdfScreen(backNavigate:()->Unit,
                       navigateToPdfViewer: ()->Unit,
                       fileName:String,
+                      fileUri:Uri,
                       uri:Uri,
                       savePdfToExternalStorage:(externalStoragePdfUri:Uri,internalStoragePdfUri: Uri)->Unit) {
     val savePdf = rememberLauncherForActivityResult(
         contract= ActivityResultContracts.CreateDocument("application/pdf"),
         onResult = {
             if(it!=null) {
-                savePdfToExternalStorage(it,uri)
+                savePdfToExternalStorage(it,fileUri)
             }
         }
     )
     Scaffold(
         floatingActionButton = {
-            FloatingActionButton(onClick = {savePdf.launch("name")}){
-                    Text(text = "Save To Device")
-//                    Text(text = stringResource(id = R.string.convert_to_images),fontSize = 20.sp)
-            }
+            ExtendedFloatingActionButton(
+                text = {Text(text = stringResource(id = R.string.save_to_storage),fontSize = 20.sp)},
+                icon = { Icon(Icons.Filled.Create, null)},
+                onClick = {savePdf.launch("name")},
+                containerColor = MaterialTheme.colorScheme.secondaryContainer,
+                contentColor = MaterialTheme.colorScheme.secondary)
         },
         topBar = {
             AppBar(onNavigationIconClick =backNavigate)
