@@ -6,8 +6,8 @@ import androidx.annotation.StringRes
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.panwar2001.pdfpro.R
-import com.panwar2001.pdfpro.data.Pdf2TextRepository
-import com.panwar2001.pdfpro.data.ToolsInterfaceRepository
+import com.panwar2001.pdfpro.data.Pdf2TextInterface
+import com.panwar2001.pdfpro.data.ToolsInterface
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -36,8 +36,8 @@ data class PdfToTextUiState(
 @HiltViewModel
 class PdfToTextViewModel
 @Inject
-constructor(private val toolsRepository: ToolsInterfaceRepository,
-            private val pdf2TextRepository: Pdf2TextRepository): ViewModel() {
+constructor(private val toolsRepository: ToolsInterface,
+            private val pdf2TextRepository: Pdf2TextInterface): ViewModel() {
 
     private val _uiState = MutableStateFlow(pdf2TextRepository.initPdfToTextUiState())
     val uiState: StateFlow<PdfToTextUiState> = _uiState.asStateFlow()
@@ -117,7 +117,7 @@ constructor(private val toolsRepository: ToolsInterfaceRepository,
         viewModelScope.launch {
             try {
                 setLoading(true)
-                text = toolsRepository.convertToText(uri = uiState.value.uri)
+                text = pdf2TextRepository.convertToText(uri = uiState.value.uri)
                 info = pdf2TextRepository.createTextFile(text, uiState.value.pdfFileName)
             } catch (e: Exception) {
                 e.printStackTrace()

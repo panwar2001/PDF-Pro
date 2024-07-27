@@ -4,10 +4,13 @@ import android.content.Context
 import android.graphics.Bitmap
 import android.net.Uri
 import android.provider.DocumentsContract
+import androidx.annotation.WorkerThread
 import androidx.core.content.FileProvider
 import com.panwar2001.pdfpro.data.source.local.TextFile
 import com.panwar2001.pdfpro.data.source.local.TextFileDao
 import com.panwar2001.pdfpro.view_models.PdfToTextUiState
+import com.tom_roush.pdfbox.pdmodel.PDDocument
+import com.tom_roush.pdfbox.text.PDFTextStripper
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
@@ -30,6 +33,8 @@ interface Pdf2TextInterface {
     suspend fun getTextAndNameFromFile(id: Long): Pair<String,String>
 
     suspend fun modifyName(id: Long, name: String)
+
+    suspend fun convertToText(uri: Uri): String
 }
 
 @Singleton
@@ -155,6 +160,18 @@ constructor(@ApplicationContext private val context: Context,
             len < 1073741824 -> "%.1f MB".format(len / 1048576.0)
             else -> "%.1f GB".format(len / 1073741824.0)
         }
+
+    @WorkerThread
+    override suspend fun convertToText(uri: Uri): String {
+        return withContext(Dispatchers.IO) {
+            context.contentResolver.openInputStream(uri).use {
+                PDDocument.load(it).use { doc ->
+                    PDFTextStripper().getText(doc)
+                }
+            }
+        }
+    }
+
 }
 
 data class TextFileInfo(

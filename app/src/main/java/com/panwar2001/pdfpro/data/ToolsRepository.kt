@@ -6,12 +6,6 @@ import android.content.ContentUris
 import android.content.Context
 import android.database.Cursor
 import android.graphics.Bitmap
-import android.graphics.BitmapFactory
-import android.graphics.Canvas
-import android.graphics.Color
-import android.graphics.Paint
-import android.graphics.pdf.PdfDocument
-import android.graphics.pdf.PdfDocument.PageInfo
 import android.graphics.pdf.PdfRenderer
 import android.net.Uri
 import android.os.Build
@@ -19,40 +13,56 @@ import android.os.Environment
 import android.os.LocaleList
 import android.provider.MediaStore
 import android.provider.OpenableColumns
-import android.util.Size
 import androidx.annotation.WorkerThread
 import androidx.appcompat.app.AppCompatDelegate
-import androidx.core.content.FileProvider
-import androidx.core.net.toFile
 import androidx.core.os.LocaleListCompat
 import androidx.documentfile.provider.DocumentFile
 import com.panwar2001.pdfpro.R
 import com.panwar2001.pdfpro.compose.PdfRow
 import com.panwar2001.pdfpro.view_models.AppUiState
-import com.panwar2001.pdfpro.view_models.Img2PdfUiState
-import com.panwar2001.pdfpro.view_models.PdfToImagesUiState
-import com.panwar2001.pdfpro.view_models.PdfToTextUiState
-import com.tom_roush.pdfbox.pdmodel.PDDocument
-import com.tom_roush.pdfbox.text.PDFTextStripper
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.withContext
-import java.io.File
-import java.io.FileOutputStream
-import java.io.InputStream
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
 import javax.inject.Inject
 import javax.inject.Singleton
 
+
+interface ToolsInterface {
+    val progress: StateFlow<Float>
+
+    suspend fun saveFileToDownload(uri: Uri, context: Context)
+
+    suspend fun searchPdfs(sortingOrder: Int, ascendingSort: Boolean, mimeType: String,query: String): List<PdfRow>
+
+    suspend fun getThumbnailOfPdf(uri:Uri): Bitmap
+
+    suspend fun getNumPages(uri:Uri):Int
+
+    suspend fun getPdfName(uri: Uri): String
+
+    fun getAppLocale(): String
+
+    suspend fun setAppLocale(localeTag: String)
+
+    fun getImageInfo(uri:Uri):ImageInfo
+
+    fun getDefaultThumbnail(): Bitmap
+
+    fun getUriFromMediaId(id: Long): Uri
+
+    fun initAppUiState(): AppUiState
+}
+
 //https://developer.android.com/codelabs/basic-android-kotlin-compose-add-repository#3
 
  @Singleton
  class ToolsRepository @Inject
- constructor(@ApplicationContext private val context: Context): ToolsInterfaceRepository{
+ constructor(@ApplicationContext private val context: Context): ToolsInterface{
      private val _progress = MutableStateFlow(0f)
      override val progress: StateFlow<Float> get() = _progress
 
@@ -153,38 +163,28 @@ import javax.inject.Singleton
            }
  }
     override suspend fun getNumPages(uri:Uri):Int {
-         val contentResolver = context.contentResolver
-         val fileDescriptor = contentResolver.openFileDescriptor(uri, "r")
-         fileDescriptor?.use { return  PdfRenderer(it).pageCount}
-         return 0
+         context.contentResolver.openFileDescriptor(uri, "r").use {
+             if(it==null)return 0
+             PdfRenderer(it).use { renderer->
+                 return renderer.pageCount
+             }
+         }
      }
 
      @WorkerThread
      override suspend fun getPdfName(uri: Uri): String {
-         val returnCursor =
-             context.contentResolver.query(uri, null, null, null, null)
-         returnCursor.use {
-             if (it != null) {
+         context.contentResolver
+             .query(uri, null, null, null, null)
+             ?.use {
                  val nameIndex = it.getColumnIndex(OpenableColumns.DISPLAY_NAME)
                  it.moveToFirst()
                  val fileName = it.getString(nameIndex)
                  it.close()
                  return fileName
-             }
          }
          throw NullPointerException("Could not get pdf file name")
      }
 
-     @WorkerThread
-     override suspend fun convertToText(uri: Uri): String {
-         return withContext(Dispatchers.IO) {
-             context.contentResolver.openInputStream(uri).use {
-                 PDDocument.load(it).use { doc ->
-                      PDFTextStripper().getText(doc)
-                 }
-             }
-         }
-      }
 // TODO("check for how to set locale for less than android 13 version")
      override fun getAppLocale(): String {
          return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
@@ -207,49 +207,6 @@ import javax.inject.Singleton
          }
      }
 
-     @WorkerThread
-     override suspend fun images2Pdf(imageList: List<ImageInfo>): Uri{
-             val document = PdfDocument()
-             val length = imageList.size
-             _progress.value=0f
-            for (i in 0..<length) {
-                 val uri = imageList[i].uri
-                 val bitmap = uri.toBitmap()
-                 val pageInfo = PageInfo.Builder(bitmap.width, bitmap.height, i + 1).create()
-                 val page = document.startPage(pageInfo)
-                 val canvas = page.canvas
-                 val paint = Paint()
-                 paint.color = Color.WHITE
-                 canvas.drawBitmap(bitmap, 0f, 0f, null)
-                 document.finishPage(page)
-                 _progress.value=i * 1.0f / length
-             }
-             val newPdfFile = File(context.filesDir, "file.pdf")
-       return withContext(Dispatchers.IO) {
-             FileOutputStream(newPdfFile).use {
-                 document.writeTo(it)
-                 document.close()
-
-                  FileProvider.getUriForFile(context,
-                          context.packageName + ".fileprovider",
-                                  newPdfFile)
-             }
-         }
-     }
-     private fun Uri.toBitmap(): Bitmap {
-         var inputStream: InputStream? = null
-         try {
-             inputStream = context.contentResolver.openInputStream(this)
-             return BitmapFactory.decodeStream(inputStream)
-                 ?: Bitmap.createBitmap(1, 1, Bitmap.Config.ARGB_8888) // Return a fallback bitmap if decoding fails
-         } catch (e: Exception) {
-             e.printStackTrace()
-             return Bitmap.createBitmap(1, 1, Bitmap.Config.ARGB_8888) // Return a fallback bitmap on any exception
-         } finally {
-             inputStream?.close()
-         }
-     }
-
      /**
       * Gets the image information- type and it's size from it's uri
       * DocumentFile is a wrapper over File and does query internally
@@ -262,42 +219,6 @@ import javax.inject.Singleton
          return ImageInfo(uri = uri,
              type = docFile?.type?:"",
              size = docFile?.length()?.toMB() ?: 0f)
-     }
-     override suspend fun pdfToImages(uri: Uri): List<Bitmap> {
-         val contentResolver = context.contentResolver
-         val fileDescriptor = contentResolver.openFileDescriptor(uri, "r")
-         _progress.value=0f
-         if(fileDescriptor==null){
-             throw NullPointerException("File descriptor is null")
-         }
-         fileDescriptor.use { descriptor ->
-             val pdfRenderer = PdfRenderer(descriptor)
-             pdfRenderer.use { renderer ->
-                 val imagesList = mutableListOf<Bitmap>()
-                 for (pageNum in 0 until renderer.pageCount) {
-                     val page = renderer.openPage(pageNum)
-                     val bitmap = Bitmap.createBitmap(
-                         page.width,
-                         page.height,
-                         Bitmap.Config.ARGB_8888
-                     )
-                     val canvas = Canvas(bitmap)
-                     val paint =Paint().apply { color= Color.WHITE}
-                     canvas.drawRect(0f, 0f, page.width.toFloat(), page.height.toFloat(), paint)
-
-                     page.render(
-                         bitmap,
-                         null,
-                         null,
-                         PdfRenderer.Page.RENDER_MODE_FOR_DISPLAY
-                     )
-                     imagesList.add(bitmap)
-                     _progress.value=pageNum * 1.0f / renderer.pageCount
-                     page.close()
-                 }
-                 return imagesList
-             }
-         }
      }
 
      override fun getDefaultThumbnail(): Bitmap {
@@ -323,9 +244,4 @@ import javax.inject.Singleton
              numPages=0)
      }
 
-     override suspend fun saveFileToDevice(oldFileUri: Uri,newUri:Uri, fileName: String) {
-         val file= oldFileUri.toFile()
-         val newFile= File(newUri.toFile(),fileName)
-         file.copyTo(newFile)
-     }
  }

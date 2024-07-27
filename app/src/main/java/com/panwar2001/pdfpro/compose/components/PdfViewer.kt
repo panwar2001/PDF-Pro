@@ -161,6 +161,7 @@ fun PdfView(uri: Uri,
             PDFView(ctx, null).apply {
                 fromUri(uri)
                     .enableSwipe(true)
+                    .autoSpacing(true)
                     .swipeHorizontal(false)
                     .enableDoubletap(true)
                     .defaultPage(0)

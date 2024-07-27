@@ -6,7 +6,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.panwar2001.pdfpro.R
 import com.panwar2001.pdfpro.compose.PdfRow
-import com.panwar2001.pdfpro.data.ToolsInterfaceRepository
+import com.panwar2001.pdfpro.data.ToolsInterface
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -32,7 +32,7 @@ data class AppUiState(
 
 
 @HiltViewModel
-class AppViewModel @Inject constructor(private val toolsRepository: ToolsInterfaceRepository): ViewModel() {
+class AppViewModel @Inject constructor(private val toolsRepository: ToolsInterface): ViewModel() {
     private val _uiState = MutableStateFlow(toolsRepository.initAppUiState())
     val uiState: StateFlow<AppUiState> = _uiState.asStateFlow()
     val options= listOf(

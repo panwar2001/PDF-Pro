@@ -1,20 +1,44 @@
 package com.panwar2001.pdfpro.data
 
 import android.content.Context
+import android.graphics.Bitmap
+import android.graphics.BitmapFactory
+import android.graphics.Color
+import android.graphics.Paint
+import android.graphics.pdf.PdfDocument
+import android.graphics.pdf.PdfDocument.PageInfo
 import android.net.Uri
+import androidx.annotation.WorkerThread
+import androidx.core.content.FileProvider
 import com.panwar2001.pdfpro.view_models.Img2PdfUiState
 import dagger.hilt.android.qualifiers.ApplicationContext
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.withContext
 import java.io.File
+import java.io.FileOutputStream
+import java.io.InputStream
 import javax.inject.Inject
 import javax.inject.Singleton
 
 interface Img2PdfInterface{
-   fun initImg2PdfUiState(): Img2PdfUiState
-   suspend fun savePdfToExternalStorage(externalStoragePdfUri:Uri,internalStoragePdfUri: Uri)
+
+    val progress: StateFlow<Float>
+
+    fun initImg2PdfUiState(): Img2PdfUiState
+
+    suspend fun savePdfToExternalStorage(externalStoragePdfUri:Uri,internalStoragePdfUri: Uri)
+
+    suspend fun images2Pdf(imageList: List<ImageInfo>,maxHeight: Int=842, maxWidth: Int= 595): Uri
 }
 
 @Singleton
 class Img2PdfRepository @Inject constructor(@ApplicationContext private val context: Context): Img2PdfInterface{
+
+    private val _progress = MutableStateFlow(0f)
+    override val progress: StateFlow<Float> get() = _progress
+
     override fun initImg2PdfUiState(): Img2PdfUiState{
         return Img2PdfUiState(
             imageList = listOf(),
@@ -47,4 +71,76 @@ class Img2PdfRepository @Inject constructor(@ApplicationContext private val cont
             }
         }
     }
+
+    private fun resizeBitmap(image: Bitmap, maxHeight: Int, maxWidth: Int): Bitmap {
+        if (maxHeight > 0 && maxWidth > 0) {
+            val sourceWidth: Int = image.width
+            val sourceHeight: Int = image.height
+
+            var targetWidth = maxWidth
+            var targetHeight = maxHeight
+
+            val sourceRatio = sourceWidth.toFloat() / sourceHeight.toFloat()
+            val targetRatio = maxWidth.toFloat() / maxHeight.toFloat()
+
+            if (targetRatio > sourceRatio) {
+                targetWidth = (maxHeight.toFloat() * sourceRatio).toInt()
+            } else {
+                targetHeight = (maxWidth.toFloat() / sourceRatio).toInt()
+            }
+
+            return Bitmap.createScaledBitmap(
+                image, targetWidth, targetHeight, true
+            )
+
+        } else {
+            throw RuntimeException()
+        }
+    }
+    @WorkerThread
+    override suspend fun images2Pdf(imageList: List<ImageInfo>, maxHeight: Int, maxWidth: Int): Uri{
+        val document = PdfDocument()
+        val length = imageList.size
+        _progress.value=0f
+        for (i in 0..<length) {
+            val uri = imageList[i].uri
+            val bitmap = resizeBitmap(uri.toBitmap(),maxHeight,maxWidth)
+            val pageInfo = PageInfo.Builder(maxWidth ,maxHeight, i + 1).create()
+            val page = document.startPage(pageInfo)
+            val canvas = page.canvas
+            val paint = Paint()
+            paint.color = Color.WHITE
+            canvas.drawBitmap(bitmap,
+                (page.info.pageWidth-bitmap.width)/2.0f,
+                (page.info.pageHeight-bitmap.height)/2.0f,
+                null)
+            document.finishPage(page)
+            _progress.value=i * 1.0f / length
+        }
+        val newPdfFile = File(context.filesDir, "file.pdf")
+        return withContext(Dispatchers.IO) {
+            FileOutputStream(newPdfFile).use {
+                document.writeTo(it)
+                document.close()
+
+                FileProvider.getUriForFile(context,
+                    context.packageName + ".fileprovider",
+                    newPdfFile)
+            }
+        }
+    }
+    private fun Uri.toBitmap(): Bitmap {
+        var inputStream: InputStream? = null
+        try {
+            inputStream = context.contentResolver.openInputStream(this)
+            return BitmapFactory.decodeStream(inputStream)
+                ?: Bitmap.createBitmap(1, 1, Bitmap.Config.ARGB_8888) // Return a fallback bitmap if decoding fails
+        } catch (e: Exception) {
+            e.printStackTrace()
+            return Bitmap.createBitmap(1, 1, Bitmap.Config.ARGB_8888) // Return a fallback bitmap on any exception
+        } finally {
+            inputStream?.close()
+        }
+    }
+
 }

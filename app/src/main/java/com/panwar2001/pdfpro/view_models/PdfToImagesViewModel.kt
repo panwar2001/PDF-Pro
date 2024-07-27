@@ -2,14 +2,10 @@ package com.panwar2001.pdfpro.view_models
 
 import android.graphics.Bitmap
 import android.net.Uri
-import android.util.Log
-import androidx.annotation.WorkerThread
-import androidx.compose.ui.graphics.ImageBitmap
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.panwar2001.pdfpro.R
-import com.panwar2001.pdfpro.data.Pdf2ImgRepository
-import com.panwar2001.pdfpro.data.ToolsInterfaceRepository
+import com.panwar2001.pdfpro.data.Pdf2ImgInterface
+import com.panwar2001.pdfpro.data.ToolsInterface
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -33,12 +29,12 @@ data class PdfToImagesUiState(
 @HiltViewModel
 class PdfToImagesViewModel
 @Inject
-constructor(private val toolsRepository: ToolsInterfaceRepository,
-            pdf2ImgRepository: Pdf2ImgRepository): ViewModel() {
+constructor(private val toolsRepository: ToolsInterface,
+            private val pdf2ImgRepository: Pdf2ImgInterface): ViewModel() {
     private val _uiState = MutableStateFlow(pdf2ImgRepository.initPdfToImagesUiState())
     val uiState: StateFlow<PdfToImagesUiState> = _uiState.asStateFlow()
 
-    val progress: StateFlow<Float> = toolsRepository.progress
+    val progress: StateFlow<Float> = pdf2ImgRepository.progress
 
     /**
      * Set the [uri] of a file for the current ui state.
@@ -93,7 +89,7 @@ constructor(private val toolsRepository: ToolsInterfaceRepository,
         viewModelScope.launch {
             try {
                 _uiState.update {
-                    it.copy(images = toolsRepository.pdfToImages(uiState.value.uri))
+                    it.copy(images = pdf2ImgRepository.pdfToImages(uiState.value.uri))
                 }
             } catch (e: Exception) {
                 e.printStackTrace()
