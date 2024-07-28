@@ -119,4 +119,24 @@ class Img2pdfViewModel @Inject constructor(private val toolsRepository: ToolsInt
             }
         }
     }
+
+    fun renamePdfFile(uri: Uri,newFileName:String){
+        viewModelScope.launch {
+            var newUri:Uri?=null
+            var isSuccess=true
+            try {
+                newUri=img2PdfRepository.renamePdfFile(uri,"$newFileName.pdf")
+            }catch (e: Exception){
+                isSuccess=false
+                e.printStackTrace()
+            }finally {
+                if(isSuccess && newUri!=null){
+                    _uiState.update {
+                        it.copy(fileUri = newUri,
+                                fileName = newFileName)
+                    }
+                }
+            }
+        }
+    }
 }

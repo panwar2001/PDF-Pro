@@ -8,8 +8,10 @@ import android.graphics.Paint
 import android.graphics.pdf.PdfDocument
 import android.graphics.pdf.PdfDocument.PageInfo
 import android.net.Uri
+import android.util.Log
 import androidx.annotation.WorkerThread
 import androidx.core.content.FileProvider
+import androidx.documentfile.provider.DocumentFile
 import com.panwar2001.pdfpro.view_models.Img2PdfUiState
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.Dispatchers
@@ -31,6 +33,8 @@ interface Img2PdfInterface{
     suspend fun savePdfToExternalStorage(externalStoragePdfUri:Uri,internalStoragePdfUri: Uri)
 
     suspend fun images2Pdf(imageList: List<ImageInfo>,maxHeight: Int=842, maxWidth: Int= 595): Uri
+
+    suspend fun renamePdfFile(uri:Uri,newFileName: String):Uri
 }
 
 @Singleton
@@ -43,7 +47,7 @@ class Img2PdfRepository @Inject constructor(@ApplicationContext private val cont
         return Img2PdfUiState(
             imageList = listOf(),
             isLoading = false,
-            fileName  = "file",
+            fileName  = "PdfPro",
             fileUri   = Uri.EMPTY,
             numPages  = 0
         )
@@ -140,6 +144,19 @@ class Img2PdfRepository @Inject constructor(@ApplicationContext private val cont
             return Bitmap.createBitmap(1, 1, Bitmap.Config.ARGB_8888) // Return a fallback bitmap on any exception
         } finally {
             inputStream?.close()
+        }
+    }
+
+    override suspend fun renamePdfFile(uri: Uri,newFileName: String):Uri {
+        val name=uri.pathSegments.last()
+        val pdfFile = File(context.filesDir, name)
+        val newPdfFile=File(context.filesDir,newFileName)
+        if(pdfFile.renameTo(newPdfFile)){
+            return FileProvider.getUriForFile(context,
+                context.packageName + ".fileprovider",
+                newPdfFile)
+        }else{
+            throw Exception("Could not rename file")
         }
     }
 }

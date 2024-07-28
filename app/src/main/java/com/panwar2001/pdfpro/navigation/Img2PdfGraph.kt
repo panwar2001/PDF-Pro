@@ -95,7 +95,8 @@ fun NavGraphBuilder.img2PdfGraph(navActions: NavigationActions){
                         fileName = uiState.fileName,
                         uri = uiState.imageList.first().uri,
                         fileUri=uiState.fileUri,
-                        savePdfToExternalStorage = viewModel::savePdfToExternalStorage
+                        savePdfToExternalStorage = viewModel::savePdfToExternalStorage,
+                        renamePdfFile=viewModel::renamePdfFile
             )
         }
     }

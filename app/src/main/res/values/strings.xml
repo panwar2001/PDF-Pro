@@ -45,6 +45,7 @@
     <string name="change_order">change order of files</string>
     <string name="sort_options">Sorting Options</string>
     <string name="share">Share</string>
+    <string name="convert2pdf" translatable="false">Convert to pdf</string>
     <string name="delete_file_dialog_title" translatable="false">Remove file?</string>
     <string name="delete_file_dialog_text" translatable="false">\'%1$s\' will be removed from these text files.</string>
 

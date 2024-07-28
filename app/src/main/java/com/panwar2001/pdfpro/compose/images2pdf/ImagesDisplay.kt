@@ -19,6 +19,7 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.filled.Build
 import androidx.compose.material.icons.filled.CheckCircle
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.outlined.AddCircle
@@ -26,6 +27,7 @@ import androidx.compose.material3.Badge
 import androidx.compose.material3.BottomAppBar
 import androidx.compose.material3.Checkbox
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.ExtendedFloatingActionButton
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
@@ -95,16 +97,13 @@ fun ImagesDisplay(navigateUp:()->Unit,
     }
     Scaffold(
         floatingActionButton = {
-            FloatingActionButton(onClick = convertToPdf,
-                containerColor = Color.White,
-                shape = CircleShape) {
-                Icon(
-                    imageVector = Icons.Default.CheckCircle,
-                    modifier = Modifier.size(60.dp),
+            ExtendedFloatingActionButton(
+                text = { Text(text = stringResource(id = R.string.convert2pdf))},
+                icon = {  Icon(
+                    imageVector = Icons.Default.Build,
                     contentDescription = null,
-                    tint = Color.Green,
-                )
-            }
+                )},
+                onClick = convertToPdf)
         },
         topBar = {
         TopAppBar(
@@ -131,12 +130,12 @@ fun ImagesDisplay(navigateUp:()->Unit,
                         BottomIconButton(onToggle = deleteImages,
                             icon =  Icons.Default.Delete,
                             text =  stringResource(id = R.string.delete),
-                            tint=Color.Unspecified)
+                            tint=LocalContentColor.current)
 
                         BottomIconButton(onToggle = navigateToReorder,
                             icon =  R.drawable.arrow_sort,
                             text =  stringResource(id = R.string.reorder),
-                            tint=Color.Unspecified)
+                            tint=LocalContentColor.current)
 
                         BottomIconButton(onToggle = {
                             imagesPickerLauncher.launch(
@@ -144,7 +143,7 @@ fun ImagesDisplay(navigateUp:()->Unit,
                             )},
                             icon =  Icons.Outlined.AddCircle,
                             text =  stringResource(id = R.string.add_more),
-                            tint=Color.Unspecified)
+                            tint=LocalContentColor.current)
 
                         BottomIconButton(onToggle = {
                             scanner.getStartScanIntent(activity)
