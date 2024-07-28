@@ -15,6 +15,7 @@ import android.provider.MediaStore
 import android.provider.OpenableColumns
 import androidx.annotation.WorkerThread
 import androidx.appcompat.app.AppCompatDelegate
+import androidx.core.net.toFile
 import androidx.core.os.LocaleListCompat
 import androidx.documentfile.provider.DocumentFile
 import com.panwar2001.pdfpro.R
@@ -49,7 +50,7 @@ interface ToolsInterface {
 
     suspend fun setAppLocale(localeTag: String)
 
-    fun getImageInfo(uri:Uri):ImageInfo
+    fun getImageInfo(uri:Uri,isDocScanUri:Boolean=false):ImageInfo
 
     fun getDefaultThumbnail(): Bitmap
 
@@ -214,11 +215,22 @@ interface ToolsInterface {
       *
       *  @param uri of image
       */
-     override fun getImageInfo(uri:Uri):ImageInfo{
-         val docFile= DocumentFile.fromSingleUri(context,uri)
-         return ImageInfo(uri = uri,
-             type = docFile?.type?:"",
-             size = docFile?.length()?.toMB() ?: 0f)
+     override fun getImageInfo(uri:Uri,isDocScanUri:Boolean):ImageInfo{
+         if(isDocScanUri){
+             val file=uri.toFile()
+             return ImageInfo(
+                 uri = uri,
+                 type = "image/jpeg",
+                 size = getFileSize( file.length())
+             ) }
+         else {
+             val docFile = DocumentFile.fromSingleUri(context, uri)
+             return ImageInfo(
+                 uri = uri,
+                 type = docFile?.type ?: "image/",
+                 size = getFileSize( docFile?.length())
+             )
+         }
      }
 
      override fun getDefaultThumbnail(): Bitmap {

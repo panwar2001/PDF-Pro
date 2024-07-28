@@ -156,6 +156,7 @@ dependencies {
     implementation(libs.androidx.room.runtime)
     implementation(libs.androidx.room.ktx)
     annotationProcessor(libs.androidx.room.compiler)
+    implementation(libs.gms.play.services.mlkit.document.scanner)
     ksp(libs.hilt.android.compiler)
     ksp(libs.androidx.room.compiler)
 //    implementation(libs.kotlinx.coroutines.core)

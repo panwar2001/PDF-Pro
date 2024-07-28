@@ -3,8 +3,11 @@ package com.panwar2001.pdfpro.compose.images2pdf
 
 // https://stackoverflow.com/questions/76907718/compose-take-photo-with-camera-and-display-result-not-working
 
+import android.app.Activity
 import android.net.Uri
+import android.util.Log
 import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.IntentSenderRequest
 import androidx.activity.result.PickVisualMediaRequest
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.layout.Arrangement
@@ -32,17 +35,27 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.zIndex
+import androidx.core.net.toFile
+import com.google.mlkit.vision.documentscanner.GmsDocumentScanner
+import com.google.mlkit.vision.documentscanner.GmsDocumentScannerOptions
+import com.google.mlkit.vision.documentscanner.GmsDocumentScannerOptions.RESULT_FORMAT_JPEG
+import com.google.mlkit.vision.documentscanner.GmsDocumentScannerOptions.SCANNER_MODE_FULL
+import com.google.mlkit.vision.documentscanner.GmsDocumentScanning
+import com.google.mlkit.vision.documentscanner.GmsDocumentScanningResult
 import com.panwar2001.pdfpro.R
 import com.panwar2001.pdfpro.data.ImageInfo
 import com.panwar2001.pdfpro.compose.components.BottomIconButton
 import com.panwar2001.pdfpro.compose.components.ImageComponent
+import com.panwar2001.pdfpro.data.getFileSize
 
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -51,16 +64,35 @@ fun ImagesDisplay(navigateUp:()->Unit,
                   imageList:List<ImageInfo>,
                   navigateToReorder:()->Unit,
                   addImgUris:(List<Uri>)->Unit,
+                  addDocScanUris:(List<ImageInfo>)->Unit,
                   toggleCheckBox:(Int,Boolean)->Unit,
                   deleteImages:()->Unit,
-                  convertToPdf:()->Unit){
+                  convertToPdf:()->Unit,
+                  scanner: GmsDocumentScanner= rememberDocumentScanner()){
     val imagesPickerLauncher= rememberLauncherForActivityResult(
         contract = ActivityResultContracts.PickMultipleVisualMedia() ,
         onResult = {
             if(it.isNotEmpty()) {
                 addImgUris(it)
             } })
-
+    val activity = LocalContext.current as Activity
+    val scannerLauncher = rememberLauncherForActivityResult(
+        contract =ActivityResultContracts.StartIntentSenderForResult()
+    ) { result ->
+        if (result.resultCode == Activity.RESULT_OK) {
+            val scanningResult =
+                GmsDocumentScanningResult.fromActivityResultIntent(result.data)
+            scanningResult?.pages?.let { pages ->
+                addDocScanUris(
+                    pages.map {
+                        ImageInfo(it.imageUri,
+                            "image/jpeg",
+                            getFileSize( it.imageUri.toFile().length())
+                        )}
+                )
+            }
+        }
+    }
     Scaffold(
         floatingActionButton = {
             FloatingActionButton(onClick = convertToPdf,
@@ -114,7 +146,16 @@ fun ImagesDisplay(navigateUp:()->Unit,
                             text =  stringResource(id = R.string.add_more),
                             tint=Color.Unspecified)
 
-                        BottomIconButton(onToggle = {},
+                        BottomIconButton(onToggle = {
+                            scanner.getStartScanIntent(activity)
+                                .addOnSuccessListener {
+                                    scannerLauncher.launch(
+                                        IntentSenderRequest.Builder(it).build()
+                                    )
+                                }.addOnFailureListener{
+                                    Log.d("TAG", "HomeScreen: ${it.message}")
+                                }
+                        },
                             icon = R.drawable.camera,
                             text = stringResource(id = R.string.capture),
                             tint= LocalContentColor.current
@@ -146,10 +187,22 @@ fun ImagesDisplay(navigateUp:()->Unit,
                             index+1,
                             elevation = 0.dp)
                         Text(text = imageList[index].type)
-                        Text(text = "${imageList[index].size} MB")
+                        Text(text = imageList[index].size)
                     }
                     HorizontalDivider()
                 }
             }
         }
     }
+
+@Composable
+fun rememberDocumentScanner(): GmsDocumentScanner{
+    return remember {
+         GmsDocumentScanning.getClient(
+              GmsDocumentScannerOptions.Builder()
+                 .setGalleryImportAllowed(true)
+                 .setResultFormats(RESULT_FORMAT_JPEG)
+                 .setScannerMode(SCANNER_MODE_FULL)
+                 .build())
+         }
+}

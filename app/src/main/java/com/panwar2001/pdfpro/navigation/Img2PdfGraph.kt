@@ -59,6 +59,7 @@ fun NavGraphBuilder.img2PdfGraph(navActions: NavigationActions){
                 imageList = uiState.imageList,
                 navigateUp = navActions::navigateBack,
                 addImgUris = viewModel::addImgUris,
+                addDocScanUris= viewModel::addDocScanUris,
                 navigateToReorder = {
                     navActions.navigateToScreen(Screens.Img2Pdf.ReorderScreen.route)
                 },

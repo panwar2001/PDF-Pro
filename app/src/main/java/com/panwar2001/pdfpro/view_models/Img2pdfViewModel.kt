@@ -68,7 +68,11 @@ class Img2pdfViewModel @Inject constructor(private val toolsRepository: ToolsInt
             it.copy(imageList = it.imageList +  uris.map{ uri->toolsRepository.getImageInfo(uri = uri)})
         }
     }
-
+    fun addDocScanUris(images: List<ImageInfo>){
+        _uiState.update {
+            it.copy(imageList = it.imageList + images)
+        }
+    }
     /**
      *
      */
