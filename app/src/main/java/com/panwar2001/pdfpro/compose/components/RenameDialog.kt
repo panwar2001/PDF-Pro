@@ -36,8 +36,6 @@ fun RenameDialog(onDismissRequest: () -> Unit,
                       visible:Boolean){
     if(visible) {
         var text by remember { mutableStateOf(fileName) }
-        var isError by remember { mutableStateOf(false) }
-
         Dialog(onDismissRequest = onDismissRequest) {
             Card(
                 modifier = Modifier
@@ -55,13 +53,12 @@ fun RenameDialog(onDismissRequest: () -> Unit,
                         },
                         onValueChange = {
                             text = it
-                            isError = text.toIntOrNull() == null
                         },
                         keyboardOptions = KeyboardOptions.Default.copy(
                             keyboardType = KeyboardType.Text,
                             imeAction = ImeAction.Done
                         ),
-                        isError = isError,
+                        isError = text.trim().isEmpty(),
                         singleLine = true
                     )
                     Spacer(modifier = Modifier.height(dimensionResource(id = R.dimen.spacing_large)))

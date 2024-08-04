@@ -2,16 +2,24 @@ package com.panwar2001.pdfpro.view_models
 
 import android.graphics.Bitmap
 import android.net.Uri
-import androidx.annotation.StringRes
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.panwar2001.pdfpro.R
 import com.panwar2001.pdfpro.data.Pdf2TextInterface
 import com.panwar2001.pdfpro.data.ToolsInterface
+import com.panwar2001.pdfpro.usecase.ConvertToTextUseCase
+import com.panwar2001.pdfpro.usecase.EventType
+import com.panwar2001.pdfpro.usecase.GetFileNameUseCase
+import com.panwar2001.pdfpro.usecase.GetPdfPageCountUseCase
+import com.panwar2001.pdfpro.usecase.GetPdfThumbnailUseCase
+import com.panwar2001.pdfpro.usecase.IsPdfCorruptedUseCase
+import com.panwar2001.pdfpro.usecase.IsPdfLockedUseCase
+import com.panwar2001.pdfpro.usecase.UiEventUseCase
+import com.panwar2001.pdfpro.usecase.UnlockPdfUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -27,21 +35,31 @@ data class PdfToTextUiState(
     val textFileName: String,
     val text: String,
     val numPages:Int,
-    val isError: Boolean,
-    val userMessage: Int?,
     val fileUniqueId: Long,
-    val triggerSuccess: Boolean
 )
 
 @HiltViewModel
 class PdfToTextViewModel
 @Inject
 constructor(private val toolsRepository: ToolsInterface,
-            private val pdf2TextRepository: Pdf2TextInterface): ViewModel() {
+            private val pdf2TextRepository: Pdf2TextInterface,
+            private val isPdfLockedUseCase: IsPdfLockedUseCase,
+            private val uiEventUseCase: UiEventUseCase,
+            private val isPdfCorruptedUseCase: IsPdfCorruptedUseCase,
+            private val getPdfThumbnailUseCase: GetPdfThumbnailUseCase,
+            private val getPdfPageCountUseCase: GetPdfPageCountUseCase,
+            private val getFileNameUseCase: GetFileNameUseCase,
+            private val unlockPdfUseCase: UnlockPdfUseCase,
+            private val convertToTextUseCase: ConvertToTextUseCase): ViewModel() {
 
     private val _uiState = MutableStateFlow(pdf2TextRepository.initPdfToTextUiState())
     val uiState: StateFlow<PdfToTextUiState> = _uiState.asStateFlow()
-    val allFilesInfo = pdf2TextRepository.getAllTextFiles()
+
+    val uiEventFlow = uiEventUseCase.uiEventFlow
+
+    val allFilesInfo = pdf2TextRepository.getAllTextFiles().catch {
+        emit(listOf())
+    }
 
     private fun setLoading(isLoading: Boolean) {
         _uiState.update {
@@ -55,44 +73,64 @@ constructor(private val toolsRepository: ToolsInterface,
         }
     }
 
-    fun setTriggerSuccess(success: Boolean) {
-        _uiState.update {
-            it.copy(triggerSuccess = success)
-        }
-    }
+
 
     private fun setTextFileName(text: String) {
         _uiState.update {
             it.copy(textFileName = text)
         }
     }
-    private fun setUserMessage(@StringRes message: Int?,isError:Boolean=false){
-        _uiState.update {
-            it.copy(userMessage = message, isError = isError)
-        }
-    }
-    fun snackBarMessageShown(){
-        setUserMessage(null)
-    }
     /**
      * using pdf-box to generate thumbnail of pdf (Bitmap of first page of pdf using it's uri)
      */
-
+    fun uploadPdf(uri:Uri){
+        viewModelScope.launch {
+            if(isPdfCorruptedUseCase(uri)){
+                uiEventUseCase(EventType.Error)
+            }
+            else if (isPdfLockedUseCase(uri)) {
+                _uiState.update { state ->
+                    state.copy(uri = uri)
+                }
+                uiEventUseCase(EventType.ShowDialog)
+            } else {
+                pickPdf(uri)
+            }
+        }
+    }
+    fun unlockPdfAndUpload(uri:Uri,password: String){
+        viewModelScope.launch {
+            var newUri:Uri?=null
+            var isSuccess=true
+            try {
+                newUri=unlockPdfUseCase(uri, password)
+            }catch (e:Exception){
+                isSuccess=false
+                e.printStackTrace()
+            }finally {
+                if(isSuccess && newUri!=null){
+                    pickPdf(newUri)
+                }else{
+                    uiEventUseCase(EventType.ShowDialogError)
+                }
+            }
+        }
+    }
     fun pickPdf(uri: Uri) {
         var isSuccess = true
-        var thumbnail = toolsRepository.getDefaultThumbnail()
+        var thumbnail= toolsRepository.getDefaultThumbnail()
         var numPages = 0
         var fileName = ""
         viewModelScope.launch {
             try {
                 setLoading(true)
-                thumbnail = toolsRepository.getThumbnailOfPdf(uri)
-                numPages = toolsRepository.getNumPages(uri)
-                fileName = toolsRepository.getPdfName(uri)
+                thumbnail = getPdfThumbnailUseCase(uri)
+                numPages = getPdfPageCountUseCase(uri)
+                fileName = getFileNameUseCase(uri)
             } catch (e: Exception) {
                 e.printStackTrace()
                 isSuccess = false
-                setUserMessage(R.string.error_message, isError = true)
+                uiEventUseCase(EventType.Error)
             } finally {
                 if (isSuccess) {
                     _uiState.update { state ->
@@ -100,10 +138,10 @@ constructor(private val toolsRepository: ToolsInterface,
                             thumbnail = thumbnail,
                             numPages = numPages,
                             pdfFileName = fileName,
-                            uri = uri,
-                            triggerSuccess = true
+                            uri = uri
                         )
                     }
+                    uiEventUseCase(EventType.Success)
                 }
                 setLoading(false)
             }
@@ -117,12 +155,12 @@ constructor(private val toolsRepository: ToolsInterface,
         viewModelScope.launch {
             try {
                 setLoading(true)
-                text = pdf2TextRepository.convertToText(uri = uiState.value.uri)
+                text = convertToTextUseCase(uri = uiState.value.uri)
                 info = pdf2TextRepository.createTextFile(text, uiState.value.pdfFileName)
             } catch (e: Exception) {
                 e.printStackTrace()
                 isSuccess = false
-                setUserMessage(R.string.error_message, isError = true)
+                uiEventUseCase(EventType.Error)
             } finally {
                 if (isSuccess) {
                     _uiState.update {
@@ -130,9 +168,9 @@ constructor(private val toolsRepository: ToolsInterface,
                             text = text,
                             fileUniqueId = info.first,
                             textFileName = info.second,
-                            triggerSuccess = true
                         )
                     }
+                    uiEventUseCase(EventType.Success)
                 }
                 setLoading(false)
             }
@@ -141,18 +179,13 @@ constructor(private val toolsRepository: ToolsInterface,
 
     fun deleteFile(id: Long) {
         viewModelScope.launch {
-            var isSuccess=true
             try {
                 setLoading(true)
                 pdf2TextRepository.deleteTextFile(id)
             } catch (e: Exception) {
                 e.printStackTrace()
-                isSuccess=false
-                setUserMessage(R.string.error_message, isError = true)
+                uiEventUseCase(EventType.Error)
             }finally{
-//                if(isSuccess){
-//                    setUserMessage()
-//                }
                 setLoading(false)
             }
         }
@@ -171,7 +204,7 @@ constructor(private val toolsRepository: ToolsInterface,
                 textFileName = fileDetails.second
             } catch (e: Exception) {
                 e.printStackTrace()
-                setUserMessage(R.string.error_message, isError = true)
+                uiEventUseCase(EventType.Error)
                 isSuccess = false
             } finally {
                 if (isSuccess) {
@@ -180,10 +213,8 @@ constructor(private val toolsRepository: ToolsInterface,
                             text = text,
                             textFileName = textFileName,
                             fileUniqueId = id,
-                            triggerSuccess = true
                         )
                     }
-                    setTriggerSuccess(true)
                 }
                 setLoading(false)
             }
@@ -192,18 +223,12 @@ constructor(private val toolsRepository: ToolsInterface,
 
     fun modifyFileName(name: String) {
         viewModelScope.launch {
-            var isSuccess = true
             try {
                 pdf2TextRepository.modifyName(uiState.value.fileUniqueId, "$name.txt")
                 setTextFileName(name)
             } catch (e: Exception) {
-                isSuccess=false
-                setUserMessage(R.string.error_message, isError = true)
+                uiEventUseCase(EventType.Error)
                 e.printStackTrace()
-            }finally {
-//                if(isSuccess){
-//                    setUserMessage(R.str, isError = true)
-//                }
             }
         }
     }

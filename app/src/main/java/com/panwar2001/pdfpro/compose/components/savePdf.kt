@@ -1,4 +1,4 @@
-package com.panwar2001.pdfpro.compose.images2pdf
+package com.panwar2001.pdfpro.compose.components
 
 import android.net.Uri
 import androidx.activity.compose.rememberLauncherForActivityResult
@@ -46,7 +46,6 @@ import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
 import com.panwar2001.pdfpro.R
 import com.panwar2001.pdfpro.compose.AppBar
-import com.panwar2001.pdfpro.compose.components.RenameDialog
 
 
 @Composable

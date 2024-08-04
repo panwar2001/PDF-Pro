@@ -49,21 +49,11 @@ fun PreviewFileScreen(onNavigationIconClick:()->Unit,
                       navigateToPdfViewer:()->Unit,
                       menuItems: List<MenuItem> = listOf(),
                       isLoading: Boolean,
-                      snackBarHostState: SnackbarHostState= remember {SnackbarHostState()},
-                      @StringRes userMessage: Int?,
-                      snackBarMessageShown:()->Unit,
-                      isError: Boolean
+                      snackBarHostState: SnackbarHostState= remember {SnackbarHostState()}
 ) {
-    userMessage?.let{ message->
-        val snackBarText = stringResource(message)
-        LaunchedEffect(Unit) {
-            snackBarHostState.showSnackbar(snackBarText, withDismissAction = true)
-            snackBarMessageShown()
-        }
-    }
 
     Scaffold(
-        snackbarHost = {SnackBarHost(snackBarHostState,isError)},
+        snackbarHost = {SnackBarHost(snackBarHostState)},
         floatingActionButton = {
             FloatingActionButton(onClick = {convertToText()},
                 containerColor = Color.Red,

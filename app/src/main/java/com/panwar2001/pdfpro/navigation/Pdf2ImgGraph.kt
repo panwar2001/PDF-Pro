@@ -3,8 +3,11 @@ package com.panwar2001.pdfpro.navigation
 import android.util.Log
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
+import androidx.compose.ui.platform.LocalContext
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.composable
 import androidx.navigation.navigation
@@ -23,6 +26,7 @@ fun NavGraphBuilder.pdf2ImgGraph(navActions: NavigationActions){
         composable(route= Screens.FilePicker.route){ backStackEntry->
             val viewModel = navActions.sharedViewModel<PdfToImagesViewModel>(backStackEntry)
             val uiState by viewModel.uiState.collectAsState()
+            val snackBarHostState = remember { SnackbarHostState() }
 
             val pdfPickerLauncher=rememberLauncherForActivityResult(
                 contract = ActivityResultContracts.OpenDocument(),
@@ -42,10 +46,7 @@ fun NavGraphBuilder.pdf2ImgGraph(navActions: NavigationActions){
                 },
                 tool= DataSource.getToolData(R.string.pdf2img),
                 isLoading = uiState.isLoading,
-                userMessage = null,
-                snackBarMessageShown = {},
-                isError = false
-            )
+                snackBarHostState = snackBarHostState)
         }
         composable(route= Screens.PdfToImage.PreviewFile.route) { backStackEntry->
             val viewModel = navActions.sharedViewModel<PdfToImagesViewModel>(backStackEntry)

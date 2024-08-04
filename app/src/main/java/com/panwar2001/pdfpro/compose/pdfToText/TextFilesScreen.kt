@@ -56,23 +56,12 @@ fun TextFilesScreen(filesInfo:List<TextFileInfo>,
                     viewTextFile:(Long)->Unit,
                     isLoading:Boolean,
                     snackBarHostState: SnackbarHostState= remember {SnackbarHostState()},
-                    @StringRes userMessage: Int?,
-                    snackBarMessageShown:()->Unit,
-                    isError: Boolean
 ){
 
     var openDeleteFileDialog by remember { mutableStateOf(false) }
-    
-    userMessage?.let{ message->
-        val snackBarText = stringResource(message)
-        LaunchedEffect(Unit) {
-            snackBarHostState.showSnackbar(snackBarText, withDismissAction = true)
-            snackBarMessageShown()
-        }
-    }
 
     Scaffold(
-            snackbarHost = {SnackBarHost(snackBarHostState,isError = isError)},
+            snackbarHost = {SnackBarHost(snackBarHostState)},
             topBar = {
             TopAppBar(
                 title = { Text(text = "Text Files Log")},
@@ -169,9 +158,5 @@ fun PreviewTextFilesScreen(){
     filesInfo.add(TextFileInfo("file name  file name file name file name file name file name file name",3, Uri.EMPTY, fileSize = "0.4"))
     TextFilesScreen(filesInfo = filesInfo, navigateBack = { /*TODO*/ },
         viewTextFile = {}, share = {}, deleteFile = {},
-        isLoading = true,
-        userMessage = null,
-        isError = false,
-        snackBarMessageShown = {}
-    )
+        isLoading = true)
 }

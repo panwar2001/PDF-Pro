@@ -2,46 +2,75 @@ package com.panwar2001.pdfpro.navigation
 
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.compose.material3.SnackbarDuration
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.platform.LocalContext
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.composable
 import androidx.navigation.navigation
 import com.panwar2001.pdfpro.R
 import com.panwar2001.pdfpro.compose.MenuItem
+import com.panwar2001.pdfpro.compose.components.CustomSnackBarVisuals
 import com.panwar2001.pdfpro.compose.components.FilePickerScreen
 import com.panwar2001.pdfpro.compose.components.PdfViewer
+import com.panwar2001.pdfpro.compose.components.passwordInputDialogState
 import com.panwar2001.pdfpro.compose.components.sharePdfFile
 import com.panwar2001.pdfpro.compose.pdfToText.PreviewFileScreen
 import com.panwar2001.pdfpro.compose.pdfToText.TextFilesScreen
 import com.panwar2001.pdfpro.compose.pdfToText.TextScreen
 import com.panwar2001.pdfpro.data.DataSource
+import com.panwar2001.pdfpro.usecase.EventType
 import com.panwar2001.pdfpro.view_models.PdfToTextViewModel
+import kotlinx.coroutines.flow.collectLatest
 
 fun NavGraphBuilder.pdf2txtGraph(navActions: NavigationActions){
     navigation(route= Screens.PdfToText.route,startDestination= Screens.FilePicker.route) {
         composable(route = Screens.FilePicker.route,) { backStackEntry ->
             val viewModel = navActions.sharedViewModel<PdfToTextViewModel>(backStackEntry)
             val uiState by viewModel.uiState.collectAsState()
+            val context= LocalContext.current
+            val snackBarHostState = remember { SnackbarHostState() }
+            val passwordDialogState= passwordInputDialogState(onConfirm = {
+                viewModel.unlockPdfAndUpload(uri = uiState.uri, password = it)
+            })
             val menuItems = remember {
                 mutableListOf(MenuItem("Text Files Log") {
                     navActions.navigateToScreen(Screens.PdfToText.TextFilesScreen.route)
                 })
             }
+
             val pdfPickerLauncher = rememberLauncherForActivityResult(
                 contract = ActivityResultContracts.OpenDocument(),
                 onResult = { uri ->
                     if (uri != null) {
-                        viewModel.pickPdf(uri)
+                        viewModel.uploadPdf(uri)
                     }
                 })
-            if(uiState.triggerSuccess){
-                LaunchedEffect(Unit) {
-                    viewModel.setTriggerSuccess(false)
-                    navActions.navigateToScreen(Screens.PdfToText.PreviewFile.route)
+
+            LaunchedEffect(viewModel.uiEventFlow) {
+                viewModel.uiEventFlow.collectLatest {
+                    when (it) {
+                        EventType.Success -> {
+                            passwordDialogState.hide()
+                            navActions.navigateToScreen(Screens.PdfToText.PreviewFile.route)
+                        }
+                        EventType.Error ->
+                            snackBarHostState.showSnackbar(
+                                CustomSnackBarVisuals(
+                                    message = context.getString(R.string.error_message),
+                                    withDismissAction = true,
+                                    duration = SnackbarDuration.Short,
+                                    isError = true)
+                            )
+                        EventType.ShowDialog-> passwordDialogState.show()
+                        EventType.ShowDialogError-> passwordDialogState.wrongPassword()
+                    }
                 }
             }
             FilePickerScreen(
@@ -50,9 +79,7 @@ fun NavGraphBuilder.pdf2txtGraph(navActions: NavigationActions){
                 tool = DataSource.getToolData(R.string.pdf2text),
                 menuItems= menuItems,
                 isLoading = uiState.isLoading,
-                userMessage= uiState.userMessage,
-                snackBarMessageShown = viewModel::snackBarMessageShown,
-                isError = uiState.isError
+                snackBarHostState = snackBarHostState
             )
         }
         composable(route = Screens.PdfToText.PreviewFile.route) { backStackEntry ->
@@ -61,17 +88,28 @@ fun NavGraphBuilder.pdf2txtGraph(navActions: NavigationActions){
                     navActions.navigateToScreen(Screens.PdfToText.TextFilesScreen.route)
                 })
             }
+            val context= LocalContext.current
+            val snackBarHostState = remember { SnackbarHostState() }
 
             val viewModel = navActions.sharedViewModel<PdfToTextViewModel>(backStackEntry)
             val uiState by viewModel.uiState.collectAsState()
 
-
-            LaunchedEffect(uiState.triggerSuccess) {
-                if(uiState.triggerSuccess){
-                    viewModel.setTriggerSuccess(false)
-                    navActions.navigateToScreen(Screens.PdfToText.TextScreen.route)
+            LaunchedEffect(viewModel.uiEventFlow) {
+                viewModel.uiEventFlow.collectLatest {
+                    if(EventType.Success==it){
+                        navActions.navigateToScreen(Screens.PdfToText.TextScreen.route)
+                    }else if(EventType.Error==it){
+                        snackBarHostState.showSnackbar(
+                            CustomSnackBarVisuals(
+                                message = context.getString(R.string.error_message),
+                                withDismissAction = true,
+                                duration = SnackbarDuration.Short,
+                                isError = true)
+                        )
+                    }
                 }
             }
+
 
             PreviewFileScreen(
                 onNavigationIconClick = navActions::openDrawer,
@@ -81,10 +119,7 @@ fun NavGraphBuilder.pdf2txtGraph(navActions: NavigationActions){
                 convertToText = {viewModel.convertToText()},
                 tool = DataSource.getToolData(R.string.pdf2text),
                 menuItems = menuItems,
-                isLoading = uiState.isLoading,
-                snackBarMessageShown = viewModel::snackBarMessageShown,
-                isError = uiState.isError,
-                userMessage = uiState.userMessage
+                isLoading = uiState.isLoading
             )
 
         }
@@ -94,12 +129,23 @@ fun NavGraphBuilder.pdf2txtGraph(navActions: NavigationActions){
             val uiState by viewModel.uiState.collectAsState()
             val filesInfo = viewModel.allFilesInfo.collectAsState(initial = listOf()).value
             val context = LocalContext.current
+            val snackBarHostState = remember { SnackbarHostState() }
 
-            LaunchedEffect(uiState.triggerSuccess) {
-                if(uiState.triggerSuccess){
-                    viewModel.setTriggerSuccess(false)
-                    navActions.navigateToScreen(Screens.PdfToText.TextScreen.route)
-                }
+            LaunchedEffect(viewModel.uiEventFlow) {
+                viewModel.uiEventFlow.collectLatest {
+                    if(EventType.Success==it){
+                            navActions.navigateToScreen(Screens.PdfToText.TextScreen.route)
+                        }
+                    else if(EventType.Error==it){
+                            snackBarHostState.showSnackbar(
+                                CustomSnackBarVisuals(
+                                    message = context.getString(R.string.error_message),
+                                    withDismissAction = true,
+                                    duration = SnackbarDuration.Short,
+                                    isError = true)
+                            )
+                        }
+                    }
             }
 
             TextFilesScreen(
@@ -110,10 +156,7 @@ fun NavGraphBuilder.pdf2txtGraph(navActions: NavigationActions){
                     sharePdfFile(context, it, "text/plain")
                 },
                 viewTextFile = {viewModel.readTextFromFile(it)},
-                isLoading = uiState.isLoading,
-                snackBarMessageShown = viewModel::snackBarMessageShown,
-                isError = uiState.isError,
-                userMessage = uiState.userMessage
+                isLoading = uiState.isLoading
             )
         }
         composable(route = Screens.PdfToText.PdfViewer.route) { backStackEntry ->

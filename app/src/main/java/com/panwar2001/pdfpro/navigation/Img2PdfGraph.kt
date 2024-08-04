@@ -3,8 +3,10 @@ package com.panwar2001.pdfpro.navigation
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.PickVisualMediaRequest
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.composable
 import androidx.navigation.navigation
@@ -14,7 +16,7 @@ import com.panwar2001.pdfpro.compose.components.FilePickerScreen
 import com.panwar2001.pdfpro.compose.components.PdfViewer
 import com.panwar2001.pdfpro.compose.images2pdf.ImagesDisplay
 import com.panwar2001.pdfpro.compose.images2pdf.ReorderScreen
-import com.panwar2001.pdfpro.compose.images2pdf.SavePdfScreen
+import com.panwar2001.pdfpro.compose.components.SavePdfScreen
 import com.panwar2001.pdfpro.data.DataSource
 import com.panwar2001.pdfpro.view_models.Img2pdfViewModel
 
@@ -40,9 +42,10 @@ fun NavGraphBuilder.img2PdfGraph(navActions: NavigationActions){
                     )
                 },
                 tool= DataSource.getToolData(R.string.img2pdf),
-                userMessage = null,
-                snackBarMessageShown = {},
-                isError = false)
+                snackBarHostState = remember {
+                    SnackbarHostState()
+                }
+            )
         }
         composable(route= Screens.Img2Pdf.ReorderScreen.route) { backStackEntry ->
             val viewModel = navActions.sharedViewModel<Img2pdfViewModel>(backStackEntry)
