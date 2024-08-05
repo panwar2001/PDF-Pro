@@ -24,6 +24,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.dimensionResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.window.Dialog
@@ -68,13 +69,13 @@ fun RenameDialog(onDismissRequest: () -> Unit,
                         modifier = Modifier.fillMaxWidth()
                     ) {
                         TextButton(onClick = onDismissRequest) {
-                            Text(text = "Dismiss")
+                            Text(text = stringResource(id =R.string.dismiss))
                         }
                         TextButton(onClick = {
                             modifyFileName(text)
                             onDismissRequest()
                         }) {
-                            Text(text = "Save")
+                            Text(text = stringResource(id = R.string.save))
                         }
                     }
                 }

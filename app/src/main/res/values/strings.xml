@@ -48,7 +48,12 @@
     <string name="convert2pdf" translatable="false">Convert to pdf</string>
     <string name="delete_file_dialog_title" translatable="false">Remove file?</string>
     <string name="delete_file_dialog_text" translatable="false">\'%1$s\' will be removed from these text files.</string>
-
+    <string name="pdf_key_input">password</string>
+    <string name="decrypt_password_wrong">Input password is wrong, please try again!</string>
+    <string name="pdf_file_picker">Pdf File Picker</string>
+    <string name="text_files_log">Text Files Log</string>
+    <string name="dismiss">Dismiss</string>
+    <string name="save">Save</string>
     <!--***********Languages ***********************-->
     <string name="language">Language</string>
     <string-array name="english" translatable="false">

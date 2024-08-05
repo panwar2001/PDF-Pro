@@ -116,14 +116,14 @@ fun PasswordInputDialog(
                         password = it
                     },
                     isError = isPasswordError,
-                    label = { Text(stringResource(id = R.string.page_number)) },
+                    label = { Text(stringResource(id = R.string.pdf_key_input)) },
                     keyboardOptions = KeyboardOptions.Default.copy(
                         keyboardType = KeyboardType.Password,
                         imeAction = ImeAction.Done
                     )
                 )
                 if(isPasswordError){
-                    Text(text = "Input password is wrong, please try again!",
+                    Text(text = stringResource(id = R.string.decrypt_password_wrong),
                         color = Color.Red)
                 }
             }

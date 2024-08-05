@@ -116,6 +116,7 @@ android {
         sourceCompatibility = JavaVersion.VERSION_1_8
         targetCompatibility = JavaVersion.VERSION_1_8
     }
+    
     kotlinOptions {
         jvmTarget = "1.8"
     }
@@ -145,16 +146,14 @@ dependencies {
     implementation(libs.play.services.ads)
     implementation(libs.androidx.appcompat)
     implementation(libs.androidx.constraintlayout)
-    implementation(libs.androidx.lifecycle.livedata.ktx)
     implementation(libs.androidx.lifecycle.viewmodel.ktx)
-    implementation(libs.material)
     implementation(libs.androidx.fragment.ktx)
     implementation(libs.pdfbox.android)
     implementation(libs.android.pdf.viewer)
-    implementation(libs.reorderable)
     implementation(libs.hilt.android)
     implementation(libs.androidx.room.runtime)
     implementation(libs.androidx.room.ktx)
+    implementation(libs.androidx.documentfile)
     annotationProcessor(libs.androidx.room.compiler)
     implementation(libs.gms.play.services.mlkit.document.scanner)
     ksp(libs.hilt.android.compiler)

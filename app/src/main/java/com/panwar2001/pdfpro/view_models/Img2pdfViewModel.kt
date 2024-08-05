@@ -101,7 +101,6 @@ class Img2pdfViewModel @Inject constructor(private val toolsRepository: ToolsInt
              }catch (e: Exception){
                  e.printStackTrace()
              }finally {
-                 Log.e("tag",uiState.value.fileUri.toString())
                  setLoading(false)
              }
          }

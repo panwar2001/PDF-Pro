@@ -64,7 +64,7 @@ fun TextFilesScreen(filesInfo:List<TextFileInfo>,
             snackbarHost = {SnackBarHost(snackBarHostState)},
             topBar = {
             TopAppBar(
-                title = { Text(text = "Text Files Log")},
+                title = { Text(text = stringResource(id = R.string.text_files_log))},
                 navigationIcon = {
                     IconButton(onClick = navigateBack) {
                         Icon(
@@ -119,7 +119,8 @@ fun TextFilesScreen(filesInfo:List<TextFileInfo>,
                 if(openDeleteFileDialog){
                     DeleteTextFileDialog(
                         onDismissRequest = { openDeleteFileDialog=false},
-                        onConfirmation = { deleteFile(it.id) },
+                        onConfirmation = { deleteFile(it.id)
+                                         openDeleteFileDialog=false},
                         dialogTitle = R.string.delete_file_dialog_title,
                         dialogText = R.string.delete_file_dialog_text,
                         fileName = it.fileName
@@ -143,10 +144,10 @@ fun DeleteTextFileDialog(
         text = {Text(text = stringResource(id = dialogText,fileName))},
         onDismissRequest = {onDismissRequest()},
         confirmButton = {
-            TextButton(onClick = {onConfirmation()}) {Text("Confirm") }
+            TextButton(onClick = {onConfirmation()}) {Text(stringResource(id = R.string.confirm)) }
         },
         dismissButton = {
-            TextButton(onClick = {onDismissRequest() }) {Text("Dismiss")}
+            TextButton(onClick = {onDismissRequest() }) {Text(stringResource(id = R.string.dismiss))}
         })
 }
 

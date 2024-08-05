@@ -24,7 +24,6 @@ import com.panwar2001.pdfpro.navigation.Screens
 import com.panwar2001.pdfpro.theme.PDFProTheme
 import com.tom_roush.pdfbox.android.PDFBoxResourceLoader
 import dagger.hilt.android.AndroidEntryPoint
-
 @AndroidEntryPoint
 class AppActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {

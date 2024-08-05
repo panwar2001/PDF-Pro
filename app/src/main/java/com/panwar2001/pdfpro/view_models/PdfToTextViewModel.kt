@@ -148,15 +148,15 @@ constructor(private val toolsRepository: ToolsInterface,
         }
     }
 
-    fun convertToText() {
+    fun convertToText(uri: Uri,pdfFileName: String) {
         var isSuccess = true
         var text = ""
         var info = Pair(0L, "")
         viewModelScope.launch {
             try {
                 setLoading(true)
-                text = convertToTextUseCase(uri = uiState.value.uri)
-                info = pdf2TextRepository.createTextFile(text, uiState.value.pdfFileName)
+                text = convertToTextUseCase(uri=uri)
+                info = pdf2TextRepository.createTextFile(text, pdfFileName)
             } catch (e: Exception) {
                 e.printStackTrace()
                 isSuccess = false
@@ -215,6 +215,7 @@ constructor(private val toolsRepository: ToolsInterface,
                             fileUniqueId = id,
                         )
                     }
+                    uiEventUseCase(EventType.Success)
                 }
                 setLoading(false)
             }
@@ -223,12 +224,17 @@ constructor(private val toolsRepository: ToolsInterface,
 
     fun modifyFileName(name: String) {
         viewModelScope.launch {
+            var isSuccess = true
             try {
                 pdf2TextRepository.modifyName(uiState.value.fileUniqueId, "$name.txt")
-                setTextFileName(name)
             } catch (e: Exception) {
                 uiEventUseCase(EventType.Error)
+                isSuccess=false
                 e.printStackTrace()
+            }finally {
+                if(isSuccess){
+                    setTextFileName(name)
+                }
             }
         }
     }

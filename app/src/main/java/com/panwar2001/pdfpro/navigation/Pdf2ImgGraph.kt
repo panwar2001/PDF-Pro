@@ -51,7 +51,6 @@ fun NavGraphBuilder.pdf2ImgGraph(navActions: NavigationActions){
         composable(route= Screens.PdfToImage.PreviewFile.route) { backStackEntry->
             val viewModel = navActions.sharedViewModel<PdfToImagesViewModel>(backStackEntry)
             val uiState by viewModel.uiState.collectAsState()
-            Log.e("destination: ", backStackEntry.destination.parent?.route.toString())
 
                 PreviewFileScreen(
                     onNavigationIconClick = navActions::openDrawer,

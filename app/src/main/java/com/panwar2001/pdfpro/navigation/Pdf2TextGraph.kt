@@ -40,7 +40,7 @@ fun NavGraphBuilder.pdf2txtGraph(navActions: NavigationActions){
                 viewModel.unlockPdfAndUpload(uri = uiState.uri, password = it)
             })
             val menuItems = remember {
-                mutableListOf(MenuItem("Text Files Log") {
+                mutableListOf(MenuItem(R.string.text_files_log) {
                     navActions.navigateToScreen(Screens.PdfToText.TextFilesScreen.route)
                 })
             }
@@ -84,7 +84,7 @@ fun NavGraphBuilder.pdf2txtGraph(navActions: NavigationActions){
         }
         composable(route = Screens.PdfToText.PreviewFile.route) { backStackEntry ->
             val menuItems = remember {
-                mutableListOf(MenuItem("Text Files Log") {
+                mutableListOf(MenuItem(R.string.text_files_log) {
                     navActions.navigateToScreen(Screens.PdfToText.TextFilesScreen.route)
                 })
             }
@@ -116,7 +116,7 @@ fun NavGraphBuilder.pdf2txtGraph(navActions: NavigationActions){
                 thumbnail = uiState.thumbnail,
                 fileName = uiState.pdfFileName,
                 navigateToPdfViewer = { navActions.navigateToScreen(Screens.PdfToText.PdfViewer.route)},
-                convertToText = {viewModel.convertToText()},
+                convertToText = {viewModel.convertToText(uiState.uri,uiState.pdfFileName)},
                 tool = DataSource.getToolData(R.string.pdf2text),
                 menuItems = menuItems,
                 isLoading = uiState.isLoading

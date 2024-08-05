@@ -48,7 +48,7 @@ fun FilePickerScreen(onNavigationIconClick:()->Unit,
         AppBar(onNavigationIconClick =onNavigationIconClick,
             menuItems = menuItems,
             titleComposable = {
-                Text(text = "Pdf File Picker")
+                Text(text = stringResource(id = R.string.pdf_file_picker))
             }) //Appbar scope end
     }) { innerPadding ->
         Column(modifier = Modifier
