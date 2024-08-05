@@ -20,8 +20,10 @@ import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.PagerState
 import androidx.compose.foundation.pager.rememberPagerState
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.text.ClickableText
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.MaterialTheme
@@ -44,9 +46,9 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
-import androidx.compose.ui.tooling.preview.PreviewScreenSizes
+import androidx.compose.ui.tooling.preview.Preview
 import com.panwar2001.pdfpro.R
-import com.panwar2001.pdfpro.theme.PDFProTheme
+import com.panwar2001.pdfpro.compose.components.BannerAd
 import com.panwar2001.pdfpro.view_models.OnBoardData
 
 
@@ -70,9 +72,10 @@ fun  OnboardScreen(navigateToHome: () -> Unit,
                    onNextButtonClick: () -> Unit) {
     val configuration = LocalConfiguration.current
     Column(
-        Modifier.fillMaxSize(),
+        Modifier.fillMaxSize()
+            .verticalScroll(rememberScrollState()),
         horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.SpaceBetween
+        verticalArrangement = Arrangement.SpaceBetween,
     ) {
         Skip(navigateToHome)
         HorizontalPager(state = pagerState,Modifier.wrapContentSize()) { page ->
@@ -101,6 +104,7 @@ fun  OnboardScreen(navigateToHome: () -> Unit,
                 currentPage = pagerState.targetPage
             )
             Spacer(modifier = Modifier.height(dimensionResource(id = R.dimen.spacing_large)))
+            BannerAd(adUnitResID = R.string.onboard_banner)
             NextButton(
                 textId = if (pagerState.pageCount != pagerState.currentPage+1)
                     R.string.next else R.string.started,
@@ -311,7 +315,7 @@ fun MaterialTheme.isLight() = this.colorScheme.background.luminance() > 0.5
 
 
 @OptIn(ExperimentalFoundationApi::class)
-@PreviewScreenSizes
+@Preview
 @Composable
 fun OnBoardingScreenPreview(){
     val pagerState= rememberPagerState {3}
@@ -327,7 +331,6 @@ fun OnBoardingScreenPreview(){
             description = R.string.lock_description)
     )
 
-    PDFProTheme(darkTheme = false) {
             Surface(
                 modifier = Modifier.fillMaxSize(),
                 color = MaterialTheme.colorScheme.background
@@ -338,6 +341,5 @@ fun OnBoardingScreenPreview(){
                     onBoardList = onBoardList
                 ) {}
             }
-        }
 }
 

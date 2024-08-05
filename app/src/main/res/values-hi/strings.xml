@@ -43,6 +43,17 @@
     <string name="change_order">फाइलों का क्रम बदलें</string>
     <string name="sort_options">क्रमबद्ध विकल्प</string>
     <string name="share">साझा करें</string>
+    <string name="convert2pdf">पीडीएफ में बदलें</string>
+    <string name="delete_file_dialog_title">फाइल हटाएं?</string>
+    <string name="delete_file_dialog_text">"%1$s" इन टेक्स्ट फाइलों से हटा दिया जाएगा।</string>
+    <string name="pdf_key_input">पासवर्ड</string>
+    <string name="decrypt_password_wrong">दर्ज किया गया पासवर्ड गलत है, कृपया पुनः प्रयास करें!</string>
+    <string name="pdf_file_picker">पीडीएफ फाइल पिकर</string>
+    <string name="text_files_log">टेक्स्ट फाइल्स लॉग</string>
+    <string name="dismiss">खारिज करें</string>
+    <string name="save">सहेजें</string>
+
+
     <string name="ocr_description">स्ट्रीमलाइन टेक्स्ट एक्सट्रैक्शन के लिए ऑप्टिकल कैरेक्टर रिकॉग्निशन की संभावनाओं को अनलॉक करें।</string>
     <string name="compress_pdf_description">गुणवत्ता को बनाए रखते हुए और फ़ाइल आकार को कम करते हुए हमारे सहज संपीड़न उपकरण के साथ आसानी से पीडीएफ फाइलें संकुचित करें</string>
     <string name="lock_description">संवेदनशील जानकारी की सुरक्षा के लिए अपने पीडीएफ को पासवर्ड सुरक्षा के साथ सुरक्षित करें।</string>

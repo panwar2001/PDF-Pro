@@ -43,6 +43,16 @@
     <string name="change_order">ファイルの順序を変更</string>
     <string name="sort_options">ソートオプション</string>
     <string name="share">共有</string>
+    <string name="convert2pdf">PDFに変換</string>
+    <string name="delete_file_dialog_title">ファイルを削除しますか?</string>
+    <string name="delete_file_dialog_text">"%1$s" がこれらのテキストファイルから削除されます。</string>
+    <string name="pdf_key_input">パスワード</string>
+    <string name="decrypt_password_wrong">入力されたパスワードが間違っています。もう一度お試しください！</string>
+    <string name="pdf_file_picker">PDFファイルピッカー</string>
+    <string name="text_files_log">テキストファイルログ</string>
+    <string name="dismiss">閉じる</string>
+    <string name="save">保存</string>
+
     <string name="ocr_description">光学式文字認識の可能性を解き放ち、テキスト抽出を効率化します。</string>
     <string name="compress_pdf_description">品質を保ちつつファイルサイズを縮小する直感的な圧縮ツールで、PDFファイルを簡単に圧縮します</string>
     <string name="lock_description">機密情報を保護するために、パスワード保護でPDFを安全にします。</string>

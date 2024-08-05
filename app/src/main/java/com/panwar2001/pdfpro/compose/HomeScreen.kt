@@ -80,6 +80,7 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.panwar2001.pdfpro.R
+import com.panwar2001.pdfpro.compose.components.BannerAd
 import com.panwar2001.pdfpro.compose.components.BottomIconButton
 import com.panwar2001.pdfpro.data.DataSource
 import com.panwar2001.pdfpro.data.ToolsData
@@ -281,6 +282,9 @@ fun ComposeTools(navigateTo: (String)->Unit) {
     LazyColumn(contentPadding = PaddingValues(20.dp),
         modifier = Modifier.fillMaxSize()
     ) {
+        item {
+            BannerAd(adUnitResID = R.string.home_banner)
+        }
         items(items = DataSource.ToolsList,
             key = {it.title}) {item ->
             Card(item =item,navigateTo=navigateTo)

@@ -1,6 +1,11 @@
 <resources>
     <string name="app_name" translatable="false">PDF Pro</string>
     <string name="banner_test" translatable="false">ca-app-pub-3940256099942544/9214589741</string>
+    <string name="home_banner" translatable="false">ca-app-pub-9471515798383572/9190883014</string>
+    <string name="onboard_banner" translatable="false">ca-app-pub-9471515798383572/3094387765</string>
+    <string name="upload_screen_banner" translatable="false">ca-app-pub-9471515798383572/1747507268</string>
+    <string name="save_pdf_screen_banner" translatable="false">ca-app-pub-9471515798383572/3746984642</string>
+    <string name="preview_file_screen_banner" translatable="false">ca-app-pub-9471515798383572/8261611008</string>
     <string name="onboard_title" >Experience the ultimate free PDF service.</string>
     <string name="title_activity_main_screen" >MainScreen</string>
     <string name="title_activity_test">Test</string>
@@ -45,9 +50,9 @@
     <string name="change_order">change order of files</string>
     <string name="sort_options">Sorting Options</string>
     <string name="share">Share</string>
-    <string name="convert2pdf" translatable="false">Convert to pdf</string>
-    <string name="delete_file_dialog_title" translatable="false">Remove file?</string>
-    <string name="delete_file_dialog_text" translatable="false">\'%1$s\' will be removed from these text files.</string>
+    <string name="convert2pdf" >Convert to pdf</string>
+    <string name="delete_file_dialog_title" >Remove file?</string>
+    <string name="delete_file_dialog_text">\'%1$s\' will be removed from these text files.</string>
     <string name="pdf_key_input">password</string>
     <string name="decrypt_password_wrong">Input password is wrong, please try again!</string>
     <string name="pdf_file_picker">Pdf File Picker</string>

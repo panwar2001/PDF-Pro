@@ -12,6 +12,8 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.wrapContentSize
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowForward
 import androidx.compose.material3.CircularProgressIndicator
@@ -37,6 +39,7 @@ import coil.compose.AsyncImage
 import com.panwar2001.pdfpro.R
 import com.panwar2001.pdfpro.compose.AppBar
 import com.panwar2001.pdfpro.compose.MenuItem
+import com.panwar2001.pdfpro.compose.components.BannerAd
 import com.panwar2001.pdfpro.compose.components.SnackBarHost
 import com.panwar2001.pdfpro.data.Tool
 
@@ -77,9 +80,11 @@ fun PreviewFileScreen(onNavigationIconClick:()->Unit,
     }) { innerPadding ->
         Column(  modifier = Modifier
             .padding(innerPadding)
+            .verticalScroll(rememberScrollState())
             .fillMaxHeight(),
             horizontalAlignment = Alignment.CenterHorizontally
         ){
+            BannerAd(adUnitResID = R.string.preview_file_screen_banner)
             AnimatedVisibility(visible = isLoading) {
                 CircularProgressIndicator(
                     modifier = Modifier.padding(bottom = 16.dp)

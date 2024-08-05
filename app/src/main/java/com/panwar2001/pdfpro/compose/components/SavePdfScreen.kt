@@ -109,6 +109,7 @@ fun SavePdfScreen(backNavigate:()->Unit,
             .fillMaxHeight(),
             horizontalAlignment = Alignment.CenterHorizontally
         ){
+            BannerAd(adUnitResID = R.string.save_pdf_screen_banner)
             Row(
                 modifier = Modifier.padding(100.dp),
                 horizontalArrangement = Arrangement.Center
