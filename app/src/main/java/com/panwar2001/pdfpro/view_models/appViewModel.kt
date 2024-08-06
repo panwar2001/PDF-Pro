@@ -46,9 +46,9 @@ class AppViewModel @Inject constructor(private val toolsRepository: ToolsInterfa
             R.array.Russian,
             R.array.hindi)
 
-    init {
-        searchPdfs()
-    }
+//    init {
+//        searchPdfs()
+//    }
     @WorkerThread
      fun getCurrentLocale(): String {
          return toolsRepository.getAppLocale()
@@ -106,16 +106,16 @@ class AppViewModel @Inject constructor(private val toolsRepository: ToolsInterfa
         }
      }
     fun searchPdfs(){
-            viewModelScope.launch {
-                    setPdfsList(
-                        toolsRepository.searchPdfs(
-                            sortingOrder = uiState.value.sortOption,
-                            ascendingSort = uiState.value.isAscending,
-                            mimeType = "application/pdf",
-                            query = uiState.value.query
-                        )
-                    )
-            }
+//            viewModelScope.launch {
+//                    setPdfsList(
+//                        toolsRepository.searchPdfs(
+//                            sortingOrder = uiState.value.sortOption,
+//                            ascendingSort = uiState.value.isAscending,
+//                            mimeType = "application/pdf",
+//                            query = uiState.value.query
+//                        )
+//                    )
+//            }
     }
 
 }

@@ -123,8 +123,8 @@ fun HomeScreen(onNavigationIconClick:()->Unit,
         modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
         topBar = {HomeScreenTopAppBar(scrollBehavior,
             onNavigationIconClick = onNavigationIconClick)},
-        bottomBar = { HomeScreenBottomBar(scrollToPage = scrollToPage,
-                                          pagerState = pagerState )},
+//        bottomBar = { HomeScreenBottomBar(scrollToPage = scrollToPage,
+//                                          pagerState = pagerState )},
         floatingActionButton = { if(pagerState.currentPage==1)FloatingBottomSheetButton {setBottomSheetState(true)}}
     ) { innerPadding ->
         Column(
@@ -132,33 +132,35 @@ fun HomeScreen(onNavigationIconClick:()->Unit,
                 .fillMaxSize()
                 .padding(innerPadding)
         ) {
-            if(pagerState.currentPage==1){
-            HomeScreenSearchBar(
-                pdfList = pdfList.take(topSearchCount),
-                query = query,
-                onQueryChange = onQueryChange,
-                onSearch = onSearch,
-                active = active,
-                onActiveChange=onActiveChange,
-                onSearchTrailingIconClick=onSearchTrailingIconClick)
-                }
+          ComposeTools(navigateTo=navigateTo)
 
-            HorizontalPager(state = pagerState) { currentPage ->
-                if (currentPage == 0) {
-                    ComposeTools(navigateTo=navigateTo)
-                }else{
-                    PdfFilesScreen(listPDF = pdfList ,
-                                   shareFile = shareFile,
-                                   onPdfCardClick=onPdfCardClick)
-                    if (showBottomSheet) {
-                        BottomSheet(onBottomSheetDismiss = {setBottomSheetState(false)},
-                            toggleSortOrder = toggleSortOrder,
-                            sortBy=sortBy,
-                            setSortBy = setSortBy,
-                            options=options)
-                    }
-                }
-            }
+//            if(pagerState.currentPage==1){
+//            HomeScreenSearchBar(
+//                pdfList = pdfList.take(topSearchCount),
+//                query = query,
+//                onQueryChange = onQueryChange,
+//                onSearch = onSearch,
+//                active = active,
+//                onActiveChange=onActiveChange,
+//                onSearchTrailingIconClick=onSearchTrailingIconClick)
+//                }
+//
+//            HorizontalPager(state = pagerState) { currentPage ->
+//                if (currentPage == 0) {
+//                    ComposeTools(navigateTo=navigateTo)
+//                }else{
+//                    PdfFilesScreen(listPDF = pdfList ,
+//                                   shareFile = shareFile,
+//                                   onPdfCardClick=onPdfCardClick)
+//                    if (showBottomSheet) {
+//                        BottomSheet(onBottomSheetDismiss = {setBottomSheetState(false)},
+//                            toggleSortOrder = toggleSortOrder,
+//                            sortBy=sortBy,
+//                            setSortBy = setSortBy,
+//                            options=options)
+//                    }
+//                }
+//            }
 
         }
     }

@@ -29,6 +29,7 @@ android {
 
     buildTypes {
         release {
+            isDebuggable=false
             /**
              *  Enables code shrinking, obfuscation, and optimization for only
              *  your project's release build type. Make sure to use a build

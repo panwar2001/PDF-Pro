@@ -14,15 +14,22 @@ data class OnBoardData(
 )
 class OnBoardScreenViewModel: ViewModel(){
     val onBoardList= listOf(
+//        OnBoardData(icon= R.drawable.ocr,
+//            title= R.string.ocr_pdf,
+//            description = R.string.ocr_description),
+//        OnBoardData(icon= R.drawable.pdf_compresser,
+//            title= R.string.compress_pdf,
+//            description = R.string.compress_pdf_description),
+//        OnBoardData(icon= R.drawable.lock_pdf,
+//            title= R.string.lock_pdf,
+//            description = R.string.lock_description)
         OnBoardData(icon= R.drawable.ocr,
-            title= R.string.ocr_pdf,
-            description = R.string.ocr_description),
-        OnBoardData(icon= R.drawable.pdf_compresser,
-            title= R.string.compress_pdf,
-            description = R.string.compress_pdf_description),
-        OnBoardData(icon= R.drawable.lock_pdf,
-            title= R.string.lock_pdf,
-            description = R.string.lock_description)
+            title= R.string.pdf2text,
+            description = R.string.pdf2txt_description),
+        OnBoardData(icon= R.drawable.pdf_svg,
+            title= R.string.img2pdf,
+            description = R.string.img2pdf_description),
+
     )
     private val _loading = MutableStateFlow(false)
     val loading: StateFlow<Boolean> = _loading.asStateFlow()

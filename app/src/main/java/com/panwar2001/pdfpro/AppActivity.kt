@@ -29,11 +29,7 @@ class AppActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         PDFBoxResourceLoader.init(applicationContext)
-        if(hasExternalStoragePermission()){
             pdfProContent()
-        }else{
-            requestPermission()
-        }
     }
 
     private fun pdfProContent() {
@@ -129,14 +125,14 @@ class AppActivity : AppCompatActivity() {
         }
     }
 
-    override fun onResume() {
-        super.onResume()
-        if(hasExternalStoragePermission()){
-            pdfProContent()
-        }else{
-            // permission not yet approved. Display user notice and gracefully degrade
-            requestPermission()
-        }
-    }
+//    override fun onResume() {
+//        super.onResume()
+//        if(hasExternalStoragePermission()){
+//            pdfProContent()
+//        }else{
+//            // permission not yet approved. Display user notice and gracefully degrade
+//            requestPermission()
+//        }
+//    }
 }
 
