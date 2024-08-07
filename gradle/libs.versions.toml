@@ -14,9 +14,7 @@ kotlinxCoroutinesTest = "1.9.0-RC"
 lifecycleRuntimeKtx = "2.8.4"
 activityCompose = "1.9.1"
 composeBom = "2024.06.00"
-mockitoInlineVersion = "2.13.0"
-# Do not upgrade mockito kotlin
-mockitoKotlin = "4.1.0"
+mockk = "1.13.12"
 navigationCompose = "2.7.7"
 pdfboxAndroid = "2.0.27.0"
 playServicesAds = "23.2.0"
@@ -25,8 +23,6 @@ constraintlayout = "2.1.4"
 lifecycleViewmodelKtx = "2.8.4"
 fragmentKtx = "1.8.2"
 playServicesMlkitDocumentScannerVersion = "16.0.0-beta1"
-powermockApiMockito = "1.4.12"
-powermockModuleJunit4 = "1.6.2"
 roomRuntime = "2.6.1"
 documentfile = "1.0.1"
 
@@ -57,16 +53,13 @@ androidx-ui-test-junit4 = { group = "androidx.compose.ui", name = "ui-test-junit
 androidx-material3 = { group = "androidx.compose.material3", name = "material3" }
 kotlinx-coroutines-core = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-core", version.ref = "kotlinxCoroutinesCore" }
 kotlinx-coroutines-test = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-test", version.ref = "kotlinxCoroutinesTest" }
-mockito-inline-v2130 = { module = "org.mockito:mockito-inline", version.ref = "mockitoInlineVersion" }
-mockito-kotlin = { module = "org.mockito.kotlin:mockito-kotlin", version.ref = "mockitoKotlin" }
+mockk = { module = "io.mockk:mockk", version.ref = "mockk" }
 pdfbox-android = { module = "com.tom-roush:pdfbox-android", version.ref = "pdfboxAndroid" }
 play-services-ads = { module = "com.google.android.gms:play-services-ads", version.ref = "playServicesAds" }
 androidx-appcompat = { group = "androidx.appcompat", name = "appcompat", version.ref = "appcompat" }
 androidx-constraintlayout = { group = "androidx.constraintlayout", name = "constraintlayout", version.ref = "constraintlayout" }
 androidx-lifecycle-viewmodel-ktx = { group = "androidx.lifecycle", name = "lifecycle-viewmodel-ktx", version.ref = "lifecycleViewmodelKtx" }
 androidx-fragment-ktx = { group = "androidx.fragment", name = "fragment-ktx", version.ref = "fragmentKtx" }
-powermock-api-mockito = { module = "org.powermock:powermock-api-mockito", version.ref = "powermockApiMockito" }
-powermock-module-junit4 = { module = "org.powermock:powermock-module-junit4", version.ref = "powermockModuleJunit4" }
 androidx-documentfile = { group = "androidx.documentfile", name = "documentfile", version.ref = "documentfile" }
 
 [plugins]

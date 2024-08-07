@@ -1,27 +1,26 @@
 package com.panwar2001.pdfpro.pdf2TextTest
 
-import android.graphics.Bitmap
 import android.net.Uri
 import com.panwar2001.pdfpro.data.Pdf2TextInterface
 import com.panwar2001.pdfpro.data.TextFileInfo
 import com.panwar2001.pdfpro.view_models.PdfToTextUiState
+import io.mockk.mockk
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.asFlow
 import kotlinx.coroutines.flow.flow
-import org.mockito.Mockito.mock
 
 class PdfToTextFakeRepository :Pdf2TextInterface {
     private var textFiles= mutableListOf<TextFileInfo>()
+    private val uriMock= mockk<Uri>()
     init {
         repeat(5) {
-            textFiles.add(TextFileInfo("", it.toLong(), mock(Uri::class.java), "1 mb"))
+            textFiles.add(TextFileInfo("", it.toLong(), mockk(), "1 mb"))
         }
     }
     override fun initPdfToTextUiState(): PdfToTextUiState {
         return PdfToTextUiState(
-            uri=mock(Uri::class.java),
+            uri= uriMock,
             isLoading=false,
-            thumbnail= mock(Bitmap::class.java),
+            thumbnail= mockk(),
             pdfFileName="file.pdf",
             textFileName = "",
             text= "",
@@ -34,6 +33,10 @@ class PdfToTextFakeRepository :Pdf2TextInterface {
     }
 
     override suspend fun deleteTextFile(id: Long) {
+        if(id==0L){
+            throw NullPointerException("error message")
+        }
+
         var index=-1
         for(i in 0..<textFiles.size){
             if(textFiles[i].id==id){

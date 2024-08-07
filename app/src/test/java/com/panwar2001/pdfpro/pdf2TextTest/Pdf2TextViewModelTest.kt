@@ -1,10 +1,11 @@
 package com.panwar2001.pdfpro.pdf2TextTest
 
 import android.content.Context
-import android.graphics.Bitmap
 import android.net.Uri
+import android.util.Log
+
 import com.panwar2001.pdfpro.data.Pdf2TextInterface
-import com.panwar2001.pdfpro.data.ToolsRepository
+import com.panwar2001.pdfpro.data.ToolsInterface
 import com.panwar2001.pdfpro.usecase.ConvertToTextUseCase
 import com.panwar2001.pdfpro.usecase.EventType
 import com.panwar2001.pdfpro.usecase.GetFileNameUseCase
@@ -15,84 +16,107 @@ import com.panwar2001.pdfpro.usecase.IsPdfLockedUseCase
 import com.panwar2001.pdfpro.usecase.UiEventUseCase
 import com.panwar2001.pdfpro.usecase.UnlockPdfUseCase
 import com.panwar2001.pdfpro.view_models.PdfToTextViewModel
+import io.mockk.MockKAnnotations
+import io.mockk.coEvery
+import io.mockk.every
+import io.mockk.impl.annotations.MockK
+import io.mockk.impl.annotations.SpyK
+import io.mockk.mockk
+import io.mockk.spyk
 import junit.framework.TestCase.assertFalse
 import junit.framework.TestCase.assertTrue
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.MutableSharedFlow
+import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.launch
 import kotlinx.coroutines.test.StandardTestDispatcher
+import kotlinx.coroutines.test.UnconfinedTestDispatcher
+import kotlinx.coroutines.test.advanceTimeBy
 import kotlinx.coroutines.test.advanceUntilIdle
 import kotlinx.coroutines.test.resetMain
 import kotlinx.coroutines.test.runTest
 import kotlinx.coroutines.test.setMain
+import okhttp3.internal.wait
 import org.junit.After
 import org.junit.Before
 import org.junit.Test
-import org.junit.runner.RunWith
-import org.mockito.Mock
-import org.mockito.kotlin.any
-import org.mockito.Mockito
-import org.mockito.Mockito.anyInt
-import org.mockito.Mockito.anyLong
-import org.mockito.Mockito.anyString
-import org.mockito.Mockito.mock
-import org.mockito.MockitoAnnotations
-import org.mockito.junit.MockitoJUnitRunner
+import kotlin.test.assertFailsWith
 
 @ExperimentalCoroutinesApi
-@RunWith(MockitoJUnitRunner::class)
 class Pdf2txtViewModelTest {
-    private lateinit var pdf2txtViewModel:PdfToTextViewModel
-    @Mock
-    private lateinit var toolsRepository: ToolsRepository
-    @Mock
+    private lateinit var toolsRepository: ToolsInterface
     private lateinit var pdf2textRepository: Pdf2TextInterface
-    @Mock
+    @MockK
+    lateinit var context: Context
+    @MockK
     private lateinit var isPdfLockedUseCase: IsPdfLockedUseCase
-    @Mock
+    @MockK
     private lateinit var uiEventUseCase: UiEventUseCase
-    @Mock
+    @MockK
     private lateinit var isPdfCorruptedUseCase: IsPdfCorruptedUseCase
-    @Mock
+    @MockK
     private lateinit var getPdfThumbnailUseCase: GetPdfThumbnailUseCase
-    @Mock
+    @MockK
     private lateinit var getPdfPageCountUseCase: GetPdfPageCountUseCase
-    @Mock
+    @MockK
     private lateinit var getFileNameUseCase: GetFileNameUseCase
-    @Mock
+    @MockK
     private lateinit var unlockPdfUseCase: UnlockPdfUseCase
-    @Mock
+    @MockK
     private lateinit var convertToTextUseCase: ConvertToTextUseCase
 
+    private lateinit var pdf2txtViewModel:PdfToTextViewModel
+    private val uiEventFlow: MutableSharedFlow<EventType> = MutableSharedFlow()
 
+    @OptIn(ExperimentalCoroutinesApi::class)
     @Before
     fun setup() {
 
         Dispatchers.setMain(StandardTestDispatcher())
-        MockitoAnnotations.openMocks(this)
+        MockKAnnotations.init(this, relaxUnitFun = true)
+        context= mockk()
+        uiEventUseCase= mockk()
         pdf2textRepository=PdfToTextFakeRepository()
-//        Mockito.`when`(pdf2textRepository.getAllTextFiles()).thenReturn(null)
-        val context= mock(Context::class.java)
-        isPdfLockedUseCase= IsPdfLockedUseCase(context)
-        uiEventUseCase= UiEventUseCase()
-        isPdfLockedUseCase=IsPdfLockedUseCase(context)
-        getPdfThumbnailUseCase= GetPdfThumbnailUseCase(context)
-        getPdfPageCountUseCase= GetPdfPageCountUseCase(context)
-        getFileNameUseCase= GetFileNameUseCase(context)
-        unlockPdfUseCase= UnlockPdfUseCase(context)
-        convertToTextUseCase= mock(ConvertToTextUseCase::class.java)
+        toolsRepository= ToolsFakeRepository(mockk())
+        isPdfLockedUseCase= mockk(relaxed = true)
+        isPdfLockedUseCase=mockk(relaxed = true)
+        isPdfCorruptedUseCase= mockk(relaxed = true)
+        getPdfThumbnailUseCase= mockk(relaxed = true)
+        getPdfPageCountUseCase= mockk(relaxed = true)
+        getFileNameUseCase= mockk(relaxed = true)
+        unlockPdfUseCase= mockk(relaxed = true)
+        convertToTextUseCase= mockk(relaxed = true)
+
+        every { uiEventUseCase.uiEventFlow} returns uiEventFlow.asSharedFlow()
+        coEvery { uiEventUseCase(any()) } coAnswers  {
+            val event= invocation.args[0] as EventType
+            uiEventFlow.emit(event)
+        }
+        coEvery { getPdfThumbnailUseCase(any()) } coAnswers  {
+            val uri= invocation.args[0] as Uri
+            if(uri== pdf2textRepository.initPdfToTextUiState().uri){
+                throw Exception("exception pdf thumbnail")
+            }
+            mockk()
+        }
+
 
         pdf2txtViewModel= PdfToTextViewModel(
-            toolsRepository,
-            pdf2textRepository,
-            isPdfLockedUseCase,
-            uiEventUseCase,
-            isPdfCorruptedUseCase,
-            getPdfThumbnailUseCase,
-            getPdfPageCountUseCase,
-            getFileNameUseCase,
-            unlockPdfUseCase,
-            convertToTextUseCase)
+            uiEventUseCase = uiEventUseCase,
+            pdf2TextRepository = pdf2textRepository,
+            isPdfCorruptedUseCase = isPdfCorruptedUseCase,
+            isPdfLockedUseCase = isPdfLockedUseCase,
+            getFileNameUseCase = getFileNameUseCase,
+            getPdfThumbnailUseCase = getPdfThumbnailUseCase,
+            getPdfPageCountUseCase = getPdfPageCountUseCase,
+            unlockPdfUseCase = unlockPdfUseCase,
+            convertToTextUseCase = convertToTextUseCase,
+            toolsRepository = toolsRepository
+        )
 
     }
 
@@ -101,83 +125,42 @@ class Pdf2txtViewModelTest {
     fun tearDown() {
         Dispatchers.resetMain() // reset the main dispatcher to the original Main dispatcher
     }
-//    @Test
-//    fun falt(){
-//
-//    }
-//    @Test
-//    fun `test to pick pdf`()= runTest{
-//        val uri= pdf2txtViewModel.uiState.value.uri
-//        Mockito.`when`(getPdfThumbnailUseCase(any())).thenAnswer{ invocation->
-//            val t=invocation.getArgument(0) as Uri
-//            if(t==uri){
-//                throw Exception("Exception check")
-//            }
-//            return@thenAnswer mock(Bitmap::class.java)
-//        }
-//        Mockito.`when`(getPdfPageCountUseCase(any())).thenReturn(2)
-//        Mockito.`when`(getFileNameUseCase(any())).thenReturn("name.pdf")
-//
-//        pdf2txtViewModel.pickPdf(uri)
-//        advanceUntilIdle()// Ensures all pending coroutines are executed
-//        pdf2txtViewModel.uiEventFlow.collectLatest {
-//                assertTrue(it==EventType.Error)
-//        }
-//        val uri2=mock(Uri::class.java)
-//        pdf2txtViewModel.pickPdf(uri2)
-//        advanceUntilIdle()// Ensures all pending coroutines are executed
-//        pdf2txtViewModel.uiEventFlow.collectLatest {
-//            assertTrue(it==EventType.Success)
-//        }
-//    }
     @Test
-    fun testConvertToText()= runTest{
-        val uri1 = pdf2txtViewModel.uiState.value.uri
-        Mockito.`when`(convertToTextUseCase(any())).thenAnswer{ invocation->
-            val t=invocation.getArgument(0) as Uri
-            if(t==uri1){
-                throw Exception("Exception check")
-            }
-            return@thenAnswer "returned text"
-        }
-        Mockito.`when`(pdf2textRepository.createTextFile(anyString(), anyString())).thenReturn(
-            Pair(0,"file name")
-        )
-        val uri2=mock(Uri::class.java)
-        pdf2txtViewModel.pickPdf(uri2)
-        advanceUntilIdle()// Ensures all pending coroutines are executed
-        pdf2txtViewModel.convertToText(uri2,"file.pdf")
-        advanceUntilIdle()// Ensures all pending coroutines are executed
-        pdf2txtViewModel.uiEventFlow.collectLatest {
-            assertTrue(it!=EventType.Error)
-        }
-
-        pdf2txtViewModel.pickPdf(uri1)
-        advanceUntilIdle()// Ensures all pending coroutines are executed
-        pdf2txtViewModel.convertToText(uri1,"file.pdf")
-        advanceUntilIdle()// Ensures all pending coroutines are executed
-        pdf2txtViewModel.uiEventFlow.collectLatest {
-            assertTrue(it==EventType.Error)
+    fun `test exception thrown in pick pdf function`()= runTest{
+        assertFailsWith<Exception> {
+            pdf2txtViewModel.pickPdf(pdf2txtViewModel.uiState.value.uri)
         }
     }
-//    @Test
-//    fun testDeleteFile()= runTest{
-//        Mockito.`when`(pdf2textRepository.deleteTextFile(anyLong())).thenAnswer{ invocation->
-//            val t=invocation.getArgument(0) as Int
-//            if(t==0){
-//                throw NullPointerException("error message")
-//            }
-//        }
-//    /**
-//     * test delete File when throws an exception
-//     */
-//        pdf2txtViewModel.deleteFile(0L)
-//        assertFalse(pdf2txtViewModel.uiState.value.isLoading)
-//
-//        /**
-//         * test delete File when does not throw an exception
-//         */
-//        pdf2txtViewModel.deleteFile(1L)
-//        assertFalse(pdf2txtViewModel.uiState.value.isLoading)
-//    }
+    @Test
+    fun `test delete file triggers error event on exception`()= runTest{
+    var triggered=false
+    val job= launch(){
+        pdf2txtViewModel.uiEventFlow.collect {
+                triggered= (it == EventType.Error)
+        }
+    }
+    pdf2txtViewModel.deleteFile(0L)
+    advanceUntilIdle()
+    assertTrue(triggered)
+    job.cancel()
+
+    assertFailsWith<Exception> {
+        pdf2textRepository.deleteTextFile(0L)
+    }
+}
+
+    @Test
+    fun `test delete file does not triggers event when exception not occurs`()= runTest{
+        var triggered=false
+        val job= launch(){
+            pdf2txtViewModel.uiEventFlow.collect {
+                triggered= (it == EventType.Error)
+            }
+        }
+        pdf2txtViewModel.deleteFile(1L)
+
+        advanceUntilIdle()
+        assertFalse(triggered)
+        job.cancel()
+    }
 }

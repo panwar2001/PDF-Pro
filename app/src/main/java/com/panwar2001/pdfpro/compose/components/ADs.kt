@@ -10,6 +10,11 @@ import com.google.android.gms.ads.AdRequest
 import com.google.android.gms.ads.AdSize
 import com.google.android.gms.ads.AdView
 
+/**
+ * [BannerAd]
+
+ * @param adUnitResID the string resource id of the unit id of banner ad
+ */
 @Composable
 fun BannerAd(modifier: Modifier = Modifier,@StringRes adUnitResID:Int) {
     val adUnitID= stringResource(id = adUnitResID)

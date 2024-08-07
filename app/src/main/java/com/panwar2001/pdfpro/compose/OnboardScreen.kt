@@ -42,8 +42,6 @@ import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.AnnotatedString
-import androidx.compose.ui.text.TextStyle
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
@@ -169,12 +167,7 @@ fun NextButton(textId: Int,
         ) {
             Text(
                 text = stringResource(id = textId),
-                fontSize = MaterialTheme.typography.titleLarge.fontSize,
-                fontStyle = MaterialTheme.typography.titleLarge.fontStyle,
-                fontFamily = MaterialTheme.typography.titleLarge.fontFamily,
-                fontWeight = MaterialTheme.typography.titleLarge.fontWeight,
-                letterSpacing = MaterialTheme.typography.titleLarge.letterSpacing,
-                textDecoration = MaterialTheme.typography.titleLarge.textDecoration,
+                style = MaterialTheme.typography.titleLarge,
                 color = Color.White
             )
         }
@@ -192,16 +185,10 @@ fun NextButton(textId: Int,
 fun Title(textId:Int){
     Text(
         text = stringResource(id = textId),
-        fontSize = MaterialTheme.typography.headlineLarge.fontSize,
-        fontWeight = FontWeight.Bold,
         overflow= TextOverflow.Clip,
         textAlign = TextAlign.Center,
-        fontStyle = MaterialTheme.typography.titleLarge.fontStyle,
-        fontFamily = MaterialTheme.typography.titleLarge.fontFamily,
-        letterSpacing = MaterialTheme.typography.titleLarge.letterSpacing,
-        textDecoration = MaterialTheme.typography.titleLarge.textDecoration,
-        modifier= Modifier
-            .wrapContentSize()
+        style = MaterialTheme.typography.titleLarge,
+        modifier= Modifier.wrapContentSize()
     )
 }
 
@@ -238,12 +225,8 @@ fun Description(descriptionId:Int){
         text = stringResource(id = descriptionId),
         overflow= TextOverflow.Clip,
         textAlign = TextAlign.Center,
-        fontSize = MaterialTheme.typography.titleMedium.fontSize,
-        fontStyle = MaterialTheme.typography.titleMedium.fontStyle,
-        fontFamily = MaterialTheme.typography.titleMedium.fontFamily,
-        fontWeight = MaterialTheme.typography.titleMedium.fontWeight,
-        letterSpacing = MaterialTheme.typography.titleMedium.letterSpacing,
-        textDecoration = MaterialTheme.typography.titleMedium.textDecoration)
+        style = MaterialTheme.typography.titleMedium
+    )
 }
 
 /**
@@ -258,14 +241,7 @@ fun Skip(navigateToHome: () -> Unit){
     Row(horizontalArrangement = Arrangement.End,
         modifier = Modifier.fillMaxWidth()) {
         ClickableText(text = AnnotatedString("${stringResource(id = R.string.skip)}→"),
-            style = TextStyle(
-                fontSize = MaterialTheme.typography.headlineSmall.fontSize,
-                fontStyle = MaterialTheme.typography.headlineSmall.fontStyle,
-                fontFamily = MaterialTheme.typography.headlineSmall.fontFamily,
-                fontWeight = MaterialTheme.typography.headlineSmall.fontWeight,
-                letterSpacing = MaterialTheme.typography.headlineSmall.letterSpacing,
-                textDecoration = MaterialTheme.typography.headlineSmall.textDecoration,
-            ),
+            style = MaterialTheme.typography.headlineSmall,
             onClick = {navigateToHome()})
     }
 }

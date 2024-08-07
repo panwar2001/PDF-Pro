@@ -173,15 +173,13 @@ dependencies {
      * Testing dependencies
      */
     androidTestImplementation(libs.androidx.junit)
-    testImplementation(libs.junit)
+//    testImplementation(libs.junit)
+    testImplementation(kotlin("test"))
     androidTestImplementation(libs.androidx.espresso.core)
     androidTestImplementation(platform(libs.androidx.compose.bom))
     androidTestImplementation(libs.androidx.ui.test.junit4)
-    testImplementation(libs.mockito.kotlin)
-    testImplementation(libs.powermock.api.mockito)
-    testImplementation(libs.powermock.module.junit4)
+    testImplementation(libs.mockk)
     testImplementation(libs.kotlinx.coroutines.core)
-    testImplementation(libs.mockito.inline.v2130)
     //https://kotlinlang.org/api/kotlinx.coroutines/kotlinx-coroutines-test/
     testImplementation(libs.kotlinx.coroutines.test)
     debugImplementation(libs.androidx.ui.tooling)
