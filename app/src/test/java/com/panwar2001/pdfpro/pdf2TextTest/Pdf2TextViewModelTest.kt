@@ -85,7 +85,7 @@ class Pdf2txtViewModelTest {
         isPdfLockedUseCase= mockk(relaxed = true)
         isPdfLockedUseCase=mockk(relaxed = true)
         isPdfCorruptedUseCase= mockk(relaxed = true)
-        getPdfThumbnailUseCase= mockk(relaxed = true)
+        getPdfThumbnailUseCase= mockk()
         getPdfPageCountUseCase= mockk(relaxed = true)
         getFileNameUseCase= mockk(relaxed = true)
         unlockPdfUseCase= mockk(relaxed = true)
@@ -98,6 +98,8 @@ class Pdf2txtViewModelTest {
         }
         coEvery { getPdfThumbnailUseCase(any()) } coAnswers  {
             val uri= invocation.args[0] as Uri
+            val initUri=pdf2textRepository.initPdfToTextUiState().uri
+            
             if(uri== pdf2textRepository.initPdfToTextUiState().uri){
                 throw Exception("exception pdf thumbnail")
             }
@@ -128,7 +130,7 @@ class Pdf2txtViewModelTest {
     @Test
     fun `test exception thrown in pick pdf function`()= runTest{
         assertFailsWith<Exception> {
-            pdf2txtViewModel.pickPdf(pdf2txtViewModel.uiState.value.uri)
+            getPdfThumbnailUseCase(pdf2txtViewModel.uiState.value.uri)
         }
     }
     @Test
