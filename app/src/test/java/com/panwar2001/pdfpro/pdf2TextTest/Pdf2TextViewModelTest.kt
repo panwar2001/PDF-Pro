@@ -2,8 +2,6 @@ package com.panwar2001.pdfpro.pdf2TextTest
 
 import android.content.Context
 import android.net.Uri
-import android.util.Log
-
 import com.panwar2001.pdfpro.data.Pdf2TextInterface
 import com.panwar2001.pdfpro.data.ToolsInterface
 import com.panwar2001.pdfpro.usecase.ConvertToTextUseCase
@@ -20,27 +18,19 @@ import io.mockk.MockKAnnotations
 import io.mockk.coEvery
 import io.mockk.every
 import io.mockk.impl.annotations.MockK
-import io.mockk.impl.annotations.SpyK
 import io.mockk.mockk
-import io.mockk.spyk
 import junit.framework.TestCase.assertFalse
 import junit.framework.TestCase.assertTrue
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.asSharedFlow
-import kotlinx.coroutines.flow.collectLatest
-import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.test.StandardTestDispatcher
-import kotlinx.coroutines.test.UnconfinedTestDispatcher
-import kotlinx.coroutines.test.advanceTimeBy
 import kotlinx.coroutines.test.advanceUntilIdle
 import kotlinx.coroutines.test.resetMain
 import kotlinx.coroutines.test.runTest
 import kotlinx.coroutines.test.setMain
-import okhttp3.internal.wait
 import org.junit.After
 import org.junit.Before
 import org.junit.Test
@@ -98,8 +88,6 @@ class Pdf2txtViewModelTest {
         }
         coEvery { getPdfThumbnailUseCase(any()) } coAnswers  {
             val uri= invocation.args[0] as Uri
-            val initUri=pdf2textRepository.initPdfToTextUiState().uri
-            
             if(uri== pdf2textRepository.initPdfToTextUiState().uri){
                 throw Exception("exception pdf thumbnail")
             }
@@ -136,7 +124,7 @@ class Pdf2txtViewModelTest {
     @Test
     fun `test delete file triggers error event on exception`()= runTest{
     var triggered=false
-    val job= launch(){
+    val job= launch{
         pdf2txtViewModel.uiEventFlow.collect {
                 triggered= (it == EventType.Error)
         }
@@ -154,7 +142,7 @@ class Pdf2txtViewModelTest {
     @Test
     fun `test delete file does not triggers event when exception not occurs`()= runTest{
         var triggered=false
-        val job= launch(){
+        val job= launch{
             pdf2txtViewModel.uiEventFlow.collect {
                 triggered= (it == EventType.Error)
             }
