@@ -18,6 +18,7 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.DrawerState
+import androidx.compose.material3.DrawerValue
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalDrawerSheet
@@ -25,6 +26,7 @@ import androidx.compose.material3.ModalNavigationDrawer
 import androidx.compose.material3.Switch
 import androidx.compose.material3.SwitchDefaults
 import androidx.compose.material3.Text
+import androidx.compose.material3.rememberDrawerState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -35,14 +37,16 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.panwar2001.pdfpro.R
-import com.panwar2001.pdfpro.compose.CircularIcon
+import com.panwar2001.pdfpro.compose.AppBar
 import com.panwar2001.pdfpro.data.DataSource
 import com.panwar2001.pdfpro.data.ToolsData
 import com.panwar2001.pdfpro.navigation.Screens
@@ -93,6 +97,7 @@ fun DrawerHeader() {
                 verticalArrangement = Arrangement.SpaceAround,
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
+                Spacer(modifier = Modifier.width(dimensionResource(id = R.dimen.spacing_medium)))
                 Image(
                     painter = painterResource(id = R.mipmap.launcher_icon_foreground),
                     contentDescription = stringResource(id = R.string.app_name),
@@ -101,12 +106,11 @@ fun DrawerHeader() {
                         .clip(CircleShape)
                         .background(Color.White)
                 )
+                Spacer(modifier = Modifier.width(dimensionResource(id = R.dimen.spacing_large)))
                 Text(
                     text = stringResource(id = R.string.app_name),
-                    Modifier
-                        .fillMaxWidth()
-                        .padding(top = 16.dp),
-                    fontSize = 22.sp,
+                    Modifier.fillMaxWidth(),
+                    style = MaterialTheme.typography.bodyMedium,
                     textAlign = TextAlign.Center
                 )
             }
@@ -169,27 +173,33 @@ fun DrawerBody(
 }
 @Composable
 fun NavItem(navigateTo: (String) -> Unit,
-            item:ToolsData,
-            itemTextStyle: TextStyle = TextStyle(fontSize = 18.sp)){
+            item:ToolsData){
     Row(
         modifier = Modifier
             .fillMaxWidth()
             .clickable {
                 navigateTo(item.route)
-            }
-            .padding(16.dp),
+            },
         verticalAlignment = Alignment.CenterVertically
     ) {
+        Spacer(modifier = Modifier.width(dimensionResource(id = R.dimen.spacing_medium)))
         CircularIcon(iconResourceId = item.iconId,
                      backgroundColor = item.iconColor,
-                     modifier = Modifier.size(40.dp),
-                     iconSize = 25.dp
-        )
-        Spacer(modifier = Modifier.width(16.dp))
+                     size= dimensionResource(id = R.dimen.icon_size_very_small))
+        Spacer(modifier = Modifier.width(dimensionResource(id = R.dimen.spacing_medium)))
         Text(
             text = stringResource(id = item.title),
-            style = itemTextStyle,
-            modifier = Modifier.weight(1f)
+            style = MaterialTheme.typography.titleSmall
         )
+    }
+}
+@Preview
+@Composable
+fun PreviewNavBar(drawerState: DrawerState = rememberDrawerState(initialValue = DrawerValue.Open)){
+    val scope= rememberCoroutineScope()
+    AppModalNavigationDrawer(drawerState,{},false,navigateTo ={}) {
+        AppBar(onNavigationIconClick = {
+            scope.launch { drawerState.open() }
+        })
     }
 }

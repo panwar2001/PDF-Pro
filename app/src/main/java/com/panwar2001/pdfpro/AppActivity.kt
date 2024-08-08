@@ -19,6 +19,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
+import com.google.android.gms.ads.MobileAds
 import com.panwar2001.pdfpro.navigation.NavigationController
 import com.panwar2001.pdfpro.navigation.Screens
 import com.panwar2001.pdfpro.theme.PDFProTheme
