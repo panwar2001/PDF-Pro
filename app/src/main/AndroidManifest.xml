@@ -43,10 +43,11 @@
             android:name="autoStoreLocales"
             android:value="true" />
         </service>
-<!-- *************************************************************************-->
+<!-- *******Google ads ******************************************************************-->
         <meta-data
             android:name="com.google.android.gms.ads.APPLICATION_ID"
             android:value="ca-app-pub-9471515798383572~1026627627" />
+
     </application>
 
 </manifest>

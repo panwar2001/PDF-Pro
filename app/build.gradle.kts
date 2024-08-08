@@ -170,20 +170,24 @@ dependencies {
     implementation(libs.coil.compose)
     implementation(libs.androidx.hilt.navigation.compose)
     /**
-     * Testing dependencies
+     *  unit testing dependencies
+     */
+    testImplementation(kotlin("test"))
+    testImplementation(libs.mockk)
+    //https://kotlinlang.org/api/kotlinx.coroutines/kotlinx-coroutines-test/
+    testImplementation(libs.kotlinx.coroutines.core)
+    testImplementation(libs.kotlinx.coroutines.test)
+    /**
+     *  Android tests dependencies
      */
     androidTestImplementation(libs.androidx.junit)
-//    testImplementation(libs.junit)
-    testImplementation(kotlin("test"))
     androidTestImplementation(libs.androidx.espresso.core)
     androidTestImplementation(platform(libs.androidx.compose.bom))
     androidTestImplementation(libs.androidx.ui.test.junit4)
-    testImplementation(libs.mockk)
-    testImplementation(libs.kotlinx.coroutines.core)
-    //https://kotlinlang.org/api/kotlinx.coroutines/kotlinx-coroutines-test/
-    testImplementation(libs.kotlinx.coroutines.test)
+    /**
+     * Debugging
+     */
     debugImplementation(libs.androidx.ui.tooling)
-
     debugImplementation(libs.androidx.ui.test.manifest)
 }
 
