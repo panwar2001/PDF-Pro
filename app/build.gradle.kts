@@ -138,6 +138,9 @@ android {
 }
 
 dependencies {
+    /**
+     * Android Dependencies
+     */
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.lifecycle.runtime.ktx)
     implementation(libs.androidx.ui)
@@ -157,6 +160,7 @@ dependencies {
     implementation(libs.androidx.documentfile)
     annotationProcessor(libs.androidx.room.compiler)
     implementation(libs.gms.play.services.mlkit.document.scanner)
+    implementation(libs.androidx.datastore.preferences)
     ksp(libs.hilt.android.compiler)
     ksp(libs.androidx.room.compiler)
 //    implementation(libs.kotlinx.coroutines.core)
@@ -168,6 +172,7 @@ dependencies {
     implementation(platform(libs.androidx.compose.bom))
     implementation(libs.androidx.navigation.compose)
     implementation(libs.coil.compose)
+    implementation(libs.androidx.material.icons.extended)
     implementation(libs.androidx.hilt.navigation.compose)
     /**
      *  unit testing dependencies

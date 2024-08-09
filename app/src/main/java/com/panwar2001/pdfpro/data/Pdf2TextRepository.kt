@@ -7,6 +7,7 @@ import android.provider.DocumentsContract
 import androidx.core.content.FileProvider
 import com.panwar2001.pdfpro.data.source.local.TextFile
 import com.panwar2001.pdfpro.data.source.local.TextFileDao
+import com.panwar2001.pdfpro.usecase.GetFileSizeUseCase
 import com.panwar2001.pdfpro.view_models.PdfToTextUiState
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.Dispatchers
@@ -35,7 +36,8 @@ interface Pdf2TextInterface {
 @Singleton
 class Pdf2TextRepository @Inject
 constructor(@ApplicationContext private val context: Context,
-            private val textFileDao: TextFileDao):Pdf2TextInterface {
+            private val textFileDao: TextFileDao,
+            private val getFileSizeUseCase: GetFileSizeUseCase):Pdf2TextInterface {
     override suspend fun modifyName(id: Long, name: String) {
         val directory = File(context.filesDir, "TEXT_FILES_DIR")
         val path = textFileDao.getFilePath(id)
@@ -139,7 +141,7 @@ constructor(@ApplicationContext private val context: Context,
                                 context.packageName + ".fileprovider",
                                 file
                             ),
-                            fileSize = getFileSize(file.length())
+                            fileSize = getFileSizeUseCase(file.length())
                         )
                     }
                 }
@@ -148,13 +150,6 @@ constructor(@ApplicationContext private val context: Context,
 
 }
 
-fun getFileSize(len: Long?)= when {
-    len==null-> "0 Byte"
-    len < 1024 -> "$len Byte"
-    len < 1048576 -> "%.1f KB".format(len / 1024.0)
-    len < 1073741824 -> "%.1f MB".format(len / 1048576.0)
-    else -> "%.1f GB".format(len / 1073741824.0)
-}
 
 data class TextFileInfo(
     val fileName: String,

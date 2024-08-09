@@ -11,9 +11,6 @@ import io.mockk.mockk
 import kotlinx.coroutines.flow.StateFlow
 
 class ToolsFakeRepository(override val progress: StateFlow<Float>) :ToolsInterface {
-    override suspend fun saveFileToDownload(uri: Uri, context: Context) {
-
-    }
 
     override suspend fun searchPdfs(
         sortingOrder: Int,

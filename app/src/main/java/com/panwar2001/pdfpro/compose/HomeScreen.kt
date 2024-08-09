@@ -120,7 +120,6 @@ fun HomeScreen(onNavigationIconClick:()->Unit,
                sortBy: Int,
                topSearchCount:Int=7,
                onSearchTrailingIconClick:()->Unit) {
-
     val scrollBehavior = TopAppBarDefaults.exitUntilCollapsedScrollBehavior(rememberTopAppBarState())
     Scaffold(
         modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
@@ -231,6 +230,7 @@ fun HomeScreenSearchBar(
 @Composable
 fun HomeScreenTopAppBar(scrollBehavior:TopAppBarScrollBehavior,
                         onNavigationIconClick :()->Unit){
+
         TopAppBar(title = { Text("PdfPro",
                               fontWeight = FontWeight.Bold,
                               fontSize = 30.sp)},

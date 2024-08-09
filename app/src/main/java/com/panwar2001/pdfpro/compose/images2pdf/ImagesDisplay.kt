@@ -14,13 +14,10 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Build
-import androidx.compose.material.icons.filled.CheckCircle
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.outlined.AddCircle
 import androidx.compose.material3.Badge
@@ -28,7 +25,6 @@ import androidx.compose.material3.BottomAppBar
 import androidx.compose.material3.Checkbox
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExtendedFloatingActionButton
-import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -54,10 +50,10 @@ import com.google.mlkit.vision.documentscanner.GmsDocumentScannerOptions.SCANNER
 import com.google.mlkit.vision.documentscanner.GmsDocumentScanning
 import com.google.mlkit.vision.documentscanner.GmsDocumentScanningResult
 import com.panwar2001.pdfpro.R
-import com.panwar2001.pdfpro.data.ImageInfo
 import com.panwar2001.pdfpro.compose.components.BottomIconButton
 import com.panwar2001.pdfpro.compose.components.ImageComponent
-import com.panwar2001.pdfpro.data.getFileSize
+import com.panwar2001.pdfpro.data.ImageInfo
+import com.panwar2001.pdfpro.usecase.GetFileSizeUseCase
 
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -70,7 +66,8 @@ fun ImagesDisplay(navigateUp:()->Unit,
                   toggleCheckBox:(Int,Boolean)->Unit,
                   deleteImages:()->Unit,
                   convertToPdf:()->Unit,
-                  scanner: GmsDocumentScanner= rememberDocumentScanner()){
+                  scanner: GmsDocumentScanner= rememberDocumentScanner(),
+                  getFileSizeUseCase: GetFileSizeUseCase=GetFileSizeUseCase()){
     val imagesPickerLauncher= rememberLauncherForActivityResult(
         contract = ActivityResultContracts.PickMultipleVisualMedia() ,
         onResult = {
@@ -89,7 +86,7 @@ fun ImagesDisplay(navigateUp:()->Unit,
                     pages.map {
                         ImageInfo(it.imageUri,
                             "image/jpeg",
-                            getFileSize( it.imageUri.toFile().length())
+                            getFileSizeUseCase( it.imageUri.toFile().length())
                         )}
                 )
             }

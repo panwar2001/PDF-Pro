@@ -1,6 +1,5 @@
 package com.panwar2001.pdfpro.data
 
-import android.app.DownloadManager
 import android.app.LocaleManager
 import android.content.ContentUris
 import android.content.Context
@@ -9,7 +8,6 @@ import android.graphics.Bitmap
 import android.graphics.pdf.PdfRenderer
 import android.net.Uri
 import android.os.Build
-import android.os.Environment
 import android.os.LocaleList
 import android.provider.MediaStore
 import android.provider.OpenableColumns
@@ -20,6 +18,7 @@ import androidx.core.os.LocaleListCompat
 import androidx.documentfile.provider.DocumentFile
 import com.panwar2001.pdfpro.R
 import com.panwar2001.pdfpro.compose.PdfRow
+import com.panwar2001.pdfpro.usecase.GetFileSizeUseCase
 import com.panwar2001.pdfpro.view_models.AppUiState
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.Dispatchers
@@ -35,8 +34,6 @@ import javax.inject.Singleton
 
 interface ToolsInterface {
     val progress: StateFlow<Float>
-
-    suspend fun saveFileToDownload(uri: Uri, context: Context)
 
     suspend fun searchPdfs(sortingOrder: Int, ascendingSort: Boolean, mimeType: String,query: String): List<PdfRow>
 
@@ -63,23 +60,12 @@ interface ToolsInterface {
 
  @Singleton
  class ToolsRepository @Inject
- constructor(@ApplicationContext private val context: Context): ToolsInterface{
+ constructor(
+     @ApplicationContext private val context: Context,
+     private val getFileSizeUseCase: GetFileSizeUseCase
+     ): ToolsInterface{
      private val _progress = MutableStateFlow(0f)
      override val progress: StateFlow<Float> get() = _progress
-
-    override suspend fun saveFileToDownload(uri: Uri, context: Context) {
-         val request = DownloadManager.Request(uri)
-         request.setTitle("PDF Download") // Title of the download notification
-         request.setDescription("Downloading PDF") // Description of the download notification
-         request.setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE_NOTIFY_COMPLETED)
-
-         // Set destination in Downloads folder
-         request.setDestinationInExternalPublicDir(Environment.DIRECTORY_DOWNLOADS, "example.pdf")
-
-         // Enqueue the download and get download reference ID
-         val downloadManager = context.getSystemService(Context.DOWNLOAD_SERVICE)  as DownloadManager
-         downloadManager.enqueue(request)
-     }
 
      override suspend fun searchPdfs(sortingOrder: Int,
                                      ascendingSort: Boolean,
@@ -221,14 +207,14 @@ interface ToolsInterface {
              return ImageInfo(
                  uri = uri,
                  type = "image/jpeg",
-                 size = getFileSize( file.length())
+                 size = getFileSizeUseCase( file.length())
              ) }
          else {
              val docFile = DocumentFile.fromSingleUri(context, uri)
              return ImageInfo(
                  uri = uri,
                  type = docFile?.type ?: "image/",
-                 size = getFileSize( docFile?.length())
+                 size = getFileSizeUseCase( docFile?.length())
              )
          }
      }
