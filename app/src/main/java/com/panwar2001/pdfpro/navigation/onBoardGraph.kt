@@ -12,6 +12,7 @@ import kotlinx.coroutines.launch
 @OptIn(ExperimentalFoundationApi::class)
 fun NavGraphBuilder.onBoardGraph(navActions: NavigationActions,
                                  setOnboardingFinished:()->Unit ) {
+
     composable(route = Screens.OnBoard.route) {
         val viewModel = OnBoardScreenViewModel()
         val pagerState = rememberPagerState(pageCount = { viewModel.onBoardList.size })

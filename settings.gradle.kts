@@ -21,4 +21,5 @@ dependencyResolutionManagement {
 
 rootProject.name = "PDF Pro"
 include(":app")
- 
+include(":feature:settings")
+include(":feature:settings")
