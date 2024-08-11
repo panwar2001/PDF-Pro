@@ -1,4 +1,4 @@
-package com.panwar2001.pdfpro.usecase
+package com.panwar2001.pdfpro.core.domain
 
 import javax.inject.Inject
 
