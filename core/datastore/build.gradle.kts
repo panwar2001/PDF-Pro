@@ -36,6 +36,7 @@ android {
 
 dependencies {
     implementation(libs.androidx.datastore.preferences)
+    api(project(":core:model"))
     /**
      * Hilt Dependencies
      */
