@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="onboard_banner" translatable="false">ca-app-pub-9471515798383572/3094387765</string>
+    <string name="next">Next</string>
+    <string name="started">Get Started</string>
+    <string name="skip">Skip</string>
+    <string name="onBoard">walk through</string>
+    <string name="pdf2text">Pdf to text</string>
+    <string name="img2pdf">Images to pdf</string>
+
+    <string name="pdf2txt_description">Our advanced text extraction algorithm ensures high accuracy, preserving formatting and layout faithfully.</string>
+    <string name="img2pdf_description">Our cutting-edge images to PDF converter ensures high-quality PDF, maintaining the integrity and clarity of your document.</string>
+</resources>
