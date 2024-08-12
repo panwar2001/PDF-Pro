@@ -1,4 +1,4 @@
-package com.panwar2001.pdfpro.compose
+package com.panwar2001.pdfpro.feature.pdfviewer
 
 import android.annotation.SuppressLint
 import android.net.Uri
@@ -49,7 +49,6 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
 import com.github.barteksc.pdfviewer.PDFView
-import com.panwar2001.pdfpro.R
 
 /**
  *  This composable Display's the pdf utilizing Android View and library

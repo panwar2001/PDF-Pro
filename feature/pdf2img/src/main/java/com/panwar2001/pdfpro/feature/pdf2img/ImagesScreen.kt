@@ -1,4 +1,4 @@
-package com.panwar2001.pdfpro.compose.pdfToImages
+package com.panwar2001.pdfpro.feature.pdf2img
 
 
 import android.graphics.Bitmap

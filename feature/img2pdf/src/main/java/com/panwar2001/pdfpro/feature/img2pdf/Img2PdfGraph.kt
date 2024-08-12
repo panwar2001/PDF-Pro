@@ -1,4 +1,4 @@
-package com.panwar2001.pdfpro.navigation
+package com.panwar2001.pdfpro.feature.img2pdf
 
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.PickVisualMediaRequest

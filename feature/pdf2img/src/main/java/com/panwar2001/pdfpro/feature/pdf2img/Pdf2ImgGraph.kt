@@ -1,4 +1,4 @@
-package com.panwar2001.pdfpro.navigation
+package com.panwar2001.pdfpro.feature.pdf2img
 
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
@@ -16,7 +16,6 @@ import com.panwar2001.pdfpro.ui.components.PdfViewer
 import com.panwar2001.pdfpro.compose.pdfToImages.ImagesScreen
 import com.panwar2001.pdfpro.compose.pdfToImages.PreviewFileScreen
 import com.panwar2001.pdfpro.data.DataSource
-import com.panwar2001.pdfpro.view_models.PdfToImagesViewModel
 
 fun NavGraphBuilder.pdf2ImgGraph(navActions: NavigationActions){
     navigation(route= com.panwar2001.pdfpro.screens.Screens.PdfToImage.route,

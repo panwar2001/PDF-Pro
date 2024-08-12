@@ -1,4 +1,4 @@
-package com.panwar2001.pdfpro.compose.images2pdf
+package com.panwar2001.pdfpro.feature.img2pdf
 
 import android.net.Uri
 import androidx.compose.animation.core.animateDpAsState
@@ -29,7 +29,6 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.zIndex
 import coil.compose.AsyncImage
-import com.panwar2001.pdfpro.R
 
 /**
  * @param imageList

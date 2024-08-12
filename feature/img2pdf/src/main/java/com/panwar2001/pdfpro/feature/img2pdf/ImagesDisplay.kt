@@ -1,4 +1,4 @@
-package com.panwar2001.pdfpro.compose.images2pdf
+package com.panwar2001.pdfpro.feature.img2pdf
 
 
 // https://stackoverflow.com/questions/76907718/compose-take-photo-with-camera-and-display-result-not-working
@@ -49,7 +49,6 @@ import com.google.mlkit.vision.documentscanner.GmsDocumentScannerOptions.RESULT_
 import com.google.mlkit.vision.documentscanner.GmsDocumentScannerOptions.SCANNER_MODE_FULL
 import com.google.mlkit.vision.documentscanner.GmsDocumentScanning
 import com.google.mlkit.vision.documentscanner.GmsDocumentScanningResult
-import com.panwar2001.pdfpro.R
 import com.panwar2001.pdfpro.ui.components.BottomIconButton
 import com.panwar2001.pdfpro.ui.components.ImageComponent
 import com.panwar2001.pdfpro.data.ImageInfo

@@ -1,7 +1,8 @@
-package com.panwar2001.pdfpro.view_models
+package com.panwar2001.pdfpro.feature.pdf2txt
 
 import android.graphics.Bitmap
 import android.net.Uri
+import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.panwar2001.pdfpro.data.Pdf2TextInterface
@@ -50,9 +51,8 @@ constructor(private val toolsRepository: ToolsInterface,
             private val getPdfPageCountUseCase: GetPdfPageCountUseCase,
             private val getFileNameUseCase: GetFileNameUseCase,
             private val unlockPdfUseCase: UnlockPdfUseCase,
-            private val convertToTextUseCase: ConvertToTextUseCase
+            private val convertToTextUseCase: ConvertToTextUseCase,
 ): ViewModel() {
-
     private val _uiState = MutableStateFlow(pdf2TextRepository.initPdfToTextUiState())
     val uiState: StateFlow<PdfToTextUiState> = _uiState.asStateFlow()
 

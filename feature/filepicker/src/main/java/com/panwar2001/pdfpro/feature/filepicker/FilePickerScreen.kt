@@ -1,4 +1,4 @@
-package com.panwar2001.pdfpro.compose
+package com.panwar2001.pdfpro.feature.filepicker
 
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.BorderStroke
@@ -34,7 +34,6 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.panwar2001.pdfpro.R
 import com.panwar2001.pdfpro.compose.AppBar
 import com.panwar2001.pdfpro.compose.MenuItem
 import com.panwar2001.pdfpro.data.Tool

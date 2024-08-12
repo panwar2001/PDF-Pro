@@ -1,7 +1,9 @@
 package com.panwar2001.pdfpro.feature.onboard
 
+import android.content.Context
 import androidx.lifecycle.ViewModel
 import com.panwar2001.pdfpro.onboard.R
+import com.panwar2001.pdfpro.screens.Screens
 
 data class OnBoardData(
     val icon: Int,
@@ -17,4 +19,14 @@ class OnBoardScreenViewModel: ViewModel(){
             title= R.string.img2pdf,
             description = R.string.img2pdf_description)
     )
+
+    /**
+     * If onboarding is done once when app is run for first time then always
+     * home screen is opened after splash screen.
+     */
+
+    private fun setOnboardingFinished(){
+        this.getSharedPreferences("onBoarding", MODE_PRIVATE)
+            .edit().putBoolean("isFinished", true).apply()
+    }
 }

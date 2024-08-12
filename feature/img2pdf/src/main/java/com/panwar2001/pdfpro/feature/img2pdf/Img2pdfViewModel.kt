@@ -1,7 +1,6 @@
-package com.panwar2001.pdfpro.view_models
+package com.panwar2001.pdfpro.feature.img2pdf
 
 import android.net.Uri
-import android.util.Log
 import androidx.annotation.WorkerThread
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope

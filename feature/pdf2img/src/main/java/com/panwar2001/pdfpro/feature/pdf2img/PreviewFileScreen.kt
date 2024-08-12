@@ -1,4 +1,4 @@
-package com.panwar2001.pdfpro.compose.pdfToImages
+package com.panwar2001.pdfpro.feature.pdf2img
 
 import android.graphics.Bitmap
 import androidx.compose.foundation.background
@@ -27,7 +27,6 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
-import com.panwar2001.pdfpro.R
 import com.panwar2001.pdfpro.compose.AppBar
 import com.panwar2001.pdfpro.data.Tool
 import com.panwar2001.pdfpro.screens.Screens

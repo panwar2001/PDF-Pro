@@ -1,4 +1,4 @@
-package com.panwar2001.pdfpro.compose
+package com.panwar2001.pdfpro.feature.languagepicker
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
@@ -23,7 +23,6 @@ import androidx.compose.ui.res.stringArrayResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
-import com.panwar2001.pdfpro.R
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable

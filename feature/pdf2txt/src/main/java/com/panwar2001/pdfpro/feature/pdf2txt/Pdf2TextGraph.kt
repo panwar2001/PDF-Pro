@@ -1,4 +1,4 @@
-package com.panwar2001.pdfpro.navigation
+package com.panwar2001.pdfpro.feature.pdf2txt
 
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
@@ -24,7 +24,6 @@ import com.panwar2001.pdfpro.compose.pdfToText.TextFilesScreen
 import com.panwar2001.pdfpro.compose.pdfToText.TextScreen
 import com.panwar2001.pdfpro.data.DataSource
 import com.panwar2001.pdfpro.core.domain.EventType
-import com.panwar2001.pdfpro.view_models.PdfToTextViewModel
 import kotlinx.coroutines.flow.collectLatest
 
 fun NavGraphBuilder.pdf2txtGraph(navActions: NavigationActions){

@@ -1,4 +1,4 @@
-package com.panwar2001.pdfpro.compose
+package com.panwar2001.pdfpro.feature.settings
 
 import androidx.annotation.StringRes
 import androidx.compose.foundation.layout.Arrangement

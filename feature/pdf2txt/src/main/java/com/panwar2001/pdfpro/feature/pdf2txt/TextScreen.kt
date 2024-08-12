@@ -1,4 +1,4 @@
-package com.panwar2001.pdfpro.compose.pdfToText
+package com.panwar2001.pdfpro.feature.pdf2txt
 
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.ScrollState

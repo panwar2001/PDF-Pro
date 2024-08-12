@@ -1,4 +1,4 @@
-package com.panwar2001.pdfpro.view_models
+package com.panwar2001.pdfpro.feature.pdf2img
 
 import android.graphics.Bitmap
 import android.net.Uri
