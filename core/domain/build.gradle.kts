@@ -36,6 +36,7 @@ android {
 dependencies {
     ksp(libs.hilt.android.compiler)
     implementation(libs.hilt.android)
+    implementation(project(":core:data"))
     implementation(libs.androidx.core.ktx)
     implementation(libs.pdfbox.android)
     testImplementation(libs.junit)

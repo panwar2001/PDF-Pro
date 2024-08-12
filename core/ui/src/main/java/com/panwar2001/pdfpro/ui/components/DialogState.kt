@@ -1,4 +1,4 @@
-package com.panwar2001.pdfpro.compose.components
+package com.panwar2001.pdfpro.ui.components
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.text.KeyboardOptions
@@ -18,7 +18,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
-import com.panwar2001.pdfpro.R
+import com.panwar2001.pdfpro.ui.R
 
 /**
  * Create and [remember] a [PasswordDialogState].
@@ -79,7 +79,7 @@ fun rememberDialogState(initialValue: Boolean = false): PasswordDialogState {
 
 @Composable
 fun passwordInputDialogState(onConfirm: (String) -> Unit) =
-    rememberDialogState().also {dialogState->
+    rememberDialogState().also { dialogState->
       if(dialogState.showing){
        PasswordInputDialog(onConfirm = onConfirm,
        onDismiss={dialogState.hide()},

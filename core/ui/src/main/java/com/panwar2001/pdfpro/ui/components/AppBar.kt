@@ -30,7 +30,7 @@ import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.panwar2001.pdfpro.R
+import com.panwar2001.pdfpro.ui.R
 import kotlinx.coroutines.launch
 
 data class MenuItem(
@@ -84,13 +84,11 @@ fun AppBar(navigationIcon:ImageVector=Icons.Default.Menu,
 @Preview
 @Composable
 fun AppBarPreview(drawerState: DrawerState = rememberDrawerState(initialValue = DrawerValue.Closed)){
-    var textToDisplay by remember {
+    val textToDisplay by remember {
         mutableStateOf("")
     }
     val scope= rememberCoroutineScope()
-    val menu= mutableListOf(MenuItem(R.string.onboard_title, onClick = { textToDisplay="this task"}),
-        MenuItem(R.string.onboard_title, onClick = { textToDisplay="first task"}),
-        MenuItem(R.string.onboard_title, onClick = { textToDisplay= "second task"}))
+    val menu= listOf<MenuItem>()
     Column (
         Modifier
             .fillMaxSize())

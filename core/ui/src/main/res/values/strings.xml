@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name" translatable="false">PDF Pro</string>
+    <string name="confirm">Confirm</string>
+    <string name="close">Close</string>
+    <string name="pdf_key_input">password</string>
+    <string name="decrypt_password_wrong">Input password is wrong, please try again!</string>
+    <string name="light_mode">Light Mode</string>
+    <string name="dark_mode">Dark Mode</string>
+    <string name="dismiss">Dismiss</string>
+    <string name="save">Save</string>
+    <string name="save_to_storage">Save to device</string>
+
+</resources>

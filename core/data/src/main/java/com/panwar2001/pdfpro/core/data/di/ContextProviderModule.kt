@@ -1,4 +1,4 @@
-package com.panwar2001.pdfpro.di
+package com.panwar2001.pdfpro.core.data.di
 
 import android.app.Application
 import android.content.Context

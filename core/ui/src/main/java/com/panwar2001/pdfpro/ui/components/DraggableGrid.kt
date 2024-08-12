@@ -1,7 +1,7 @@
 /*
  Source: https://github.com/santimattius/android-drag-and-drop
  */
-package com.panwar2001.pdfpro.compose.images2pdf
+package com.panwar2001.pdfpro.ui.components
 
 
 import androidx.compose.foundation.ExperimentalFoundationApi

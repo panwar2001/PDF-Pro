@@ -1,4 +1,4 @@
-package com.panwar2001.pdfpro.compose.components
+package com.panwar2001.pdfpro.ui.components
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -28,7 +28,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.window.Dialog
-import com.panwar2001.pdfpro.R
+import com.panwar2001.pdfpro.ui.R
 
 @Composable
 fun RenameDialog(onDismissRequest: () -> Unit,

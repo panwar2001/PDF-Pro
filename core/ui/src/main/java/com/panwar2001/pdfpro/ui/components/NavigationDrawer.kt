@@ -1,4 +1,4 @@
-package com.panwar2001.pdfpro.compose.components
+package com.panwar2001.pdfpro.ui.components
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -45,11 +45,8 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.panwar2001.pdfpro.R
-import com.panwar2001.pdfpro.compose.AppBar
-import com.panwar2001.pdfpro.data.DataSource
-import com.panwar2001.pdfpro.data.ToolsData
-import com.panwar2001.pdfpro.navigation.Screens
+import com.panwar2001.pdfpro.model.ToolsData
+import com.panwar2001.pdfpro.ui.R
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 
@@ -61,14 +58,16 @@ fun AppModalNavigationDrawer(
     currentTheme: Boolean,
     scope: CoroutineScope= rememberCoroutineScope(),
     navigateTo: (String) -> Unit,
+    drawerItems:List<ToolsData>,
+    headerImageRes: Int,
     content: @Composable ()->Unit
 ){
     ModalNavigationDrawer(
         drawerState = drawerState,
         drawerContent = {
             ModalDrawerSheet(Modifier.padding(0.dp,0.dp,60.dp,0.dp)) {
-                DrawerHeader()
-                DrawerBody(items = DataSource.ToolsList,
+                DrawerHeader(headerImageRes)
+                DrawerBody(items = drawerItems,
                     setTheme=setTheme,
                     currentTheme=currentTheme){
                     if(drawerState.isOpen){
@@ -85,7 +84,7 @@ fun AppModalNavigationDrawer(
 
 }
 @Composable
-fun DrawerHeader() {
+fun DrawerHeader(headerImageRes: Int) {
         Box(
             modifier = Modifier
                 .fillMaxWidth()
@@ -99,7 +98,7 @@ fun DrawerHeader() {
             ) {
                 Spacer(modifier = Modifier.width(dimensionResource(id = R.dimen.spacing_medium)))
                 Image(
-                    painter = painterResource(id = R.mipmap.launcher_icon_foreground),
+                    painter = painterResource(id = headerImageRes),
                     contentDescription = stringResource(id = R.string.app_name),
                     modifier = Modifier
                         .size(130.dp)
@@ -156,16 +155,16 @@ fun DrawerBody(
         )
     }
     LazyColumn {
-        item{
-            NavItem(navigateTo = navigateTo, item = ToolsData(
-                R.drawable.language,
-                R.string.language,
-                Screens.Home.LanguagePickerScreen.route))
-            NavItem(navigateTo = navigateTo, item = ToolsData(
-                iconId=R.drawable.home,
-                title = R.string.home,
-                route= Screens.Home.route))
-        }
+//        item{
+//            NavItem(navigateTo = navigateTo, item = ToolsData(
+//                R.drawable.language,
+//                R.string.language,
+//                Screens.Home.LanguagePickerScreen.route))
+//            NavItem(navigateTo = navigateTo, item = ToolsData(
+//                iconId=R.drawable.home,
+//                title = R.string.home,
+//                route= Screens.Home.route))
+//        }
         items(items) { item ->
            NavItem(navigateTo = navigateTo, item =item )
         }
@@ -197,7 +196,8 @@ fun NavItem(navigateTo: (String) -> Unit,
 @Composable
 fun PreviewNavBar(drawerState: DrawerState = rememberDrawerState(initialValue = DrawerValue.Open)){
     val scope= rememberCoroutineScope()
-    AppModalNavigationDrawer(drawerState,{},false,navigateTo ={}) {
+    AppModalNavigationDrawer(drawerState,{},false,navigateTo ={}, drawerItems = listOf(),
+        headerImageRes = 0) {
         AppBar(onNavigationIconClick = {
             scope.launch { drawerState.open() }
         })

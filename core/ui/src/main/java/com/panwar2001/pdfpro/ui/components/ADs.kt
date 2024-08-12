@@ -1,4 +1,4 @@
-package com.panwar2001.pdfpro.compose.components
+package com.panwar2001.pdfpro.ui.components
 
 import androidx.annotation.StringRes
 import androidx.compose.foundation.background
@@ -12,13 +12,12 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalInspectionMode
-import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
 import com.google.android.gms.ads.AdRequest
 import com.google.android.gms.ads.AdSize
 import com.google.android.gms.ads.AdView
-import com.panwar2001.pdfpro.R
 
 /** Display [BannerAd]
  *
@@ -35,7 +34,7 @@ fun BannerAd(modifier: Modifier = Modifier,@StringRes adUnitResID:Int) {
             verticalAlignment = Alignment.CenterVertically,
             modifier = modifier
                 .background(color = Color.Gray)
-                .padding(dimensionResource(id = R.dimen.spacing_medium))
+                .padding(32.dp)
                 .fillMaxWidth()){
               Text(text = "Ads are displayed here")
         }

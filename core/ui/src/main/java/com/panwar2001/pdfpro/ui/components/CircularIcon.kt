@@ -1,4 +1,4 @@
-package com.panwar2001.pdfpro.compose.components
+package com.panwar2001.pdfpro.ui.components
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
@@ -12,10 +12,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
-import com.panwar2001.pdfpro.R
+
 @Composable
 fun CircularIcon(modifier: Modifier=Modifier,
                  backgroundColor:Color= Color.Blue,
@@ -38,8 +37,3 @@ fun CircularIcon(modifier: Modifier=Modifier,
     }
 }
 
-@Preview
-@Composable
-fun PreviewCircularIcon(){
-    CircularIcon(iconResourceId = R.drawable.pdf_icon)
-}

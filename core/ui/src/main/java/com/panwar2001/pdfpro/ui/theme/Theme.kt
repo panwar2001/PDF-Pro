@@ -1,4 +1,4 @@
-package com.panwar2001.pdfpro.theme
+package com.panwar2001.pdfpro.ui.theme
 
 import android.app.Activity
 import android.os.Build

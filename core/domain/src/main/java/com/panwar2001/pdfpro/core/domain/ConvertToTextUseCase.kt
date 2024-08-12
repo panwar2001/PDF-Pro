@@ -10,7 +10,7 @@ import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
 class ConvertToTextUseCase @Inject constructor(
-    @ApplicationContext private val context: Context
+    @ApplicationContext private val context: Context,
 ){
     suspend operator fun invoke(uri:Uri): String= withContext(Dispatchers.Default){
             context.contentResolver.openInputStream(uri).use {

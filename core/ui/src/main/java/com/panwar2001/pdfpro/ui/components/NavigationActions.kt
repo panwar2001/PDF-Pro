@@ -1,4 +1,4 @@
-package com.panwar2001.pdfpro.navigation
+package com.panwar2001.pdfpro.ui.components
 
 import androidx.compose.material3.DrawerState
 import androidx.compose.material3.DrawerValue
@@ -28,9 +28,6 @@ fun rememberNavActions(
 class NavigationActions(val navController: NavHostController,
                         val scope: CoroutineScope,
                         val drawerState: DrawerState){
-    fun navigateToHome()= navController.navigate(Screens.Home.route) {
-                   navController.popBackStack()
-                }
     fun navigateTo(screen:String) = navController.navigate(screen){
             // Pop up to the start destination of the graph to
             // avoid building up a large stack of destinations

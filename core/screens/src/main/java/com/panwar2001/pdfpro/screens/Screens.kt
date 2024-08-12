@@ -1,4 +1,4 @@
-package com.panwar2001.pdfpro.navigation
+package com.panwar2001.pdfpro.screens
 
 sealed class Screens(val route : String) {
     data object OnBoard : Screens("onboard")
