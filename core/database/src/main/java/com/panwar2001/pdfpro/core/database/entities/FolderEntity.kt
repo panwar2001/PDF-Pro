@@ -1,4 +1,4 @@
-package com.panwar2001.pdfpro.core.database.Entities
+package com.panwar2001.pdfpro.core.database.entities
 
 import androidx.room.Entity
 import androidx.room.PrimaryKey

@@ -32,6 +32,13 @@ android {
     kotlinOptions {
         jvmTarget = "1.8"
     }
+    packaging {
+        resources {
+            excludes += "/META-INF/{AL2.0,LGPL2.1}"
+        }
+    }
+    //https://dagger.dev/hilt/gradle-setup#aggregating-task
+    hilt {    enableAggregatingTask = true }
 }
 
 dependencies {
@@ -39,7 +46,8 @@ dependencies {
      * Hilt Dependencies
      */
     ksp(libs.hilt.android.compiler)
-    implementation(libs.hilt.android)
+    api(libs.hilt.android)
+    api(project(":core:model"))
 
     /**
      * Room Dependencies
