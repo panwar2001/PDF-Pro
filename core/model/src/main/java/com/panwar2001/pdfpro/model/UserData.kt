@@ -5,5 +5,5 @@ package com.panwar2001.pdfpro.model
  */
 data class UserData(
     val darkThemeEnabled: Boolean,
-    val shouldHideOnboarding: Boolean,
+    val shouldHideOnboarding: Boolean
 )
