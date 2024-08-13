@@ -7,17 +7,17 @@ import android.graphics.Color
 import android.graphics.Paint
 import android.graphics.pdf.PdfRenderer
 import android.net.Uri
-import com.panwar2001.pdfpro.data.Pdf2ImgInterface
+import com.panwar2001.pdfpro.model.PdfToImagesUiState
+import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
-import dagger.hilt.android.qualifiers.ApplicationContext
 import javax.inject.Inject
 import javax.inject.Singleton
 
 
 @Singleton
 class Pdf2ImgRepositoryImpl @Inject constructor(@ApplicationContext private val context: Context) :
-    Pdf2ImgInterface {
+    Pdf2ImgRepository {
     private val _progress = MutableStateFlow(0f)
     override val progress: StateFlow<Float> get() = _progress
 

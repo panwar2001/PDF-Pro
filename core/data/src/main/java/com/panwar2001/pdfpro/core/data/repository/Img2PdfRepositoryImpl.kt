@@ -10,6 +10,10 @@ import android.graphics.pdf.PdfDocument.PageInfo
 import android.net.Uri
 import androidx.annotation.WorkerThread
 import androidx.core.content.FileProvider
+import androidx.core.net.toFile
+import androidx.documentfile.provider.DocumentFile
+import com.panwar2001.pdfpro.model.ImageInfo
+import com.panwar2001.pdfpro.model.Img2PdfUiState
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -22,12 +26,15 @@ import javax.inject.Inject
 import javax.inject.Singleton
 
 @Singleton
-class Img2PdfRepositoryImpl @Inject constructor(@ApplicationContext private val context: Context): Img2PdfInterface{
+class Img2PdfRepositoryImpl
+@Inject
+constructor(@ApplicationContext private val context: Context,
+            private val toolsRepository: ToolsRepository): Img2PdfRepository{
 
     private val _progress = MutableStateFlow(0f)
     override val progress: StateFlow<Float> get() = _progress
 
-    override fun initImg2PdfUiState(): Img2PdfUiState{
+    override fun initImg2PdfUiState(): Img2PdfUiState {
         return Img2PdfUiState(
             imageList = listOf(),
             isLoading = false,
@@ -143,4 +150,30 @@ class Img2PdfRepositoryImpl @Inject constructor(@ApplicationContext private val 
             throw Exception("Could not rename file")
         }
     }
+
+    /**
+     * Gets the image information- type and it's size from it's uri
+     * DocumentFile is a wrapper over File and does query internally
+     * on a list of [uri] to get it's data
+     *
+     *  @param uri of image
+     */
+    override fun getImageInfo(uri: Uri, isDocScanUri:Boolean):ImageInfo{
+        if(isDocScanUri){
+            val file=uri.toFile()
+            return ImageInfo(
+                uri = uri,
+                type = "image/jpeg",
+                size = toolsRepository.getFileSize( file.length())
+            ) }
+        else {
+            val docFile = DocumentFile.fromSingleUri(context, uri)
+            return ImageInfo(
+                uri = uri,
+                type = docFile?.type ?: "image/",
+                size = toolsRepository.getFileSize( docFile?.length())
+            )
+        }
+    }
+
 }

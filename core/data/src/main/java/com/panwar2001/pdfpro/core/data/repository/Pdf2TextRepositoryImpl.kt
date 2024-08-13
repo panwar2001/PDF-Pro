@@ -5,14 +5,19 @@ import android.graphics.Bitmap
 import android.net.Uri
 import android.provider.DocumentsContract
 import androidx.core.content.FileProvider
-import com.panwar2001.pdfpro.data.Pdf2TextInterface
-import com.panwar2001.pdfpro.data.TextFileInfo
+import com.panwar2001.pdfpro.core.data.model.asEntity
+import com.panwar2001.pdfpro.core.database.dao.TextFileDao
+import com.panwar2001.pdfpro.core.database.entities.asExternalModel
+import com.panwar2001.pdfpro.model.PdfToTextUiState
+import com.panwar2001.pdfpro.model.TextFileData
+import com.panwar2001.pdfpro.model.TextFileInfo
+import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.withContext
 import java.io.File
 import java.io.FileOutputStream
-import dagger.hilt.android.qualifiers.ApplicationContext
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -21,8 +26,8 @@ import javax.inject.Singleton
 class Pdf2TextRepositoryImpl @Inject
 constructor(@ApplicationContext private val context: Context,
             private val textFileDao: TextFileDao,
-            private val getFileSizeUseCase:GetFileSizeUseCase
-): Pdf2TextInterface {
+            private val toolsRepository: ToolsRepository
+): Pdf2TextRepository {
     override suspend fun modifyName(id: Long, name: String) {
         val directory = File(context.filesDir, "TEXT_FILES_DIR")
         val path = textFileDao.getFilePath(id)
@@ -80,8 +85,9 @@ constructor(@ApplicationContext private val context: Context,
         FileOutputStream(newFile).use { outputStream ->
             outputStream.write(text.toByteArray())
         }
+        val data= TextFileData(id=0, filePath = newFile.absolutePath)
         Pair(
-            textFileDao.insertPath(TextFile(filePath = newFile.absolutePath)),
+            textFileDao.insertPath(data.asEntity()),
             newFile.name.substringBeforeLast('.')
         )
     }
@@ -117,7 +123,7 @@ constructor(@ApplicationContext private val context: Context,
             .map { filePath ->
                 withContext(Dispatchers.IO) {
                     filePath.map {
-                        val file = File(it.filePath)
+                        val file = File(it.asExternalModel().filePath)
                         TextFileInfo(
                             fileName = file.name,
                             id = it.id,
@@ -126,7 +132,7 @@ constructor(@ApplicationContext private val context: Context,
                                 context.packageName + ".fileprovider",
                                 file
                             ),
-                            fileSize = getFileSizeUseCase(file.length())
+                            fileSize = toolsRepository.getFileSize(file.length())
                         )
                     }
                 }

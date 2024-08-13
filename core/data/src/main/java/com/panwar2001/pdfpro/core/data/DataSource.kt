@@ -1,6 +1,5 @@
 package com.panwar2001.pdfpro.core.data
 
-import androidx.compose.ui.graphics.Color
 import com.panwar2001.pdfpro.model.Tool
 import com.panwar2001.pdfpro.model.ToolsData
 import com.panwar2001.pdfpro.screens.Screens
@@ -9,7 +8,7 @@ object DataSource {
     val ToolsList = listOf(
         ToolsData(iconId=R.drawable.outline_text,
                   title = R.string.pdf2text,
-                  route= com.panwar2001.pdfpro.screens.Screens.PdfToText.route,
+                  route= Screens.PdfToText.route,
                   iconColor= 0xff54e1b6
         ),
 //        ToolsData(R.drawable.ion_images,
@@ -18,7 +17,7 @@ object DataSource {
 //                  iconColor = Color(0xffaeb4fd)),
         ToolsData(R.drawable.pdf_icon,
                   title=R.string.img2pdf,
-                  route = com.panwar2001.pdfpro.screens.Screens.Img2Pdf.route,
+                  route = Screens.Img2Pdf.route,
                   iconColor = 0xfffdbda1),
 //        ToolsData(R.drawable.compress,"Compress pdf",2),
 //        ToolsData(R.drawable.ocr,"Ocr pdf",3),
