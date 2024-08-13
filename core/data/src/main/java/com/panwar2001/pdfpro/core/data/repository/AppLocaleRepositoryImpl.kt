@@ -7,6 +7,8 @@ import android.os.LocaleList
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.core.os.LocaleListCompat
 import dagger.hilt.android.qualifiers.ApplicationContext
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.flow
 import java.util.Locale
 import javax.inject.Inject
 
@@ -14,8 +16,8 @@ class AppLocaleRepositoryImpl @Inject constructor(
     @ApplicationContext private val context: Context
 ):AppLocaleRepository {
     // TODO("check for how to set locale for less than android 13 version")
-    override fun getAppLocale(): String {
-        return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+    override fun getAppLocale(): Flow<String> = flow{
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
             context.getSystemService(LocaleManager::class.java).applicationLocales.toLanguageTags()
         } else {
             AppCompatDelegate.getApplicationLocales().toLanguageTags()

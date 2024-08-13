@@ -38,7 +38,7 @@ dependencies {
 
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.appcompat)
-    implementation(project(":core:datastore"))
+    api(project(":core:datastore"))
     implementation(project(":core:database"))
     implementation(project(":core:screens"))
     implementation(libs.androidx.documentfile)

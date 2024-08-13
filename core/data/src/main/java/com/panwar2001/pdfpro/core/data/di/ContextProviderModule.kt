@@ -2,6 +2,8 @@ package com.panwar2001.pdfpro.core.data.di
 
 import android.app.Application
 import android.content.Context
+import com.panwar2001.pdfpro.core.data.repository.ToolsRepository
+import com.panwar2001.pdfpro.core.data.repository.ToolsRepositoryImpl
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -15,6 +17,12 @@ object ContextProviderModule {
     @Singleton
     fun provideApplicationContext(application: Application): Context {
         return application.applicationContext
+    }
+
+    @Provides
+    @Singleton
+    fun provideToolsRepo(context: Context): ToolsRepository {
+        return ToolsRepositoryImpl(context)
     }
 }
 
