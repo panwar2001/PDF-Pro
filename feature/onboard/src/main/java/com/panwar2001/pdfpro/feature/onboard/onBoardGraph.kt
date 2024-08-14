@@ -2,19 +2,21 @@ package com.panwar2001.pdfpro.feature.onboard
 
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.pager.rememberPagerState
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.composable
+import com.panwar2001.pdfpro.model.OnBoardData
+import com.panwar2001.pdfpro.onboard.R
 import com.panwar2001.pdfpro.screens.Screens
 import com.panwar2001.pdfpro.ui.components.NavigationActions
 import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalFoundationApi::class)
-fun NavGraphBuilder.onBoardGraph(navActions: NavigationActions,
-                                 setOnboardingFinished:()->Unit ) {
+fun NavGraphBuilder.onBoardGraph(navActions: NavigationActions) {
 
     composable(route = Screens.OnBoard.route) {
-        val viewModel = OnBoardScreenViewModel()
-        val pagerState = rememberPagerState(pageCount = { viewModel.onBoardList.size })
+        val viewModel: OnBoardScreenViewModel = hiltViewModel()
+        val pagerState = rememberPagerState(pageCount = { onBoardList.size })
 
         /**
          * TODO
@@ -23,14 +25,14 @@ fun NavGraphBuilder.onBoardGraph(navActions: NavigationActions,
          */
         OnboardScreen(navigateToHome = {
             navActions.navigateTo(Screens.Home.route)
-            setOnboardingFinished()
+            viewModel.setOnboardingFinished()
         },
             pagerState = pagerState,
-            onBoardList = viewModel.onBoardList,
+            onBoardList =  onBoardList ,
             onNextButtonClick = {
                 if (pagerState.currentPage + 1 == pagerState.pageCount) {
                     navActions.navigateTo(Screens.Home.route)
-                    setOnboardingFinished()
+                    viewModel.setOnboardingFinished()
                 } else {
                     navActions.scope.launch {
                         pagerState.animateScrollToPage(pagerState.currentPage + 1)
@@ -39,3 +41,13 @@ fun NavGraphBuilder.onBoardGraph(navActions: NavigationActions,
             })
     }
 }
+
+
+internal val onBoardList= listOf(
+    OnBoardData(icon= R.drawable.ocr,
+        title= R.string.pdf2text,
+        description = R.string.pdf2txt_description),
+    OnBoardData(icon= R.drawable.pdf_svg,
+        title= R.string.img2pdf,
+        description = R.string.img2pdf_description)
+)

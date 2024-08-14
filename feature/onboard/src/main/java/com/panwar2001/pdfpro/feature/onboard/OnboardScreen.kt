@@ -44,6 +44,7 @@ import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
+import com.panwar2001.pdfpro.model.OnBoardData
 import com.panwar2001.pdfpro.onboard.R
 import com.panwar2001.pdfpro.ui.components.BannerAd
 
@@ -62,10 +63,10 @@ private val next_button_color= Color(0xFFFF4F5A)
  */
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
-fun  OnboardScreen(navigateToHome: () -> Unit,
-                   pagerState: PagerState,
-                   onBoardList:List<OnBoardData>,
-                   onNextButtonClick: () -> Unit) {
+internal fun OnboardScreen(navigateToHome: () -> Unit,
+                           pagerState: PagerState,
+                           onBoardList:List<OnBoardData>,
+                           onNextButtonClick: () -> Unit) {
     val configuration = LocalConfiguration.current
     Column(
         Modifier.fillMaxSize()
@@ -121,7 +122,7 @@ fun  OnboardScreen(navigateToHome: () -> Unit,
  * @param descriptionId resource id of description
  */
 @Composable
-fun  LandscapeLayout(imageId: Int,
+internal fun LandscapeLayout(imageId: Int,
                     titleId:Int,
                     descriptionId: Int){
     Row(Modifier.fillMaxWidth(),
@@ -154,7 +155,7 @@ fun  LandscapeLayout(imageId: Int,
  * @param onNextButtonClick Move to next page or to the home screen
  */
 @Composable
-fun NextButton(textId: Int,
+internal fun NextButton(textId: Int,
                onNextButtonClick:()->Unit){
         Button(
             onClick = onNextButtonClick,
@@ -180,7 +181,7 @@ fun NextButton(textId: Int,
  * @param textId resource id of the title
  */
 @Composable
-fun Title(textId:Int){
+internal fun Title(textId:Int){
     Text(
         text = stringResource(id = textId),
         overflow= TextOverflow.Clip,
@@ -198,7 +199,7 @@ fun Title(textId:Int){
  * @param imageId resource id of the image
  */
 @Composable
-fun DisplayImage(imageId:Int){
+internal fun DisplayImage(imageId:Int){
     Image(
         painter = painterResource(id = imageId),
         contentDescription = null,
@@ -217,7 +218,7 @@ fun DisplayImage(imageId:Int){
  * @param descriptionId resource id of description
  */
 @Composable
-fun Description(descriptionId:Int){
+internal fun Description(descriptionId:Int){
     Spacer(Modifier.height(dimensionResource(id = R.dimen.spacing_small)))
     Text(
         text = stringResource(id = descriptionId),
@@ -235,7 +236,7 @@ fun Description(descriptionId:Int){
  * @param navigateToHome function to navigate to home screen
  */
 @Composable
-fun Skip(navigateToHome: () -> Unit){
+internal fun Skip(navigateToHome: () -> Unit){
     Row(horizontalArrangement = Arrangement.End,
         modifier = Modifier.fillMaxWidth()) {
         ClickableText(text = AnnotatedString("${stringResource(id = R.string.skip)}→"),
@@ -253,7 +254,7 @@ fun Skip(navigateToHome: () -> Unit){
  *  @param currentPage denotes the index of the current page
  */
 @Composable
-fun PageIndicator(pageCount: Int, currentPage: Int) {
+internal fun PageIndicator(pageCount: Int, currentPage: Int) {
     val dimIfSelected=dimensionResource(id = R.dimen.spacing_moreLarge)
     val dimIfNotSelected=dimensionResource(id = R.dimen.spacing_large)
     Row(
@@ -284,7 +285,7 @@ fun PageIndicator(pageCount: Int, currentPage: Int) {
  * @receiver [PageIndicator]
  */
 @Composable
-fun MaterialTheme.isLight() = this.colorScheme.background.luminance() > 0.5
+internal fun MaterialTheme.isLight() = this.colorScheme.background.luminance() > 0.5
 
 
 
@@ -293,15 +294,6 @@ fun MaterialTheme.isLight() = this.colorScheme.background.luminance() > 0.5
 @Composable
 fun OnBoardingScreenPreview(){
     val pagerState= rememberPagerState {3}
-    val onBoardList= listOf(
-        OnBoardData(icon= R.drawable.ocr,
-            title= R.string.pdf2text,
-            description = R.string.pdf2txt_description),
-        OnBoardData(icon= R.drawable.pdf_svg,
-            title= R.string.img2pdf,
-            description = R.string.img2pdf_description),
-        )
-
             Surface(
                 modifier = Modifier.fillMaxSize(),
                 color = MaterialTheme.colorScheme.background
