@@ -14,17 +14,7 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
-/**
- * Data class that represents the current UI state in terms of  and [uri]
- */
-data class PdfToImagesUiState(
-    val uri: Uri,
-    val isLoading:Boolean,
-    val thumbnail: Bitmap,
-    val fileName: String,
-    val images:List<Bitmap> ,
-    val numPages:Int
-)
+
 
 @HiltViewModel
 class PdfToImagesViewModel

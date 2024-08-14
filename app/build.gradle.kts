@@ -138,62 +138,21 @@ android {
 }
 
 dependencies {
+    implementation(project(":core:data"))
+    implementation(project(":feature:home"))
+    implementation(project(":feature:onboard"))
+    implementation(project(":feature:settings"))
     /**
      * Android Dependencies
      */
     implementation(libs.androidx.core.ktx)
-    implementation(libs.androidx.lifecycle.runtime.ktx)
-    implementation(libs.androidx.ui)
-    implementation(libs.androidx.ui.graphics)
-    implementation(libs.androidx.ui.tooling.preview)
-    implementation(libs.androidx.material3)
-    implementation(libs.play.services.ads)
-    implementation(libs.androidx.appcompat)
-    implementation(libs.androidx.constraintlayout)
     implementation(libs.androidx.lifecycle.viewmodel.ktx)
-    implementation(libs.androidx.fragment.ktx)
-    implementation(libs.pdfbox.android)
-    implementation(libs.android.pdf.viewer)
-    implementation(libs.hilt.android)
-    implementation(libs.androidx.room.runtime)
-    implementation(libs.androidx.room.ktx)
-    implementation(libs.androidx.documentfile)
-    annotationProcessor(libs.androidx.room.compiler)
-    implementation(libs.gms.play.services.mlkit.document.scanner)
-    implementation(libs.androidx.datastore.preferences)
+    implementation(libs.androidx.appcompat)
+    /**
+     * Hilt Dependencies
+     */
     ksp(libs.hilt.android.compiler)
-    ksp(libs.androidx.room.compiler)
-//    implementation(libs.kotlinx.coroutines.core)
-
-    /**
-     * Compose Dependencies
-     */
-    implementation(libs.androidx.activity.compose)
-    implementation(platform(libs.androidx.compose.bom))
-    implementation(libs.androidx.navigation.compose)
-    implementation(libs.coil.compose)
-    implementation(libs.androidx.material.icons.extended)
-    implementation(libs.androidx.hilt.navigation.compose)
-    /**
-     *  unit testing dependencies
-     */
-    testImplementation(kotlin("test"))
-    testImplementation(libs.mockk)
-    //https://kotlinlang.org/api/kotlinx.coroutines/kotlinx-coroutines-test/
-    testImplementation(libs.kotlinx.coroutines.core)
-    testImplementation(libs.kotlinx.coroutines.test)
-    /**
-     *  Android tests dependencies
-     */
-    androidTestImplementation(libs.androidx.junit)
-    androidTestImplementation(libs.androidx.espresso.core)
-    androidTestImplementation(platform(libs.androidx.compose.bom))
-    androidTestImplementation(libs.androidx.ui.test.junit4)
-    /**
-     * Debugging
-     */
-    debugImplementation(libs.androidx.ui.tooling)
-    debugImplementation(libs.androidx.ui.test.manifest)
+    implementation(libs.hilt.android)
 }
 
 

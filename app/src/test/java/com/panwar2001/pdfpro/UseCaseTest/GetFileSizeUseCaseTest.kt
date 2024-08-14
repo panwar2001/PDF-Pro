@@ -1,15 +1,15 @@
 package com.panwar2001.pdfpro.UseCaseTest
 
-import com.panwar2001.pdfpro.usecase.GetFileSizeUseCase
+import com.panwar2001.pdfpro.core.domain.GetFileSizeUseCase
 import junit.framework.TestCase.assertEquals
 import org.junit.Before
 import org.junit.Test
 
 class GetFileSizeUseCaseTest {
-    private lateinit var getFileSizeUseCase: GetFileSizeUseCase
+    private lateinit var getFileSizeUseCase: com.panwar2001.pdfpro.core.domain.GetFileSizeUseCase
     @Before
     fun setup(){
-        getFileSizeUseCase=GetFileSizeUseCase()
+        getFileSizeUseCase= com.panwar2001.pdfpro.core.domain.GetFileSizeUseCase()
     }
     @Test
     fun `get file size test , the input is in bytes and the output should be adjusted to bytes, kb and mb `(){

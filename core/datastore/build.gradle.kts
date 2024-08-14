@@ -32,10 +32,15 @@ android {
     kotlinOptions {
         jvmTarget = "1.8"
     }
+    //https://dagger.dev/hilt/gradle-setup#aggregating-task
+    hilt {    enableAggregatingTask = true }
+
 }
 
 dependencies {
+    implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.datastore.preferences)
+    implementation(libs.androidx.lifecycle.runtime.ktx)
     api(project(":core:model"))
     /**
      * Hilt Dependencies

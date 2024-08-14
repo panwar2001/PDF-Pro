@@ -1,5 +1,6 @@
 package com.panwar2001.pdfpro.core.datastore.di
 
+import android.app.Application
 import android.content.Context
 import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences
@@ -22,7 +23,13 @@ private val Context.dataStore by preferencesDataStore(
 )
 @Module
 @InstallIn(SingletonComponent::class)
-class DataStoreModule {
+object DataStoreModule {
+    @Provides
+    @Singleton
+    fun provideApplicationContext(application: Application): Context {
+        return application.applicationContext
+    }
+
     @Provides
     @Singleton
     fun providePreferencesDataStore(@ApplicationContext context: Context): DataStore<Preferences> {

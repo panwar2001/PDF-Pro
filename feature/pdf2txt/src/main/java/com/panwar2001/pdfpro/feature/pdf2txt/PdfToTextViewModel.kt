@@ -25,19 +25,7 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
-/**
- * Data class that represents the current UI state
- */
-data class PdfToTextUiState(
-    val uri: Uri,
-    val isLoading:Boolean,
-    val thumbnail: Bitmap,
-    val pdfFileName: String,
-    val textFileName: String,
-    val text: String,
-    val numPages:Int,
-    val fileUniqueId: Long,
-)
+
 
 @HiltViewModel
 class PdfToTextViewModel

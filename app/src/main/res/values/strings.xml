@@ -1,7 +1,6 @@
 <resources>
     <string name="app_name" translatable="false">PDF Pro</string>
     <string name="banner_test" translatable="false">ca-app-pub-3940256099942544/9214589741</string>
-    <string name="home_banner" translatable="false">ca-app-pub-9471515798383572/9190883014</string>
     <string name="onboard_banner" translatable="false">ca-app-pub-9471515798383572/3094387765</string>
     <string name="upload_screen_banner" translatable="false">ca-app-pub-9471515798383572/1747507268</string>
     <string name="save_pdf_screen_banner" translatable="false">ca-app-pub-9471515798383572/3746984642</string>
@@ -59,34 +58,7 @@
     <string name="text_files_log">Text Files Log</string>
     <string name="dismiss">Dismiss</string>
     <string name="save">Save</string>
-    <!--***********Languages ***********************-->
-    <string name="language">Language</string>
-    <string-array name="english" translatable="false">
-        <item>en</item>
-        <item>English</item>
-        <item> </item>
-    </string-array>
-    <string-array name="hindi" translatable="false">
-        <item>hi</item>
-        <item>Hindi</item>
-        <item>हिंदी</item>
-    </string-array>
-    <string-array name="French" translatable="false">
-        <item>fr</item>
-        <item>French</item>
-        <item>Français</item>
-    </string-array>
-    <string-array name="Japanese" translatable="false">
-        <item>ja</item>
-        <item>Japanese</item>
-        <item>日本語</item>
-    </string-array>
-    <string-array name="Russian" translatable="false">
-        <item>ru</item>
-        <item>Russian</item>
-        <item>русский</item>
-    </string-array>
-    <!--******************************************-->
+
     <string name="ocr_description">Unlock the potential of Optical Character Recognition for streamlined text extraction.</string>
     <string name="compress_pdf_description">Effortlessly compress PDF files while preserving quality and reducing file size with our intuitive compression tool</string>
     <string name="lock_description">Secure your PDF with password protection to safeguard sensitive information.</string>

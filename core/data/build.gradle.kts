@@ -32,6 +32,9 @@ android {
     kotlinOptions {
         jvmTarget = "1.8"
     }
+    //https://dagger.dev/hilt/gradle-setup#aggregating-task
+    hilt {    enableAggregatingTask = true }
+
 }
 
 dependencies {

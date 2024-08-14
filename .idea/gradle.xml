@@ -10,7 +10,24 @@
           <set>
             <option value="$PROJECT_DIR$" />
             <option value="$PROJECT_DIR$/app" />
+            <option value="$PROJECT_DIR$/core" />
+            <option value="$PROJECT_DIR$/core/data" />
+            <option value="$PROJECT_DIR$/core/database" />
+            <option value="$PROJECT_DIR$/core/datastore" />
+            <option value="$PROJECT_DIR$/core/domain" />
+            <option value="$PROJECT_DIR$/core/model" />
+            <option value="$PROJECT_DIR$/core/screens" />
+            <option value="$PROJECT_DIR$/core/ui" />
             <option value="$PROJECT_DIR$/feature" />
+            <option value="$PROJECT_DIR$/feature/filepicker" />
+            <option value="$PROJECT_DIR$/feature/home" />
+            <option value="$PROJECT_DIR$/feature/img2pdf" />
+            <option value="$PROJECT_DIR$/feature/languagepicker" />
+            <option value="$PROJECT_DIR$/feature/lockpdf" />
+            <option value="$PROJECT_DIR$/feature/onboard" />
+            <option value="$PROJECT_DIR$/feature/pdf2img" />
+            <option value="$PROJECT_DIR$/feature/pdf2txt" />
+            <option value="$PROJECT_DIR$/feature/pdfviewer" />
             <option value="$PROJECT_DIR$/feature/settings" />
           </set>
         </option>
