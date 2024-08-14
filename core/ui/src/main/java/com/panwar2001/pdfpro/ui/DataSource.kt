@@ -1,5 +1,9 @@
-package com.panwar2001.pdfpro.core.data
+package com.panwar2001.pdfpro.ui
 
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Home
+import androidx.compose.material.icons.filled.Settings
+import com.panwar2001.pdfpro.model.DrawerItemData
 import com.panwar2001.pdfpro.model.Tool
 import com.panwar2001.pdfpro.model.ToolsData
 import com.panwar2001.pdfpro.screens.Screens
@@ -36,5 +40,31 @@ object DataSource {
             else-> Tool(0,0)
         }
     }
+    val DrawerItems = listOf(
+        DrawerItemData(
+            icon= Icons.Default.Home,
+            title = R.string.home,
+            route= Screens.Home.route,
+            iconColor= 0xff34e1b6
+        ),
+        DrawerItemData(
+            icon=R.drawable.outline_text,
+            title = R.string.pdf2text,
+            route= Screens.PdfToText.route,
+            iconColor= 0xff54e1b6
+        ),
+        DrawerItemData(
+            icon = R.drawable.pdf_icon,
+            title=R.string.img2pdf,
+            route = Screens.Img2Pdf.route,
+            iconColor = 0xfffdbda1
+        ),
+        DrawerItemData(
+            icon = Icons.Default.Settings,
+            title=R.string.settings,
+            route = Screens.Img2Pdf.route,
+            iconColor = 0xfffdbda1
+        )
+    )
 
 }

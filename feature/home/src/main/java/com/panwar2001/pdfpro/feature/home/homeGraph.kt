@@ -1,4 +1,4 @@
-package com.panwar2001.pdfpro.navigation
+package com.panwar2001.pdfpro.feature.home
 
 import android.content.ContentUris
 import android.provider.MediaStore
@@ -12,18 +12,17 @@ import androidx.navigation.compose.composable
 import androidx.navigation.navigation
 import com.panwar2001.pdfpro.compose.HomeScreen
 import com.panwar2001.pdfpro.compose.LanguagePickerScreen
-import com.panwar2001.pdfpro.compose.components.PdfViewer
-import com.panwar2001.pdfpro.compose.components.sharePdfFile
-import com.panwar2001.pdfpro.view_models.AppViewModel
+import com.panwar2001.pdfpro.ui.components.PdfViewer
+import com.panwar2001.pdfpro.ui.components.sharePdfFile
 import kotlinx.coroutines.launch
 
 
 @OptIn(ExperimentalFoundationApi::class)
 fun NavGraphBuilder.appGraph(navActions: NavigationActions){
 
-    navigation(route= Screens.Home.route,
-        startDestination= Screens.Home.HomeScreen.route) {
-        composable(route = Screens.Home.HomeScreen.route) { backStackEntry ->
+    navigation(route= com.panwar2001.pdfpro.screens.Screens.Home.route,
+        startDestination= com.panwar2001.pdfpro.screens.Screens.Home.HomeScreen.route) {
+        composable(route = com.panwar2001.pdfpro.screens.Screens.Home.HomeScreen.route) { backStackEntry ->
             val viewModel = navActions.sharedViewModel<AppViewModel>(backStackEntry)
             val uiState by viewModel.uiState.collectAsState()
             val pagerState = rememberPagerState { 2 }
@@ -48,11 +47,15 @@ fun NavGraphBuilder.appGraph(navActions: NavigationActions){
                 setBottomSheetState = viewModel::setBottomSheetVisible,
                 shareFile = {
                     val baseUri = MediaStore.Files.getContentUri("external")
-                    sharePdfFile(context,ContentUris.withAppendedId(baseUri, it),"application/pdf")
+                    com.panwar2001.pdfpro.ui.components.sharePdfFile(
+                        context,
+                        ContentUris.withAppendedId(baseUri, it),
+                        "application/pdf"
+                    )
                 },
                 onPdfCardClick = {
                     viewModel.setUri(it)
-                    navActions.navigateToScreen(Screens.Home.PdfViewer.route)
+                    navActions.navigateToScreen(com.panwar2001.pdfpro.screens.Screens.Home.PdfViewer.route)
                 },
                 options = viewModel.options,
                 scrollToPage = {
@@ -82,7 +85,7 @@ fun NavGraphBuilder.appGraph(navActions: NavigationActions){
                 }
             )
         }
-        composable(route = Screens.Home.LanguagePickerScreen.route) { backStackEntry ->
+        composable(route = com.panwar2001.pdfpro.screens.Screens.Home.LanguagePickerScreen.route) { backStackEntry ->
             val viewModel = navActions.sharedViewModel<AppViewModel>(backStackEntry)
             val currentLocale = viewModel.getCurrentLocale()
             LanguagePickerScreen(navigateUp =navActions::navigateBack,
@@ -92,11 +95,11 @@ fun NavGraphBuilder.appGraph(navActions: NavigationActions){
                     viewModel.setLocale(it)
                 })
         }
-        composable(route = Screens.Home.PdfViewer.route) { backStackEntry ->
+        composable(route = com.panwar2001.pdfpro.screens.Screens.Home.PdfViewer.route) { backStackEntry ->
             val viewModel = navActions.sharedViewModel<AppViewModel>(backStackEntry)
             val uiState by viewModel.uiState.collectAsState()
 
-            PdfViewer(
+            com.panwar2001.pdfpro.ui.components.PdfViewer(
                 uri = uiState.pdfUri,
                 navigateUp = navActions::navigateBack,
                 uiState.pdfName,

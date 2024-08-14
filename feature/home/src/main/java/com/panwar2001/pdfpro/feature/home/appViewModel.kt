@@ -18,17 +18,6 @@ import javax.inject.Inject
 /**
  * Data class that represents the current UI state
  */
-data class AppUiState(
-    val text:String,
-    val query:String,
-    val isAscending: Boolean,
-    val sortOption:Int,
-    val pdfsList:List<PdfRow> ,
-    val searchBarActive:Boolean,
-    val isBottomSheetVisible:Boolean,
-    val pdfUri:Uri,
-    val pdfName:String,
-    val numPages:Int)
 
 
 @HiltViewModel

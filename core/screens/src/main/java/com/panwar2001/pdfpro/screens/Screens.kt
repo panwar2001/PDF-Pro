@@ -2,7 +2,8 @@ package com.panwar2001.pdfpro.screens
 
 sealed class Screens(val route : String) {
     data object OnBoard : Screens("onboard")
-    data object  FilePicker: Screens("pick")
+    data object FilePicker: Screens("pick")
+    data object Settings: Screens("settings")
     data object Home: Screens("home") {
         data object LanguagePickerScreen: Screens("language_picker")
         data object HomeScreen: Screens("home_screen")

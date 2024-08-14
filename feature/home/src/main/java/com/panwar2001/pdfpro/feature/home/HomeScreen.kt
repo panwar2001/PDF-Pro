@@ -3,17 +3,14 @@ package com.panwar2001.pdfpro.compose
 import android.annotation.SuppressLint
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -21,13 +18,10 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.PagerState
 import androidx.compose.foundation.pager.rememberPagerState
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.sharp.ArrowForward
@@ -67,7 +61,6 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.input.nestedscroll.nestedScroll
@@ -82,10 +75,10 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.panwar2001.pdfpro.R
-import com.panwar2001.pdfpro.compose.components.BannerAd
-import com.panwar2001.pdfpro.compose.components.BottomIconButton
-import com.panwar2001.pdfpro.compose.components.CircularIcon
-import com.panwar2001.pdfpro.data.DataSource
+import com.panwar2001.pdfpro.ui.components.BannerAd
+import com.panwar2001.pdfpro.ui.components.BottomIconButton
+import com.panwar2001.pdfpro.ui.components.CircularIcon
+import com.panwar2001.pdfpro.core.data.DataSource
 import com.panwar2001.pdfpro.data.ToolsData
 import kotlinx.coroutines.launch
 
@@ -288,9 +281,9 @@ fun ComposeTools(navigateTo: (String)->Unit) {
         modifier = Modifier.fillMaxSize()
     ) {
         item {
-            BannerAd(adUnitResID = R.string.home_banner)
+            com.panwar2001.pdfpro.ui.components.BannerAd(adUnitResID = R.string.home_banner)
         }
-        items(items = DataSource.ToolsList,
+        items(items = com.panwar2001.pdfpro.core.data.DataSource.ToolsList,
             key = {it.title}) {item ->
             Card(item =item,navigateTo=navigateTo)
         }
@@ -307,7 +300,7 @@ fun ComposeTools(navigateTo: (String)->Unit) {
 fun Card(item: ToolsData,
          modifier:Modifier=Modifier,
          navigateTo: (String)->Unit){
-    val desId=DataSource.getToolData(item.title).toolDescription
+    val desId= com.panwar2001.pdfpro.core.data.DataSource.getToolData(item.title).toolDescription
     androidx.compose.material3.Card(
         elevation = CardDefaults.cardElevation(
             defaultElevation = 15.dp
@@ -336,9 +329,10 @@ fun Card(item: ToolsData,
                 verticalAlignment = Alignment.CenterVertically,
                 modifier = Modifier.fillMaxWidth()
             ) {
-                CircularIcon(iconResourceId = item.iconId,
-                             backgroundColor = item.iconColor,
-                             modifier = Modifier.padding(10.dp)
+                com.panwar2001.pdfpro.ui.components.CircularIcon(
+                    iconResourceId = item.iconId,
+                    backgroundColor = item.iconColor,
+                    modifier = Modifier.padding(10.dp)
                 )
                 Text(
                     text = stringResource(id = item.title),
@@ -384,17 +378,17 @@ fun HomeScreenBottomBar(scrollToPage: (Int) -> Unit,
         horizontalArrangement = Arrangement.SpaceEvenly,
         verticalAlignment = Alignment.CenterVertically,
     ){
-        BottomIconButton(
-            onToggle = {scrollToPage(0)},
+        com.panwar2001.pdfpro.ui.components.BottomIconButton(
+            onToggle = { scrollToPage(0) },
             icon = Icons.Outlined.Home,
             text = stringResource(R.string.home),
-            highlightButton = pagerState.currentPage==0
+            highlightButton = pagerState.currentPage == 0
         )
-        BottomIconButton(
-            onToggle = {scrollToPage(1)},
+        com.panwar2001.pdfpro.ui.components.BottomIconButton(
+            onToggle = { scrollToPage(1) },
             icon = R.drawable.pdf_icon,
             text = stringResource(R.string.pdf_files_tab),
-            highlightButton = pagerState.currentPage==1
+            highlightButton = pagerState.currentPage == 1
         )
     }
 }

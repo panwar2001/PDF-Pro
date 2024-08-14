@@ -41,7 +41,7 @@ dependencies {
      * Hilt Dependencies
      */
     ksp(libs.hilt.android.compiler)
-    implementation(libs.hilt.android)
+    api(libs.hilt.android)
 
     testImplementation(libs.junit)
 }

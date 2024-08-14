@@ -23,29 +23,24 @@ import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalDrawerSheet
 import androidx.compose.material3.ModalNavigationDrawer
-import androidx.compose.material3.Switch
-import androidx.compose.material3.SwitchDefaults
 import androidx.compose.material3.Text
 import androidx.compose.material3.rememberDrawerState
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
-import com.panwar2001.pdfpro.model.ToolsData
+import com.panwar2001.pdfpro.model.DrawerItemData
+import com.panwar2001.pdfpro.ui.DataSource
 import com.panwar2001.pdfpro.ui.R
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
@@ -54,11 +49,9 @@ import kotlinx.coroutines.launch
 @Composable
 fun AppModalNavigationDrawer(
     drawerState: DrawerState,
-    setTheme: (Boolean) -> Unit,
-    currentTheme: Boolean,
     scope: CoroutineScope= rememberCoroutineScope(),
     navigateTo: (String) -> Unit,
-    drawerItems:List<ToolsData>,
+    drawerItems:List<DrawerItemData> = remember { DataSource.DrawerItems },
     headerImageRes: Int,
     content: @Composable ()->Unit
 ){
@@ -67,9 +60,7 @@ fun AppModalNavigationDrawer(
         drawerContent = {
             ModalDrawerSheet(Modifier.padding(0.dp,0.dp,60.dp,0.dp)) {
                 DrawerHeader(headerImageRes)
-                DrawerBody(items = drawerItems,
-                    setTheme=setTheme,
-                    currentTheme=currentTheme){
+                DrawerBody(items = drawerItems){
                     if(drawerState.isOpen){
                         scope.launch {drawerState.apply {close()}}
                     }
@@ -121,58 +112,34 @@ fun DrawerHeader(headerImageRes: Int) {
 }
 @Composable
 fun DrawerBody(
-    items: List<ToolsData>,
-    setTheme:(Boolean)->Unit,
-    currentTheme:Boolean,
-    itemTextStyle: TextStyle = TextStyle(fontSize = 18.sp),
+    items: List<DrawerItemData>,
     navigateTo: (String) -> Unit
 ) {
-    var checked by remember { mutableStateOf(currentTheme)}
-    Row(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(16.dp),
-        verticalAlignment = Alignment.CenterVertically,
-    ) {
-        Switch(
-            checked = checked,
-            onCheckedChange = {
-                setTheme(it)
-                checked=it
-            },
-            colors = SwitchDefaults.colors(
-                checkedThumbColor = MaterialTheme.colorScheme.primary,
-                checkedTrackColor = MaterialTheme.colorScheme.primaryContainer,
-                uncheckedThumbColor = MaterialTheme.colorScheme.secondary,
-                uncheckedTrackColor = MaterialTheme.colorScheme.secondaryContainer,
-            )
-        )
-        Spacer(modifier = Modifier.width(16.dp))
-        Text(
-            text = stringResource(id =if(checked) R.string.dark_mode else R.string.light_mode),
-            style = itemTextStyle,
-            modifier = Modifier.weight(1f)
-        )
-    }
+
     LazyColumn {
-//        item{
-//            NavItem(navigateTo = navigateTo, item = ToolsData(
-//                R.drawable.language,
-//                R.string.language,
-//                Screens.Home.LanguagePickerScreen.route))
-//            NavItem(navigateTo = navigateTo, item = ToolsData(
-//                iconId=R.drawable.home,
-//                title = R.string.home,
-//                route= Screens.Home.route))
-//        }
         items(items) { item ->
-           NavItem(navigateTo = navigateTo, item =item )
+           NavItem(navigateTo = navigateTo, item =item){
+               if(item.icon is Int) {
+                   CircularIcon(
+                       iconResourceId = item.icon as Int,
+                       backgroundColor = Color(item.iconColor),
+                       size = dimensionResource(id = R.dimen.icon_size_very_small)
+                   )
+               }else{
+                   CircularIcon(
+                       icon = item.icon as ImageVector,
+                       backgroundColor = Color(item.iconColor),
+                       size = dimensionResource(id = R.dimen.icon_size_very_small)
+                   )
+               }
+           }
         }
     }
 }
 @Composable
 fun NavItem(navigateTo: (String) -> Unit,
-            item:ToolsData){
+            item: DrawerItemData,
+            iconComposable: @Composable ()->Unit){
     Row(
         modifier = Modifier
             .fillMaxWidth()
@@ -182,9 +149,7 @@ fun NavItem(navigateTo: (String) -> Unit,
         verticalAlignment = Alignment.CenterVertically
     ) {
         Spacer(modifier = Modifier.width(dimensionResource(id = R.dimen.spacing_medium)))
-        CircularIcon(iconResourceId = item.iconId,
-                     backgroundColor = item.iconColor,
-                     size= dimensionResource(id = R.dimen.icon_size_very_small))
+        iconComposable()
         Spacer(modifier = Modifier.width(dimensionResource(id = R.dimen.spacing_medium)))
         Text(
             text = stringResource(id = item.title),
@@ -196,8 +161,12 @@ fun NavItem(navigateTo: (String) -> Unit,
 @Composable
 fun PreviewNavBar(drawerState: DrawerState = rememberDrawerState(initialValue = DrawerValue.Open)){
     val scope= rememberCoroutineScope()
-    AppModalNavigationDrawer(drawerState,{},false,navigateTo ={}, drawerItems = listOf(),
-        headerImageRes = 0) {
+    AppModalNavigationDrawer(
+        drawerState,
+        scope= scope,
+        navigateTo ={},
+        headerImageRes = R.drawable.pdf_icon
+    ) {
         AppBar(onNavigationIconClick = {
             scope.launch { drawerState.open() }
         })
