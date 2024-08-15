@@ -16,8 +16,9 @@ class AppLocaleRepositoryImpl @Inject constructor(
     @ApplicationContext private val context: Context
 ):AppLocaleRepository {
     // TODO("check for how to set locale for less than android 13 version")
-    override fun getAppLocale(): Flow<String> = flow{
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+
+    override fun getAppLocale(): String  {
+        return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
             context.getSystemService(LocaleManager::class.java).applicationLocales.toLanguageTags()
         } else {
             AppCompatDelegate.getApplicationLocales().toLanguageTags()
@@ -26,8 +27,13 @@ class AppLocaleRepositoryImpl @Inject constructor(
     //TODO("check for how to set locale for less than android 13 version")
     override suspend fun setAppLocale(localeTag: String) {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-            context.getSystemService(LocaleManager::class.java).applicationLocales=  LocaleList(
-                Locale.forLanguageTag(localeTag))
+            AppCompatDelegate.setApplicationLocales(
+                LocaleListCompat.forLanguageTags(
+                    localeTag
+                )
+            )
+//            context.getSystemService(LocaleManager::class.java).applicationLocales=  LocaleList(
+//                Locale.forLanguageTag(localeTag))
         } else {
             AppCompatDelegate.setApplicationLocales(
                 LocaleListCompat.forLanguageTags(
