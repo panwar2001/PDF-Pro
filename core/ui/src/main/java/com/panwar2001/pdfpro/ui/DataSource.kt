@@ -62,7 +62,7 @@ object DataSource {
         DrawerItemData(
             icon = Icons.Default.Settings,
             title=R.string.settings,
-            route = Screens.Img2Pdf.route,
+            route = Screens.Settings.route,
             iconColor = 0xfffdbda1
         )
     )

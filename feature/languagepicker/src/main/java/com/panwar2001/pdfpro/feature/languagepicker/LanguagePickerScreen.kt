@@ -26,7 +26,7 @@ import androidx.compose.ui.tooling.preview.Preview
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun LanguagePickerScreen(navigateUp:()->Unit,
+internal fun LanguagePickerScreen(navigateUp:()->Unit,
                          languages:List<Int>,
                          currentLocale:String,
                          setLocale:(localeTag:String)->Unit){

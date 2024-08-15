@@ -9,6 +9,7 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material.icons.Icons
@@ -24,6 +25,10 @@ import androidx.compose.material3.SwitchDefaults
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalUriHandler
@@ -33,6 +38,7 @@ import androidx.compose.ui.res.stringArrayResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.dp
 import com.panwar2001.pdfpro.screens.Screens
 
 private const val feedback_url= "https://forms.gle/9xJLouAgBdgpmcKs8"
@@ -46,6 +52,7 @@ fun SettingScreen(navigateUp: ()->Unit,
                   navigateTo:(String)->Unit,
                   settings : SettingsUiState.Success,
                   setTheme : (Boolean)->Unit){
+    var isDarkTheme by remember { mutableStateOf(settings.isDarkTheme) }
     val padding= dimensionResource(com.panwar2001.pdfpro.ui.R.dimen.spacing_medium)
     val uriHandler = LocalUriHandler.current
     Scaffold(topBar = {
@@ -70,18 +77,19 @@ fun SettingScreen(navigateUp: ()->Unit,
                     modifier = Modifier.padding(padding),
                     iconResId = R.drawable.language,
                     urlResId = R.array.language,
-                    onClick = { navigateTo(Screens.Home.LanguagePickerScreen.route) }
+                    onClick = { navigateTo(Screens.Settings.LanguagePickerScreen.route) }
                 )
             }
             item {
                SwitchRow(
                    modifier = Modifier.padding(padding),
-                   currentTheme = settings.isDarkTheme,
-                   onCheckedChange = {
-                       TODO("implement ")
+                   currentTheme = isDarkTheme,
+                   onCheckedChange = {theme->
+                       isDarkTheme=theme
+                       setTheme(isDarkTheme)
                    },
                    itemResId= R.array.app_theme,
-                   iconResId =  R.drawable.light_theme
+                   iconResId =  if(isDarkTheme) R.drawable.dark_theme else R.drawable.light_theme
                )
            }
             item {
@@ -134,7 +142,7 @@ fun Content(
     val spacingMedium= dimensionResource(com.panwar2001.pdfpro.ui.R.dimen.spacing_medium)
 
     Spacer(modifier.width(spacingSmall))
-    Icon(painter = painterResource(iconResId),contentDescription =  null)
+    Icon(modifier = Modifier.size(24.dp), painter = painterResource(iconResId),contentDescription =  null)
     Spacer(modifier.width(spacingMedium))
     Column {
         Text(text = title,
