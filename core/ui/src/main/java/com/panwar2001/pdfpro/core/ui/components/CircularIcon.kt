@@ -1,4 +1,4 @@
-package com.panwar2001.pdfpro.ui.components
+package com.panwar2001.pdfpro.core.ui.components
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box

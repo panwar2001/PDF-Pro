@@ -1,4 +1,4 @@
-package com.panwar2001.pdfpro.ui.components
+package com.panwar2001.pdfpro.core.ui.components
 
 import androidx.compose.material3.DrawerState
 import androidx.compose.material3.DrawerValue
@@ -20,7 +20,7 @@ fun rememberNavActions(
     navController: NavHostController= rememberNavController(),
     scope: CoroutineScope = rememberCoroutineScope(),
     drawerState: DrawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
-): NavigationActions{
+): NavigationActions {
     return remember(navController,scope,drawerState) {
         NavigationActions(navController,scope,drawerState)
     }

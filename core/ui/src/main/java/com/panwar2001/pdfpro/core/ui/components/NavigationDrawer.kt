@@ -1,4 +1,4 @@
-package com.panwar2001.pdfpro.ui.components
+package com.panwar2001.pdfpro.core.ui.components
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -40,8 +40,8 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.panwar2001.pdfpro.model.DrawerItemData
-import com.panwar2001.pdfpro.ui.DataSource
-import com.panwar2001.pdfpro.ui.R
+import com.panwar2001.pdfpro.core.ui.DataSource
+import com.panwar2001.pdfpro.core.ui.R
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 

@@ -1,4 +1,4 @@
-package com.panwar2001.pdfpro.ui.components
+package com.panwar2001.pdfpro.core.ui.components
 
 import androidx.compose.animation.core.Animatable
 import androidx.compose.animation.core.Spring

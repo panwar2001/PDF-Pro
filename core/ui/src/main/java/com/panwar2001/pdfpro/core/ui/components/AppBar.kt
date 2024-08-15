@@ -1,4 +1,4 @@
-package com.panwar2001.pdfpro.ui.components
+package com.panwar2001.pdfpro.core.ui.components
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
@@ -30,7 +30,7 @@ import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.panwar2001.pdfpro.ui.R
+import com.panwar2001.pdfpro.core.ui.R
 import kotlinx.coroutines.launch
 
 data class MenuItem(

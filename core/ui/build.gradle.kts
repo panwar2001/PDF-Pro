@@ -5,7 +5,7 @@ plugins {
 }
 
 android {
-    namespace = "com.panwar2001.pdfpro.ui"
+    namespace = "com.panwar2001.pdfpro.core.ui"
     compileSdk = 34
 
     defaultConfig {

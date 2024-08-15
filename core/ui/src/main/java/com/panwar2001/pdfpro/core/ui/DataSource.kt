@@ -1,4 +1,4 @@
-package com.panwar2001.pdfpro.ui
+package com.panwar2001.pdfpro.core.ui
 
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Home
@@ -7,10 +7,9 @@ import com.panwar2001.pdfpro.model.DrawerItemData
 import com.panwar2001.pdfpro.model.Tool
 import com.panwar2001.pdfpro.model.ToolsData
 import com.panwar2001.pdfpro.screens.Screens
-
 object DataSource {
     val ToolsList = listOf(
-        ToolsData(iconId=R.drawable.outline_text,
+        ToolsData(iconId= R.drawable.outline_text,
                   title = R.string.pdf2text,
                   route= Screens.PdfToText.route,
                   iconColor= 0xff54e1b6
@@ -19,8 +18,9 @@ object DataSource {
 //                  title= R.string.pdf2img,
 //                  route= Screens.PdfToImage.route,
 //                  iconColor = Color(0xffaeb4fd)),
-        ToolsData(R.drawable.pdf_icon,
-                  title=R.string.img2pdf,
+        ToolsData(
+            R.drawable.pdf_icon,
+                  title= R.string.img2pdf,
                   route = Screens.Img2Pdf.route,
                   iconColor = 0xfffdbda1),
 //        ToolsData(R.drawable.compress,"Compress pdf",2),
@@ -33,9 +33,9 @@ object DataSource {
 
     fun getToolData(id:Int): Tool {
         return when(id){
-            R.string.pdf2text-> Tool(R.string.pdf2txt_description,R.string.select_pdf)
-            R.string.pdf2img -> Tool(R.string.pdf2img_description,R.string.select_pdf)
-            R.string.img2pdf-> Tool(R.string.img2pdf_description, R.string.select_images)
+            R.string.pdf2text -> Tool(R.string.pdf2txt_description, R.string.select_pdf)
+            R.string.pdf2img -> Tool(R.string.pdf2img_description, R.string.select_pdf)
+            R.string.img2pdf -> Tool(R.string.img2pdf_description, R.string.select_images)
 
             else-> Tool(0,0)
         }
@@ -48,20 +48,20 @@ object DataSource {
             iconColor= 0xff34e1b6
         ),
         DrawerItemData(
-            icon=R.drawable.outline_text,
+            icon= R.drawable.outline_text,
             title = R.string.pdf2text,
             route= Screens.PdfToText.route,
             iconColor= 0xff54e1b6
         ),
         DrawerItemData(
             icon = R.drawable.pdf_icon,
-            title=R.string.img2pdf,
+            title= R.string.img2pdf,
             route = Screens.Img2Pdf.route,
             iconColor = 0xfffdbda1
         ),
         DrawerItemData(
             icon = Icons.Default.Settings,
-            title=R.string.settings,
+            title= R.string.settings,
             route = Screens.Settings.route,
             iconColor = 0xfffdbda1
         )

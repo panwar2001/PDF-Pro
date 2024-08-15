@@ -1,4 +1,4 @@
-package com.panwar2001.pdfpro.ui.theme
+package com.panwar2001.pdfpro.core.ui.theme
 
 import androidx.compose.ui.graphics.Color
 
