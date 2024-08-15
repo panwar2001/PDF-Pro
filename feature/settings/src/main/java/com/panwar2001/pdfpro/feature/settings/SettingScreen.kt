@@ -53,7 +53,7 @@ fun SettingScreen(navigateUp: ()->Unit,
                   settings : SettingsUiState.Success,
                   setTheme : (Boolean)->Unit){
     var isDarkTheme by remember { mutableStateOf(settings.isDarkTheme) }
-    val padding= dimensionResource(com.panwar2001.pdfpro.ui.R.dimen.spacing_medium)
+    val padding= dimensionResource(com.panwar2001.pdfpro.core.ui.R.dimen.spacing_medium)
     val uriHandler = LocalUriHandler.current
     Scaffold(topBar = {
         TopAppBar(
@@ -138,8 +138,8 @@ fun Content(
     title: String,
     description: String
 ){
-    val spacingSmall= dimensionResource(com.panwar2001.pdfpro.ui.R.dimen.spacing_small)
-    val spacingMedium= dimensionResource(com.panwar2001.pdfpro.ui.R.dimen.spacing_medium)
+    val spacingSmall= dimensionResource(com.panwar2001.pdfpro.core.ui.R.dimen.spacing_small)
+    val spacingMedium= dimensionResource(com.panwar2001.pdfpro.core.ui.R.dimen.spacing_medium)
 
     Spacer(modifier.width(spacingSmall))
     Icon(modifier = Modifier.size(24.dp), painter = painterResource(iconResId),contentDescription =  null)
@@ -192,7 +192,7 @@ fun AppVersionItem(modifier: Modifier=Modifier,
     HorizontalDivider()
     val version= stringResource(id = R.string.version,appVersion)
     Row(modifier = modifier
-        .padding(dimensionResource(com.panwar2001.pdfpro.ui.R.dimen.spacing_medium))
+        .padding(dimensionResource(com.panwar2001.pdfpro.core.ui.R.dimen.spacing_medium))
         .fillMaxWidth(),
         horizontalArrangement = Arrangement.Center,
         verticalAlignment = Alignment.CenterVertically){

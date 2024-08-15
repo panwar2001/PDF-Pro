@@ -4,37 +4,36 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.panwar2001.pdfpro.core.data.repository.AppLocaleRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.flow.SharingStarted
-import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.map
-import kotlinx.coroutines.flow.onStart
-import kotlinx.coroutines.flow.stateIn
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
+data class LanguagePickerUiState(
+    val appLocale: String="en"
+)
 @HiltViewModel
 class LanguagePickerViewModel @Inject
 constructor(
     private val appLocaleRepository: AppLocaleRepository
 ): ViewModel() {
-    val currentLocale: StateFlow<LanguagePickerUiState> = appLocaleRepository
-        .getAppLocale()
-        .map<String, LanguagePickerUiState>(LanguagePickerUiState::Success)
-        .onStart { emit(LanguagePickerUiState.Loading) }
-        .stateIn(
-        scope = viewModelScope,
-        started = SharingStarted.WhileSubscribed(5_000),
-        initialValue = LanguagePickerUiState.Loading
-    )
-
-    fun setAppLocale(localeTag: String) = viewModelScope.launch {
-            appLocaleRepository.setAppLocale(localeTag)
+    private val _uiState= MutableStateFlow(LanguagePickerUiState())
+    val uiState = _uiState.asStateFlow()
+    init {
+        updateLocale(appLocaleRepository.getAppLocale())
     }
-}
-
-
-sealed interface LanguagePickerUiState {
-    data object Loading : LanguagePickerUiState
-
-    data class Success(val appLocale: String): LanguagePickerUiState
+    private fun updateLocale(locale: String){
+        viewModelScope.launch {
+            _uiState.update {
+                it.copy(appLocale = locale)
+            }
+        }
+    }
+    fun setAppLocale(localeTag: String) {
+        viewModelScope.launch {
+            appLocaleRepository.setAppLocale(localeTag)
+            updateLocale(localeTag)
+        }
+    }
 }

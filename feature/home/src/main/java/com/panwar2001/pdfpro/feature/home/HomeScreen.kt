@@ -50,9 +50,9 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.panwar2001.pdfpro.model.ToolsData
-import com.panwar2001.pdfpro.ui.DataSource
-import com.panwar2001.pdfpro.ui.components.BannerAd
-import com.panwar2001.pdfpro.ui.components.CircularIcon
+import com.panwar2001.pdfpro.core.ui.DataSource
+import com.panwar2001.pdfpro.core.ui.components.BannerAd
+import com.panwar2001.pdfpro.core.ui.components.CircularIcon
 
 @SuppressLint("RememberReturnType")
 @OptIn(ExperimentalMaterial3Api::class)
@@ -147,7 +147,7 @@ fun Card(
                 },
                 onClick = { navigateTo(item.route) })
             .fillMaxWidth()
-            .padding(dimensionResource(id = com.panwar2001.pdfpro.ui.R.dimen.spacing_large))
+            .padding(dimensionResource(id = com.panwar2001.pdfpro.core.ui.R.dimen.spacing_large))
         ,colors = CardDefaults.cardColors(
             containerColor = if(MaterialTheme.colorScheme.background.luminance() > 0.5)Color.White else Color.Unspecified,
         )
@@ -186,7 +186,7 @@ fun Card(
                     text = stringResource(id = desId),
                     overflow = TextOverflow.Ellipsis,
                     modifier = Modifier
-                        .padding(dimensionResource(id = com.panwar2001.pdfpro.ui.R.dimen.spacing_small))
+                        .padding(dimensionResource(id = com.panwar2001.pdfpro.core.ui.R.dimen.spacing_small))
                         .weight(1f),
                     maxLines = 5,
                     style = MaterialTheme.typography.bodyMedium,

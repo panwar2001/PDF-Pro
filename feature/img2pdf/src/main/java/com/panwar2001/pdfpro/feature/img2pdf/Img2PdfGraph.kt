@@ -18,7 +18,6 @@ import com.panwar2001.pdfpro.compose.images2pdf.ImagesDisplay
 import com.panwar2001.pdfpro.compose.images2pdf.ReorderScreen
 import com.panwar2001.pdfpro.ui.components.SavePdfScreen
 import com.panwar2001.pdfpro.data.DataSource
-import com.panwar2001.pdfpro.view_models.Img2pdfViewModel
 
 fun NavGraphBuilder.img2PdfGraph(navActions: NavigationActions){
 

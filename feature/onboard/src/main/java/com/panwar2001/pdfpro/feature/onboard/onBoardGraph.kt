@@ -8,7 +8,7 @@ import androidx.navigation.compose.composable
 import com.panwar2001.pdfpro.model.OnBoardData
 import com.panwar2001.pdfpro.onboard.R
 import com.panwar2001.pdfpro.screens.Screens
-import com.panwar2001.pdfpro.ui.components.NavigationActions
+import com.panwar2001.pdfpro.core.ui.components.NavigationActions
 import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalFoundationApi::class)

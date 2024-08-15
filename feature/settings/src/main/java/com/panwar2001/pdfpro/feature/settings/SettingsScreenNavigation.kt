@@ -9,8 +9,8 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.navigation
 import com.panwar2001.pdfpro.feature.languagepicker.LanguagePicker
 import com.panwar2001.pdfpro.screens.Screens
-import com.panwar2001.pdfpro.ui.components.NavigationActions
-import com.panwar2001.pdfpro.ui.components.ProgressIndicator
+import com.panwar2001.pdfpro.core.ui.components.NavigationActions
+import com.panwar2001.pdfpro.core.ui.components.ProgressIndicator
 
 fun NavGraphBuilder.settingsScreenNavigation(navActions: NavigationActions){
     navigation(startDestination = Screens.Settings.SettingsScreen.route, route= Screens.Settings.route) {

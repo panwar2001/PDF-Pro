@@ -4,7 +4,7 @@ import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.composable
 import androidx.navigation.navigation
 import com.panwar2001.pdfpro.screens.Screens
-import com.panwar2001.pdfpro.ui.components.NavigationActions
+import com.panwar2001.pdfpro.core.ui.components.NavigationActions
 
 
 fun NavGraphBuilder.homeGraph(navActions: NavigationActions){

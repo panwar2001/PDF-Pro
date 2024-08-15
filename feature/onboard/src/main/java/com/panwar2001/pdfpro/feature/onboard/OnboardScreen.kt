@@ -46,7 +46,7 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import com.panwar2001.pdfpro.model.OnBoardData
 import com.panwar2001.pdfpro.onboard.R
-import com.panwar2001.pdfpro.ui.components.BannerAd
+import com.panwar2001.pdfpro.core.ui.components.BannerAd
 
 private val next_button_color= Color(0xFFFF4F5A)
 /**
