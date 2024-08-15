@@ -10,10 +10,6 @@ android {
     namespace = "com.panwar2001.pdfpro"
     compileSdk = 35
 
-    androidResources{
-        @file:Suppress("UnstableApiUsage")
-        generateLocaleConfig = true
-    }
     defaultConfig {
         applicationId = "com.panwar2001.pdfpro"
         minSdk = 24

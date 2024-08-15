@@ -11,15 +11,14 @@
         android:theme="@style/Theme"
         android:enableOnBackInvokedCallback="true"
         tools:targetApi="34"
+        android:localeConfig="@xml/locales_config"
         >
         <activity
             android:name=".AppActivity"
             android:exported="true"
-            android:localeConfig="@xml/locales_config"
             >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>

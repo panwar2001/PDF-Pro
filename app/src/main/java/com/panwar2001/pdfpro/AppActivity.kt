@@ -18,8 +18,8 @@ import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import com.panwar2001.pdfpro.model.UserData
 import com.panwar2001.pdfpro.screens.Screens
-import com.panwar2001.pdfpro.ui.components.ProgressIndicator
-import com.panwar2001.pdfpro.ui.theme.PDFProTheme
+import com.panwar2001.pdfpro.core.ui.components.ProgressIndicator
+import com.panwar2001.pdfpro.core.ui.theme.PDFProTheme
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.onEach
