@@ -27,6 +27,7 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -68,47 +69,50 @@ internal fun OnboardScreen(navigateToHome: () -> Unit,
                            onBoardList:List<OnBoardData>,
                            onNextButtonClick: () -> Unit) {
     val configuration = LocalConfiguration.current
-    Column(
-        Modifier.fillMaxSize()
-            .verticalScroll(rememberScrollState()),
-        horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.SpaceBetween,
-    ) {
-        Skip(navigateToHome)
-        HorizontalPager(state = pagerState,Modifier.wrapContentSize()) { page ->
-        if (configuration.orientation == Configuration.ORIENTATION_LANDSCAPE) {
-           LandscapeLayout(
-               imageId = onBoardList[page].icon,
-               titleId = onBoardList[page].title,
-               descriptionId = onBoardList[page].description
-           )
-        } else {
-            Column(
-                Modifier.padding(dimensionResource(id = R.dimen.spacing_large)),
-                horizontalAlignment = Alignment.CenterHorizontally,
-            ) {
-                DisplayImage(imageId = onBoardList[page].icon)
-                Spacer(modifier = Modifier.height(dimensionResource(id = R.dimen.spacing_large)))
-                Title(textId = onBoardList[page].title)
-                Spacer(modifier = Modifier.height(dimensionResource(id = R.dimen.spacing_large)))
-                Description(descriptionId = onBoardList[page].description)
+    Scaffold{
+        Column(
+            Modifier.padding(it)
+                .fillMaxSize()
+                .verticalScroll(rememberScrollState()),
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.SpaceBetween,
+        ) {
+            Skip(navigateToHome)
+            HorizontalPager(state = pagerState, Modifier.wrapContentSize()) { page ->
+                if (configuration.orientation == Configuration.ORIENTATION_LANDSCAPE) {
+                    LandscapeLayout(
+                        imageId = onBoardList[page].icon,
+                        titleId = onBoardList[page].title,
+                        descriptionId = onBoardList[page].description
+                    )
+                } else {
+                    Column(
+                        Modifier.padding(dimensionResource(id = R.dimen.spacing_large)),
+                        horizontalAlignment = Alignment.CenterHorizontally,
+                    ) {
+                        DisplayImage(imageId = onBoardList[page].icon)
+                        Spacer(modifier = Modifier.height(dimensionResource(id = R.dimen.spacing_large)))
+                        Title(textId = onBoardList[page].title)
+                        Spacer(modifier = Modifier.height(dimensionResource(id = R.dimen.spacing_large)))
+                        Description(descriptionId = onBoardList[page].description)
+                    }
+                }
             }
-        }
-        }
-        Column(horizontalAlignment = Alignment.CenterHorizontally){
-            PageIndicator(
-                pageCount = pagerState.pageCount,
-                currentPage = pagerState.targetPage
-            )
-            Spacer(modifier = Modifier.height(dimensionResource(id = R.dimen.spacing_large)))
-            BannerAd(adUnitResID = R.string.onboard_banner)
-            NextButton(
-                textId = if (pagerState.pageCount != pagerState.currentPage+1)
-                    R.string.next else R.string.started,
-                onNextButtonClick = onNextButtonClick
-            )
-        }
+            Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                PageIndicator(
+                    pageCount = pagerState.pageCount,
+                    currentPage = pagerState.targetPage
+                )
+                Spacer(modifier = Modifier.height(dimensionResource(id = R.dimen.spacing_large)))
+                BannerAd(adUnitResID = R.string.onboard_banner)
+                NextButton(
+                    textId = if (pagerState.pageCount != pagerState.currentPage + 1)
+                        R.string.next else R.string.started,
+                    onNextButtonClick = onNextButtonClick
+                )
+            }
 
+        }
     }
 }
 

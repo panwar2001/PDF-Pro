@@ -9,20 +9,19 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
+import com.panwar2001.pdfpro.core.ui.theme.PDFProTheme
 import com.panwar2001.pdfpro.model.UserData
 import com.panwar2001.pdfpro.screens.Screens
-import com.panwar2001.pdfpro.core.ui.components.ProgressIndicator
-import com.panwar2001.pdfpro.core.ui.theme.PDFProTheme
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.onEach
@@ -34,6 +33,7 @@ class AppActivity : AppCompatActivity() {
     private val viewModel: AppViewModel by viewModels()
 
     override fun onCreate(savedInstanceState: Bundle?) {
+        val splashScreen= installSplashScreen()
         super.onCreate(savedInstanceState)
         var uiState: AppUiState by mutableStateOf(AppUiState.Loading)
 
@@ -46,10 +46,14 @@ class AppActivity : AppCompatActivity() {
             }
         }
 
-        // Turn off the decor fitting system windows, which allows us to handle insets,
-        // including IME animations, and go edge-to-edge
-        // This also sets up the initial system bar style based on the platform theme
+        /**
+         *  Turn off the decor fitting system windows, which allows us to handle insets,
+         *  including IME animations, and go edge-to-edge This also sets up the initial
+         *  system bar style based on the platform theme
+         */
         enableEdgeToEdge()
+
+        splashScreen.setKeepOnScreenCondition { uiState is AppUiState.Loading }
 
         setContent {
             Content(uiState)
@@ -58,27 +62,14 @@ class AppActivity : AppCompatActivity() {
     @Composable
     private fun Content(uiState: AppUiState) {
         val darkTheme = shouldUseDarkTheme(uiState)
-        // Update the edge to edge configuration to match the theme
-        // This is the same parameters as the default enableEdgeToEdge call, but we manually
-        // resolve whether or not to show dark theme using uiState, since it can be different
-        // than the configuration's dark theme value based on the user preference.
-        DisposableEffect(darkTheme) {
-            enableEdgeToEdge(
-                statusBarStyle = SystemBarStyle.auto(
-                    android.graphics.Color.TRANSPARENT,
-                    android.graphics.Color.TRANSPARENT,
-                ) { darkTheme },
-                navigationBarStyle = SystemBarStyle.auto(
-                    lightScrim,
-                    darkScrim,
-                ) { darkTheme },
-            )
-            onDispose {}
-        }
+
+        EnableEdgeToEdge(darkTheme = darkTheme)
 
         PDFProTheme(darkTheme = darkTheme) {
-                // A surface container using the 'background' color from the theme
-                Surface(
+            /**
+             *  A surface container using the 'background' color from the theme
+             */
+            Surface(
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background
                 ) {
@@ -86,9 +77,6 @@ class AppActivity : AppCompatActivity() {
                         NavigationController(
                             startDestination = getStartingDestination(uiState.userData)
                         )
-                    }else{
-                        ProgressIndicator(modifier = Modifier)
-                        Text("onboarding screen loading..")
                     }
                 }
             }
@@ -104,6 +92,29 @@ class AppActivity : AppCompatActivity() {
             return if(shouldHideOnboarding) Screens.Home.route else Screens.OnBoard.route
         }
     }
+
+    /**
+     * Update the edge to edge configuration to match the theme
+     * This is the same parameters as the default enableEdgeToEdge call, but we manually
+     * resolve whether or not to show dark theme using uiState, since it can be different
+     * than the configuration's dark theme value based on the user preference.
+     */
+    @Composable
+    private fun EnableEdgeToEdge(darkTheme : Boolean){
+        DisposableEffect(darkTheme) {
+            enableEdgeToEdge(
+                statusBarStyle = SystemBarStyle.auto(
+                    android.graphics.Color.TRANSPARENT,
+                    android.graphics.Color.TRANSPARENT,
+                ) { darkTheme },
+                navigationBarStyle = SystemBarStyle.auto(
+                    lightScrim,
+                    darkScrim,
+                ) { darkTheme },
+            )
+            onDispose {}
+        }
+    }
 }
 
 @Composable
@@ -113,7 +124,6 @@ private fun shouldUseDarkTheme(
     AppUiState.Loading -> false
     is AppUiState.Success -> uiState.userData.darkThemeEnabled
 }
-
 
 
 /**
