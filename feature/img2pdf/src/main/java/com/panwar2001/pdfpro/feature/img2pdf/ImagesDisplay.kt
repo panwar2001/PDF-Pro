@@ -10,11 +10,15 @@ import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.IntentSenderRequest
 import androidx.activity.result.PickVisualMediaRequest
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.gestures.Orientation
+import androidx.compose.foundation.gestures.scrollable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Build
@@ -49,10 +53,9 @@ import com.google.mlkit.vision.documentscanner.GmsDocumentScannerOptions.RESULT_
 import com.google.mlkit.vision.documentscanner.GmsDocumentScannerOptions.SCANNER_MODE_FULL
 import com.google.mlkit.vision.documentscanner.GmsDocumentScanning
 import com.google.mlkit.vision.documentscanner.GmsDocumentScanningResult
-import com.panwar2001.pdfpro.ui.components.BottomIconButton
-import com.panwar2001.pdfpro.ui.components.ImageComponent
-import com.panwar2001.pdfpro.data.ImageInfo
-import com.panwar2001.pdfpro.core.domain.GetFileSizeUseCase
+import com.panwar2001.pdfpro.core.ui.components.BottomIconButton
+import com.panwar2001.pdfpro.core.ui.components.ImageComponent
+import com.panwar2001.pdfpro.model.ImageInfo
 
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -60,19 +63,19 @@ import com.panwar2001.pdfpro.core.domain.GetFileSizeUseCase
 fun ImagesDisplay(navigateUp:()->Unit,
                   imageList:List<ImageInfo>,
                   navigateToReorder:()->Unit,
-                  addImgUris:(List<Uri>)->Unit,
+                  addImgUris:(List<Uri>,Boolean)->Unit,
                   addDocScanUris:(List<ImageInfo>)->Unit,
                   toggleCheckBox:(Int,Boolean)->Unit,
                   deleteImages:()->Unit,
                   convertToPdf:()->Unit,
                   scanner: GmsDocumentScanner= rememberDocumentScanner(),
-                  getFileSizeUseCase: com.panwar2001.pdfpro.core.domain.GetFileSizeUseCase = com.panwar2001.pdfpro.core.domain.GetFileSizeUseCase()
+                  getFileSizeUseCase: (Long)->String= { "" }
 ){
     val imagesPickerLauncher= rememberLauncherForActivityResult(
         contract = ActivityResultContracts.PickMultipleVisualMedia() ,
         onResult = {
             if(it.isNotEmpty()) {
-                addImgUris(it)
+                addImgUris(it,false)
             } })
     val activity = LocalContext.current as Activity
     val scannerLauncher = rememberLauncherForActivityResult(
@@ -94,6 +97,7 @@ fun ImagesDisplay(navigateUp:()->Unit,
     }
     Scaffold(
         floatingActionButton = {
+            if(imageList.isNotEmpty()){
             ExtendedFloatingActionButton(
                 text = { Text(text = stringResource(id = R.string.convert2pdf))},
                 icon = {  Icon(
@@ -101,6 +105,7 @@ fun ImagesDisplay(navigateUp:()->Unit,
                     contentDescription = null,
                 )},
                 onClick = convertToPdf)
+                }
         },
         topBar = {
         TopAppBar(
@@ -122,23 +127,26 @@ fun ImagesDisplay(navigateUp:()->Unit,
                 actions = {
                     Row(horizontalArrangement = Arrangement.SpaceBetween,
                         verticalAlignment = Alignment.CenterVertically,
-                        modifier = Modifier.fillMaxWidth()){
+                        modifier = Modifier
+                            .fillMaxWidth()){
 
-                        com.panwar2001.pdfpro.ui.components.BottomIconButton(
+                        BottomIconButton(
                             onToggle = deleteImages,
                             icon = Icons.Default.Delete,
                             text = stringResource(id = R.string.delete),
-                            tint = LocalContentColor.current
+                            tint = LocalContentColor.current,
+                            enabled = imageList.isNotEmpty()
                         )
 
-                        com.panwar2001.pdfpro.ui.components.BottomIconButton(
+                        BottomIconButton(
                             onToggle = navigateToReorder,
                             icon = R.drawable.arrow_sort,
                             text = stringResource(id = R.string.reorder),
-                            tint = LocalContentColor.current
+                            tint = LocalContentColor.current,
+                            enabled = imageList.isNotEmpty()
                         )
 
-                        com.panwar2001.pdfpro.ui.components.BottomIconButton(
+                        BottomIconButton(
                             onToggle = {
                                 imagesPickerLauncher.launch(
                                     PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly)
@@ -149,7 +157,7 @@ fun ImagesDisplay(navigateUp:()->Unit,
                             tint = LocalContentColor.current
                         )
 
-                        com.panwar2001.pdfpro.ui.components.BottomIconButton(
+                        BottomIconButton(
                             onToggle = {
                                 scanner.getStartScanIntent(activity)
                                     .addOnSuccessListener {
@@ -171,6 +179,13 @@ fun ImagesDisplay(navigateUp:()->Unit,
 
         }) { innerPadding ->
             LazyColumn(modifier= Modifier.padding(innerPadding)) {
+
+                if (imageList.isEmpty()) {
+                    item {
+                        Text(text = stringResource(id = R.string.empty_images_array_message))
+                    }
+                }
+
                 items(imageList.size) { index->
                     Row(verticalAlignment = Alignment.CenterVertically,
                         horizontalArrangement = Arrangement.SpaceAround,
@@ -187,7 +202,7 @@ fun ImagesDisplay(navigateUp:()->Unit,
                             modifier = Modifier
                                 .zIndex(12f))
 
-                        com.panwar2001.pdfpro.ui.components.ImageComponent(
+                        ImageComponent(
                             imageList[index].uri,
                             index + 1,
                             elevation = 0.dp

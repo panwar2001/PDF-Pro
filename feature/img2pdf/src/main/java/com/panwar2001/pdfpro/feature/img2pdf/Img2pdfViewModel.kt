@@ -4,9 +4,10 @@ import android.net.Uri
 import androidx.annotation.WorkerThread
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.panwar2001.pdfpro.data.ImageInfo
-import com.panwar2001.pdfpro.data.Img2PdfInterface
-import com.panwar2001.pdfpro.data.ToolsInterface
+import com.panwar2001.pdfpro.core.data.repository.Img2PdfRepository
+import com.panwar2001.pdfpro.core.data.repository.ToolsRepository
+import com.panwar2001.pdfpro.model.ImageInfo
+import com.panwar2001.pdfpro.model.Img2PdfUiState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -15,20 +16,8 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
-/**
- * represents the current UI state
- */
-data class Img2PdfUiState(
-    val imageList: List<ImageInfo> ,
-    val isLoading:Boolean,
-    val fileName: String,
-    val fileUri:Uri,
-    val numPages:Int
-)
-
 @HiltViewModel
-class Img2pdfViewModel @Inject constructor(private val toolsRepository: ToolsInterface,
-                                           private val img2PdfRepository: Img2PdfInterface): ViewModel() {
+class Img2pdfViewModel @Inject constructor(private val img2PdfRepository: Img2PdfRepository): ViewModel() {
     private val _uiState = MutableStateFlow(img2PdfRepository.initImg2PdfUiState())
     val uiState: StateFlow<Img2PdfUiState> = _uiState.asStateFlow()
 
@@ -38,9 +27,9 @@ class Img2pdfViewModel @Inject constructor(private val toolsRepository: ToolsInt
      * Set the images for the current ui state.
      * @param uris list of uri of images
      */
-    fun setUris(uris: List<Uri>) {
+    fun setUris(uris: List<Uri>,isDocScanUri: Boolean) {
         _uiState.update {
-            it.copy(imageList = uris.map{ uri->toolsRepository.getImageInfo(uri = uri)})
+            it.copy(imageList = uris.map{ uri->img2PdfRepository.getImageInfo(uri = uri,isDocScanUri)})
         }
     }
 
@@ -62,9 +51,9 @@ class Img2pdfViewModel @Inject constructor(private val toolsRepository: ToolsInt
     /**
      * Append a list of image [uris] data to imageList
      */
-    fun addImgUris(uris: List<Uri>){
+    fun addImgUris(uris: List<Uri>,isDocScanUri: Boolean){
         _uiState.update {
-            it.copy(imageList = it.imageList +  uris.map{ uri->toolsRepository.getImageInfo(uri = uri)})
+            it.copy(imageList = it.imageList +  uris.map{ uri->img2PdfRepository.getImageInfo(uri = uri,isDocScanUri)})
         }
     }
     fun addDocScanUris(images: List<ImageInfo>){

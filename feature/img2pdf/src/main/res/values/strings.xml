@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="reorder">Reorder</string>
+    <string name="img2pdf_description">Our cutting-edge images to PDF converter ensures high-quality PDF, maintaining the integrity and clarity of your document.</string>
+    <string name="sort_by_size">Sort by size</string>
+    <string name="pdf_file_picker">Pdf File Picker</string>
+    <string name="upload_screen_banner" translatable="false">ca-app-pub-9471515798383572/1747507268</string>
+    <string name="convert2pdf" >Convert to pdf</string>
+    <string name="delete">Delete</string>
+    <string name="add_more">Add more</string>
+    <string name="capture">Capture</string>
+    <string name="empty_images_array_message">To add more images, please click "Add More." To take a new picture, tap the "Capture" button.</string>
+</resources>

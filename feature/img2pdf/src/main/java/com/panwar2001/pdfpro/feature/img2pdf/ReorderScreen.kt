@@ -29,6 +29,7 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.zIndex
 import coil.compose.AsyncImage
+import com.panwar2001.pdfpro.core.ui.components.DraggableGrid
 
 /**
  * @param imageList

@@ -1,4 +1,4 @@
-package com.panwar2001.pdfpro.feature.filepicker
+package com.panwar2001.pdfpro.feature.img2pdf
 
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.BorderStroke
@@ -34,22 +34,23 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.panwar2001.pdfpro.compose.AppBar
-import com.panwar2001.pdfpro.compose.MenuItem
-import com.panwar2001.pdfpro.data.Tool
-
+import com.panwar2001.pdfpro.core.ui.components.AppBar
+import com.panwar2001.pdfpro.core.ui.components.BannerAd
+import com.panwar2001.pdfpro.core.ui.components.MenuItem
+import com.panwar2001.pdfpro.core.ui.components.SnackBarHost
+import com.panwar2001.pdfpro.model.Tool
 
 @Composable
-fun FilePickerScreen(onNavigationIconClick:()->Unit,
-                     onClick: () -> Unit,
-                     tool:Tool,
-                     menuItems: List<MenuItem> = listOf(),
-                     isLoading:Boolean=false,
-                     snackBarHostState: SnackbarHostState,
+fun ImgPickerScreen(onNavigationIconClick:()->Unit,
+                    onClick: () -> Unit,
+                    tool: Tool,
+                    menuItems: List<MenuItem> = listOf(),
+                    isLoading:Boolean=false,
+                    snackBarHostState: SnackbarHostState,
 ) {
     Scaffold(snackbarHost ={ SnackBarHost(snackBarHostState) },
         topBar = {
-        AppBar(onNavigationIconC lick =onNavigationIconClick,
+        AppBar(onNavigationIconClick =onNavigationIconClick,
             menuItems = menuItems,
             titleComposable = {
                 Text(text = stringResource(id = R.string.pdf_file_picker))
@@ -69,7 +70,7 @@ fun FilePickerScreen(onNavigationIconClick:()->Unit,
                 )
             }
             ToolDescription(stringResource(id = tool.toolDescription))
-            Spacer(modifier = Modifier.height(dimensionResource(id = R.dimen.spacing_medium)))
+            Spacer(modifier = Modifier.height(dimensionResource(id = com.panwar2001.pdfpro.core.ui.R.dimen.spacing_medium)))
             Row(
                 modifier = Modifier.fillMaxSize(),
                 horizontalArrangement = Arrangement.Center
@@ -128,9 +129,10 @@ fun PrevFilePickerScreen(
     var loading by remember {
         mutableStateOf(false)
     }
-    FilePickerScreen(onNavigationIconClick = { /*TODO*/ },
+    ImgPickerScreen(onNavigationIconClick = { /*TODO*/ },
         onClick = { loading=!loading},
         tool = Tool(R.string.img2pdf_description,R.string.sort_by_size),
         isLoading = loading,
         snackBarHostState = snackBarHostState)
 }
+

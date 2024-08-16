@@ -4,7 +4,8 @@ import androidx.room.Entity
 import androidx.room.PrimaryKey
 
 @Entity(tableName = "folders")
-data class FolderEntity(
-    @PrimaryKey val id: String,
-    val lastModified: Long
+data class ImagesFolderEntity(
+    @PrimaryKey(autoGenerate = true) val id: Long,
+    val albumName: String,
+    val date: Long
 )

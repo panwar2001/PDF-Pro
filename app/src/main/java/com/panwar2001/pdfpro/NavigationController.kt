@@ -8,6 +8,7 @@ import com.panwar2001.pdfpro.feature.settings.settingsScreenNavigation
 import com.panwar2001.pdfpro.core.ui.components.AppModalNavigationDrawer
 import com.panwar2001.pdfpro.core.ui.components.NavigationActions
 import com.panwar2001.pdfpro.core.ui.components.rememberNavActions
+import com.panwar2001.pdfpro.feature.img2pdf.img2PdfGraph
 
 /**
  * Composable that has navigation host and graph for navigating
@@ -27,9 +28,9 @@ fun NavigationController(
             onBoardGraph(navActions)
             homeGraph(navActions)
             settingsScreenNavigation(navActions)
+            img2PdfGraph(navActions)
 //            pdf2txtGraph(navActions)
 //            pdf2ImgGraph(navActions)
-//            img2PdfGraph(navActions)
         }
     }
 }

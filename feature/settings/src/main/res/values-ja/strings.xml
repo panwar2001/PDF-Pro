@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources xmlns:tools="http://schemas.android.com/tools">
+    <string-array name="language">
+        <item>言語</item>
+        <item>アプリのインターフェースとコンテンツをパーソナライズするために、お好みの言語を選択してください。</item>
+    </string-array>
+    <string-array name="app_theme">
+        <item>テーマ</item>
+        <item>アプリのテーマを選択してください：ダークモードまたはライトモード</item>
+    </string-array>
+    <string-array name="feedback_google_form_content">
+        <item>フィードバック</item>
+        <item>Google フィードバック フォームに記入して、私たちと意見を共有してください。</item>
+    </string-array>
+    <string-array name="privacy_policy">
+        <item>プライバシーポリシー</item>
+        <item>プライバシーポリシーを読んで、データの収集、使用、および保護方法を理解してください。</item>
+    </string-array>
+    <string name="settings">設定</string>
+    <string name="version">バージョン \'%1$s\'</string>
+</resources>

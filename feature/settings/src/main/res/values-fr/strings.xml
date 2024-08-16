@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources xmlns:tools="http://schemas.android.com/tools">
+    <string-array name="language">
+        <item>Langue</item>
+        <item>Sélectionnez votre langue préférée pour personnaliser l\'interface et le contenu de l\'application.</item>
+    </string-array>
+    <string-array name="app_theme">
+        <item>Thème</item>
+        <item>Choisissez votre thème préféré : Mode sombre ou clair pour votre application.</item>
+    </string-array>
+    <string-array name="feedback_google_form_content">
+        <item>Avis</item>
+        <item>Partagez vos commentaires avec nous en remplissant notre formulaire Google Forms.</item>
+    </string-array>
+    <string-array name="privacy_policy">
+        <item>Politique de confidentialité</item>
+        <item>Lisez notre politique de confidentialité pour comprendre comment nous collectons, utilisons et protégeons vos données.</item>
+    </string-array>
+    <string name="settings">Paramètres</string>
+    <string name="version">Version %1$s</string>
+</resources>

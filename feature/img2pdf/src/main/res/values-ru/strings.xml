@@ -1,0 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="empty_images_array_message">Чтобы добавить больше изображений, нажмите «Добавить еще». Чтобы сделать новый снимок, нажмите кнопку «Сделать снимок».</string>
+</resources>

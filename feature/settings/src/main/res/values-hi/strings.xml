@@ -1,23 +1,21 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources xmlns:tools="http://schemas.android.com/tools">
-    <string-array name="app_theme">
-        <item>Theme</item>
-        <item>Choose your preferred theme: Dark or Light mode for your app</item>
-    </string-array>
     <string-array name="language">
-        <item>Language</item>
-        <item>Select your preferred language to personalize the app\'s interface and content.</item>
+        <item>भाषा</item>
+        <item>ऐप के इंटरफेस और सामग्री को व्यक्तिगत बनाने के लिए अपनी पसंदीदा भाषा चुनें।</item>
     </string-array>
-
-    <string-array name="feedback_google_form_content" tools:ignore="InconsistentArrays">
-        <item>Feedback</item>
-        <item>Share your thoughts with us by filling out our Google Feedback Form.</item>
+    <string-array name="app_theme">
+        <item>थीम</item>
+        <item>अपनी पसंदीदा थीम चुनें: अपने ऐप के लिए डार्क या लाइट मोड</item>
     </string-array>
-    <string-array name="privacy_policy" tools:ignore="InconsistentArrays">
-        <item >Privacy policy</item>
-        <item>Read our Privacy Policy to understand how we collect, use, and protect your data.</item>
+    <string-array name="feedback_google_form_content">
+        <item>फीडबैक</item>
+        <item>हमसे अपने विचार साझा करने के लिए हमारा Google फीडबैक फॉर्म भरें।</item>
     </string-array>
-    <string name="settings">Settings</string>
-    <string name="version">hindi check version \'%1$s\'</string>
-
+    <string-array name="privacy_policy">
+        <item>गोपनीयता नीति</item>
+        <item>समझने के लिए हमारी गोपनीयता नीति पढ़ें कि हम आपका डेटा कैसे एकत्रित, उपयोग और सुरक्षित करते हैं।</item>
+    </string-array>
+    <string name="settings">सेटिंग्स</string>
+    <string name="version">संस्करण \'%1$s\'</string>
 </resources>

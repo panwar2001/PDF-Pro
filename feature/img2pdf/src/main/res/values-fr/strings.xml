@@ -1,0 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="empty_images_array_message">Pour ajouter plus d\'images, cliquez sur "Ajouter plus". Pour prendre une nouvelle photo, appuyez sur le bouton "Capturer".</string>
+</resources>

@@ -1,4 +1,4 @@
-package com.panwar2001.pdfpro.feature.pdfviewer
+package com.panwar2001.pdfpro.core.ui.components
 
 import android.annotation.SuppressLint
 import android.net.Uri
@@ -49,6 +49,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
 import com.github.barteksc.pdfviewer.PDFView
+import com.panwar2001.pdfpro.core.ui.R
 
 /**
  *  This composable Display's the pdf utilizing Android View and library
@@ -246,16 +247,18 @@ fun BottomIconButton(onToggle:()->Unit,
                      icon:Any,
                      text:String,
                      tint:Color= LocalContentColor.current,
-                     highlightButton: Boolean=false
+                     highlightButton: Boolean=false,
+                     enabled:Boolean=true
                      ){
     Column(verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally){
         Button(onClick = onToggle,
+            enabled = enabled,
             colors =  ButtonDefaults.buttonColors(if(highlightButton) Color.Red.copy(alpha = 0.1f) else Color.Transparent)) {
             if(icon is Int) {
                 Icon(
                     painter = painterResource(id = icon),
-                    modifier = Modifier.size(32.dp),
+                    modifier = Modifier.size(24.dp),
                     contentDescription = text,
                     tint = tint
                 )
@@ -263,14 +266,15 @@ fun BottomIconButton(onToggle:()->Unit,
             else if(icon is ImageVector) {
                 Icon(
                     imageVector =icon,
-                    modifier = Modifier.size(32.dp),
+                    modifier = Modifier.size(24.dp),
                     contentDescription = text,
                     tint = tint
                 )
             }
         }
         Text(text = text,
-            fontWeight = FontWeight.Bold)
+            fontWeight = FontWeight.Bold,
+            style = MaterialTheme.typography.labelSmall)
     }
 }
 

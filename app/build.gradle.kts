@@ -138,6 +138,7 @@ dependencies {
     implementation(project(":feature:home"))
     implementation(project(":feature:onboard"))
     implementation(project(":feature:settings"))
+    implementation(project(":feature:img2pdf"))
     /**
      * Android Dependencies
      */

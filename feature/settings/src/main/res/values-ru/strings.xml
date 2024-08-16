@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources xmlns:tools="http://schemas.android.com/tools">
+    <string-array name="language">
+        <item>Язык</item>
+        <item>Выберите предпочтительный язык, чтобы персонализировать интерфейс и контент приложения.</item>
+    </string-array>
+    <string-array name="app_theme">
+        <item>Тема</item>
+        <item>Выберите предпочтительную тему: Темный или Светлый режим для вашего приложения</item>
+    </string-array>
+    <string-array name="feedback_google_form_content">
+        <item>Обратная связь</item>
+        <item>Поделитесь своим мнением, заполнив нашу форму обратной связи Google.</item>
+    </string-array>
+    <string-array name="privacy_policy">
+        <item>Политика конфиденциальности</item>
+        <item>Прочитайте нашу Политику конфиденциальности, чтобы понять, как мы собираем, используем и защищаем ваши данные.</item>
+    </string-array>
+    <string name="settings">Настройки</string>
+    <string name="version">Версия \'%1$s\'</string>
+</resources>
