@@ -27,13 +27,8 @@ class AppLocaleRepositoryImpl @Inject constructor(
     //TODO("check for how to set locale for less than android 13 version")
     override suspend fun setAppLocale(localeTag: String) {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-            AppCompatDelegate.setApplicationLocales(
-                LocaleListCompat.forLanguageTags(
-                    localeTag
-                )
-            )
-//            context.getSystemService(LocaleManager::class.java).applicationLocales=  LocaleList(
-//                Locale.forLanguageTag(localeTag))
+            context.getSystemService(LocaleManager::class.java).applicationLocales=  LocaleList(
+                Locale.forLanguageTag(localeTag))
         } else {
             AppCompatDelegate.setApplicationLocales(
                 LocaleListCompat.forLanguageTags(
@@ -43,3 +38,5 @@ class AppLocaleRepositoryImpl @Inject constructor(
         }
     }
 }
+
+
