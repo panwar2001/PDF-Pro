@@ -2,8 +2,10 @@ package com.panwar2001.pdfpro.feature.img2pdf
 
 import android.net.Uri
 import androidx.annotation.WorkerThread
+import androidx.core.net.toFile
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.google.mlkit.vision.documentscanner.GmsDocumentScanningResult.Page
 import com.panwar2001.pdfpro.core.data.repository.Img2PdfRepository
 import com.panwar2001.pdfpro.core.data.repository.ToolsRepository
 import com.panwar2001.pdfpro.model.ImageInfo
@@ -17,7 +19,12 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
-class Img2pdfViewModel @Inject constructor(private val img2PdfRepository: Img2PdfRepository): ViewModel() {
+class Img2pdfViewModel
+@Inject
+constructor(
+    private val img2PdfRepository: Img2PdfRepository,
+    private val toolsRepository: ToolsRepository
+): ViewModel() {
     private val _uiState = MutableStateFlow(img2PdfRepository.initImg2PdfUiState())
     val uiState: StateFlow<Img2PdfUiState> = _uiState.asStateFlow()
 
@@ -56,10 +63,18 @@ class Img2pdfViewModel @Inject constructor(private val img2PdfRepository: Img2Pd
             it.copy(imageList = it.imageList +  uris.map{ uri->img2PdfRepository.getImageInfo(uri = uri,isDocScanUri)})
         }
     }
-    fun addDocScanUris(images: List<ImageInfo>){
+    fun addDocScanUris(pages: List<Page>){
+
         _uiState.update {
-            it.copy(imageList = it.imageList + images)
+            it.copy(imageList = it.imageList + pages.map { page->
+                ImageInfo(page.imageUri,
+                    "image/jpeg",
+                    toolsRepository.getFileSize( page.imageUri.toFile().length())
+                )})
         }
+    }
+    fun getFileSize(docUri: Uri){
+
     }
     /**
      *

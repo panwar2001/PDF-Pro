@@ -53,6 +53,7 @@ import com.google.mlkit.vision.documentscanner.GmsDocumentScannerOptions.RESULT_
 import com.google.mlkit.vision.documentscanner.GmsDocumentScannerOptions.SCANNER_MODE_FULL
 import com.google.mlkit.vision.documentscanner.GmsDocumentScanning
 import com.google.mlkit.vision.documentscanner.GmsDocumentScanningResult
+import com.google.mlkit.vision.documentscanner.GmsDocumentScanningResult.Page
 import com.panwar2001.pdfpro.core.ui.components.BottomIconButton
 import com.panwar2001.pdfpro.core.ui.components.ImageComponent
 import com.panwar2001.pdfpro.model.ImageInfo
@@ -64,12 +65,11 @@ fun ImagesDisplay(navigateUp:()->Unit,
                   imageList:List<ImageInfo>,
                   navigateToReorder:()->Unit,
                   addImgUris:(List<Uri>,Boolean)->Unit,
-                  addDocScanUris:(List<ImageInfo>)->Unit,
+                  addDocScanUris:(List<Page>)->Unit,
                   toggleCheckBox:(Int,Boolean)->Unit,
                   deleteImages:()->Unit,
                   convertToPdf:()->Unit,
                   scanner: GmsDocumentScanner= rememberDocumentScanner(),
-                  getFileSizeUseCase: (Long)->String= { "" }
 ){
     val imagesPickerLauncher= rememberLauncherForActivityResult(
         contract = ActivityResultContracts.PickMultipleVisualMedia() ,
@@ -85,13 +85,7 @@ fun ImagesDisplay(navigateUp:()->Unit,
             val scanningResult =
                 GmsDocumentScanningResult.fromActivityResultIntent(result.data)
             scanningResult?.pages?.let { pages ->
-                addDocScanUris(
-                    pages.map {
-                        ImageInfo(it.imageUri,
-                            "image/jpeg",
-                            getFileSizeUseCase( it.imageUri.toFile().length())
-                        )}
-                )
+                addDocScanUris(pages)
             }
         }
     }

@@ -81,7 +81,7 @@ fun NavGraphBuilder.img2PdfGraph(navActions: NavigationActions){
                 uri = uiState.fileUri,
                 navigateUp = navActions::navigateBack,
                 fileName = uiState.fileName,
-                numPages = uiState.numPages
+                numPages = uiState.imageList.size
             )
         }
         composable(route= com.panwar2001.pdfpro.screens.Screens.Img2Pdf.SavePdfScreen.route){ backStackEntry->
