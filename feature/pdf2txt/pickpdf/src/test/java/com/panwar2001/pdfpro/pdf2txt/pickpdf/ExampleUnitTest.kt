@@ -1,4 +1,4 @@
-package com.panwar2001.pdfpro.feature.pdf2txt
+package com.panwar2001.pdfpro.pdf2txt.pickpdf
 
 import org.junit.Test
 

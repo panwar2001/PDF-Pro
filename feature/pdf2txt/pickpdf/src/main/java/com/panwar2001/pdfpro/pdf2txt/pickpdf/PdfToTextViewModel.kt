@@ -1,8 +1,6 @@
 package com.panwar2001.pdfpro.feature.pdf2txt
 
-import android.graphics.Bitmap
 import android.net.Uri
-import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.panwar2001.pdfpro.data.Pdf2TextInterface

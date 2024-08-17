@@ -24,22 +24,24 @@ import com.panwar2001.pdfpro.compose.pdfToText.TextFilesScreen
 import com.panwar2001.pdfpro.compose.pdfToText.TextScreen
 import com.panwar2001.pdfpro.data.DataSource
 import com.panwar2001.pdfpro.core.domain.EventType
+import com.panwar2001.pdfpro.core.ui.components.NavigationActions
+import com.panwar2001.pdfpro.core.ui.components.passwordInputDialogState
+import com.panwar2001.pdfpro.screens.Screens
 import kotlinx.coroutines.flow.collectLatest
 
 fun NavGraphBuilder.pdf2txtGraph(navActions: NavigationActions){
-    navigation(route= com.panwar2001.pdfpro.screens.Screens.PdfToText.route,startDestination= com.panwar2001.pdfpro.screens.Screens.FilePicker.route) {
-        composable(route = com.panwar2001.pdfpro.screens.Screens.FilePicker.route,) { backStackEntry ->
+    navigation(route= Screens.PdfToText.route,startDestination= Screens.FilePicker.route) {
+        composable(route = Screens.FilePicker.route) { backStackEntry ->
             val viewModel = navActions.sharedViewModel<PdfToTextViewModel>(backStackEntry)
             val uiState by viewModel.uiState.collectAsState()
             val context= LocalContext.current
             val snackBarHostState = remember { SnackbarHostState() }
-            val passwordDialogState=
-                com.panwar2001.pdfpro.ui.components.passwordInputDialogState(onConfirm = {
+            val passwordDialogState=passwordInputDialogState(onConfirm = {
                     viewModel.unlockPdfAndUpload(uri = uiState.uri, password = it)
                 })
             val menuItems = remember {
                 mutableListOf(MenuItem(R.string.text_files_log) {
-                    navActions.navigateToScreen(com.panwar2001.pdfpro.screens.Screens.PdfToText.TextFilesScreen.route)
+                    navActions.navigateToScreen(Screens.PdfToText.TextFilesScreen.route)
                 })
             }
 
