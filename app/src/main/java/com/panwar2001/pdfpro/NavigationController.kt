@@ -22,7 +22,7 @@ fun NavigationController(
     AppModalNavigationDrawer(
         navActions.drawerState,
         navigateTo = navActions::navigateTo,
-        headerImageRes = R.drawable.pdf_svg
+        headerImageRes = R.drawable.app_icon
     ) {
         NavHost(navActions.navController, startDestination) {
             onBoardGraph(navActions)
