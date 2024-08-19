@@ -4,6 +4,13 @@ import android.content.Context
 import android.content.Intent
 import android.net.Uri
 
+/**
+ * [sharePdfFile] to share the file provided it's mimetype and the uri
+ *
+ * @param context the main ui thread context, provided to share the file
+ * @param fileURI the uri of the file
+ * @param fileMimeType the mime type of the file to be shared
+ */
 fun sharePdfFile(context:Context,
               fileURI:Uri,
               fileMimeType:String){
