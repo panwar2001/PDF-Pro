@@ -4,7 +4,7 @@
 
 <img src="/Screenshots/home%20screen.jpg" alt="drawing" width="200" height="400"/>
 
-![navigation bar](/Screenshots/navigation%20bar.jpg)
+<img src="/Screenshots/navigation%20bar.jpg" alt="drawing" width="200" height="400"/>
 
 ### Contribution Guide
 
