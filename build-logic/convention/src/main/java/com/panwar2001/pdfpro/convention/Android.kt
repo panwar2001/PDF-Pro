@@ -1,21 +1,21 @@
-package com.panwar2001.pdfpro.tasks
+package com.panwar2001.pdfpro.convention
 
 import com.android.build.api.dsl.CommonExtension
 import org.gradle.api.JavaVersion
+import org.gradle.api.Project
 
-@Suppress("UnstableApiUsage")
-internal fun configureAndroid(commonExtension: CommonExtension<*, *, *, *>) {
+internal fun Project.configureAndroid(commonExtension: CommonExtension<*, *, *, *, * ,*>) {
     commonExtension.apply {
-        compileSdk = 33
+        compileSdk = 35
 
         defaultConfig {
-            minSdk = 30
+            minSdk = 24
             testInstrumentationRunner = "com.google.samples.modularization.testing.HiltTestRunner"
         }
 
         compileOptions {
-            sourceCompatibility = JavaVersion.VERSION_17
-            targetCompatibility = JavaVersion.VERSION_17
+            sourceCompatibility = JavaVersion.VERSION_1_8
+            targetCompatibility = JavaVersion.VERSION_1_8
         }
 
         buildFeatures.buildConfig = false

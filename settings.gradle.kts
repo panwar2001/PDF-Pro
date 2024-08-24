@@ -1,4 +1,5 @@
 pluginManagement {
+    includeBuild("build-logic")
     repositories {
         google {
             content {
@@ -30,7 +31,6 @@ include(":core:screens")
 include(":core:datastore")
 include(":feature:onboard")
 include(":feature:img2pdf")
-include(":feature:pdf2txt")
 include(":feature:languagepicker")
 include(":feature:pdf2img")
 include(":feature:lockpdf")
@@ -38,3 +38,4 @@ include(":feature:pdfviewer")
 include(":feature:filepicker")
 include(":feature:settings")
 include(":feature:home")
+include(":feature:pdf2txt:pickpdf")
