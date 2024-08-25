@@ -34,3 +34,84 @@ dependencies {
     compileOnly(libs.ksp.gradlePlugin)
     compileOnly(libs.room.gradlePlugin)
 }
+
+gradlePlugin {
+    plugins {
+        /**
+         * Register Compose application and library plugin.
+         */
+        register(androidApplicationCompose) {
+            id = androidApplicationComposeId
+            implementationClass = androidApplicationCompose
+        }
+        register(androidLibraryCompose) {
+            id = androidLibraryComposeId
+            implementationClass = androidLibraryCompose
+        }
+        /**
+         * Register Android application and library plugin.
+         */
+        register(androidApplication) {
+            id = androidApplicationId
+            implementationClass = androidApplication
+        }
+        register(androidLibrary) {
+            id = androidLibraryId
+            implementationClass = androidLibrary
+        }
+        /**
+         * Register plugin for features which are build with compose
+         */
+        register(androidFeature) {
+            id = androidFeatureId
+            implementationClass = androidFeature
+        }
+        /**
+         * Register hilt plugin
+         */
+        register(androidHilt) {
+            id = androidHiltId
+            implementationClass = androidHilt
+        }
+        /**
+         * Register room plugin
+         */
+        register(androidRoom) {
+            id = androidRoomId
+            implementationClass = androidRoom
+        }
+        /**
+         * Register test plugin
+         */
+        register(androidTest) {
+            id = androidTestId
+            implementationClass = androidTest
+        }
+    }
+}
+
+
+private val androidApplicationCompose="AndroidApplicationComposeConventionPlugin"
+private val androidApplicationComposeId= "pdfpro.android.application.compose"
+
+private val androidLibraryCompose= "AndroidLibraryComposeConventionPlugin"
+private val androidLibraryComposeId= "pdfpro.android.library.compose"
+
+private val androidApplication= "AndroidApplicationConventionPlugin"
+private val androidApplicationId= "pdfpro.android.application"
+
+private val androidLibrary = "AndroidLibraryConventionPlugin"
+private val androidLibraryId = "pdfpro.android.library"
+
+private val androidHilt = "HiltConventionPlugin"
+private val androidHiltId = "pdfpro.hilt"
+
+private val androidFeature = "AndroidFeatureConventionPlugin"
+private val androidFeatureId = "pdfpro.android.feature"
+
+private val androidRoom = "AndroidRoomConventionPlugin"
+private val androidRoomId= "pdfpro.android.room"
+
+private val androidTest = "AndroidTestConventionPlugin"
+private val androidTestId = "pdfpro.android.test"
+
