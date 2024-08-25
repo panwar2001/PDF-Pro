@@ -7,18 +7,24 @@ import org.gradle.api.Project
 import org.gradle.kotlin.dsl.dependencies
 
 class HiltConventionPlugin : Plugin<Project> {
+    private val devToolsKspPluginId= "com.google.devtools.ksp"
+    private val implementation= "implementation"
+    private val ksp = "ksp"
+    private val androidBase= "com.android.base"
+    private val daggerHiltPlugin= "com.google.dagger.hilt.android"
+    private val hiltAndroidCompiler= "hilt.android.compiler"
     override fun apply(target: Project) {
         with(target) {
-            pluginManager.apply("com.google.devtools.ksp")
+            pluginManager.apply(devToolsKspPluginId)
             dependencies {
-                add("ksp", libs.findLibrary("hilt.android.compiler").get())
+                add(ksp, libs.findLibrary(hiltAndroidCompiler).get())
             }
-
+            
             /** Add support for Android modules, based on [AndroidBasePlugin] */
-            pluginManager.withPlugin("com.android.base") {
-                pluginManager.apply("dagger.hilt.android.plugin")
+            pluginManager.withPlugin(androidBase) {
+                pluginManager.apply(daggerHiltPlugin)
                 dependencies {
-                    add("implementation", libs.findLibrary("hilt.android").get())
+                    add(implementation, libs.findLibrary(hiltAndroidCompiler).get())
                 }
             }
         }

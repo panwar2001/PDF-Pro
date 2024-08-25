@@ -7,24 +7,29 @@ import org.gradle.kotlin.dsl.dependencies
 import org.gradle.kotlin.dsl.kotlin
 
 class AndroidLibraryConventionPlugin : Plugin<Project> {
+    private val androidApplicationPluginId = "com.android.application"
+    private val kotlinAndroidPluginId = "org.jetbrains.kotlin.android"
+    private val testInstrumentationRunner= "androidx.test.runner.AndroidJUnitRunner"
+    private val androidTestImplementation= "androidTestImplementation"
+    private val testImplementation= "testImplementation"
+    private val test="test"
     override fun apply(target: Project) {
         with(target) {
             with(pluginManager) {
-                apply("com.android.application")
-                apply("org.jetbrains.kotlin.android")
+                apply(androidApplicationPluginId)
+                apply(kotlinAndroidPluginId)
             }
 
             extensions.configure<LibraryExtension> {
                 configureAndroid(this)
                 @Suppress("UnstableApiUsage")
                 testOptions.animationsDisabled = true
-                defaultConfig.testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+                defaultConfig.testInstrumentationRunner = testInstrumentationRunner
                 dependencies {
-                    add("androidTestImplementation", kotlin("test"))
-                    add("testImplementation", kotlin("test"))
+                    add(androidTestImplementation, kotlin(test))
+                    add(testImplementation, kotlin(test))
                 }
             }
-
         }
     }
 }

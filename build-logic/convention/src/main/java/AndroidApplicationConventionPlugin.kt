@@ -5,11 +5,13 @@ import org.gradle.api.Project
 import org.gradle.kotlin.dsl.configure
 
 class AndroidApplicationConventionPlugin : Plugin<Project> {
+    private val androidApplicationPluginId = "com.android.application"
+    private val kotlinAndroidPluginId = "org.jetbrains.kotlin.android"
     override fun apply(target: Project) {
         with(target) {
             with(pluginManager) {
-                apply("com.android.application")
-                apply("org.jetbrains.kotlin.android")
+                apply(androidApplicationPluginId)
+                apply(kotlinAndroidPluginId)
             }
 
             extensions.configure<ApplicationExtension> {
