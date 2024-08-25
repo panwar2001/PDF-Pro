@@ -36,6 +36,30 @@ dependencies {
 }
 
 gradlePlugin {
+    val androidApplicationCompose="AndroidApplicationComposeConventionPlugin"
+    val androidApplicationComposeId= "pdfpro.android.application.compose"
+
+    val androidLibraryCompose= "AndroidLibraryComposeConventionPlugin"
+    val androidLibraryComposeId= "pdfpro.android.library.compose"
+
+    val androidApplication= "AndroidApplicationConventionPlugin"
+    val androidApplicationId= "pdfpro.android.application"
+
+    val androidLibrary = "AndroidLibraryConventionPlugin"
+    val androidLibraryId = "pdfpro.android.library"
+
+    val androidHilt = "HiltConventionPlugin"
+    val androidHiltId = "pdfpro.hilt"
+
+    val androidFeature = "AndroidFeatureConventionPlugin"
+    val androidFeatureId = "pdfpro.android.feature"
+
+    val androidRoom = "AndroidRoomConventionPlugin"
+    val androidRoomId= "pdfpro.android.room"
+
+    val androidTest = "AndroidTestConventionPlugin"
+    val androidTestId = "pdfpro.android.test"
+
     plugins {
         /**
          * Register Compose application and library plugin.
@@ -91,27 +115,4 @@ gradlePlugin {
 }
 
 
-private val androidApplicationCompose="AndroidApplicationComposeConventionPlugin"
-private val androidApplicationComposeId= "pdfpro.android.application.compose"
-
-private val androidLibraryCompose= "AndroidLibraryComposeConventionPlugin"
-private val androidLibraryComposeId= "pdfpro.android.library.compose"
-
-private val androidApplication= "AndroidApplicationConventionPlugin"
-private val androidApplicationId= "pdfpro.android.application"
-
-private val androidLibrary = "AndroidLibraryConventionPlugin"
-private val androidLibraryId = "pdfpro.android.library"
-
-private val androidHilt = "HiltConventionPlugin"
-private val androidHiltId = "pdfpro.hilt"
-
-private val androidFeature = "AndroidFeatureConventionPlugin"
-private val androidFeatureId = "pdfpro.android.feature"
-
-private val androidRoom = "AndroidRoomConventionPlugin"
-private val androidRoomId= "pdfpro.android.room"
-
-private val androidTest = "AndroidTestConventionPlugin"
-private val androidTestId = "pdfpro.android.test"
 
