@@ -19,16 +19,12 @@ internal fun Project.configureAndroid(commonExtension: CommonExtension<*, *, *, 
 
         defaultConfig {
             minSdk = 24
-            vectorDrawables {
-                useSupportLibrary = true
-            }
         }
 
         compileOptions {
             sourceCompatibility = JavaVersion.VERSION_1_8
             targetCompatibility = JavaVersion.VERSION_1_8
         }
-
         buildFeatures.buildConfig = false
     }
 }

@@ -67,8 +67,7 @@ androidx-lifecycle-viewmodel-ktx = { group = "androidx.lifecycle", name = "lifec
 androidx-activity-compose = { group = "androidx.activity", name = "activity-compose", version.ref = "activityCompose" }
 androidx-compose-bom = { group = "androidx.compose", name = "compose-bom", version.ref = "composeBom" }
 androidx-material3 = { group = "androidx.compose.material3", name = "material3" }
-ui-tooling = { group = "androidx.compose.ui", name = "ui-tooling", version.ref = "uiTooling" }
-androidx-ui-tooling = { group = "androidx.compose.ui", name = "ui-tooling" }
+androidx-ui-tooling = { group = "androidx.compose.ui", name = "ui-tooling", version.ref = "uiTooling" }
 androidx-ui-tooling-preview = { group = "androidx.compose.ui", name = "ui-tooling-preview" }
 material = { group = "com.google.android.material", name = "material", version.ref = "material" }
 androidx-material-icons-extended = { module = "androidx.compose.material:material-icons-extended", version.ref = "materialIconsExtended" }
@@ -101,7 +100,7 @@ compose-gradlePlugin = { module = "org.jetbrains.kotlin:compose-compiler-gradle-
 kotlin-gradlePlugin = { group = "org.jetbrains.kotlin", name = "kotlin-gradle-plugin", version.ref = "kotlin" }
 ksp-gradlePlugin = { group = "com.google.devtools.ksp", name = "com.google.devtools.ksp.gradle.plugin", version.ref = "ksp" }
 room-gradlePlugin = { group = "androidx.room", name = "room-gradle-plugin", version.ref = "room" }
-
+hilt-gradlePlugin = { group = "com.google.dagger", name = "hilt-android-gradle-plugin", version.ref = "hiltAndroid" }
 
 [plugins]
 androidApplication = { id = "com.android.application", version.ref = "agp" }
@@ -113,3 +112,12 @@ jetbrains-kotlin-jvm = { id = "org.jetbrains.kotlin.jvm", version.ref = "jetbrai
 dagger-hilt-android = { id = "com.google.dagger.hilt.android", version.ref = "daggerHiltversion"}
 devtools-ksp = { id = "com.google.devtools.ksp", version.ref = "devtoolsKspVersion"}
 
+# Plugins defined by this project
+pdfpro-android-application = { id = "pdfpro.android.application", version = "unspecified" }
+pdfpro-android-application-compose = { id = "pdfpro.android.application.compose", version = "unspecified" }
+pdfpro-android-library = { id = "pdfpro.android.library", version = "unspecified" }
+pdfpro-android-library-compose = { id = "pdfpro.android.library.compose", version = "unspecified" }
+pdfpro-android-feature = { id = "pdfpro.android.feature", version = "unspecified" }
+pdfpro-android-room = { id = "pdfpro.android.room", version = "unspecified" }
+pdfpro-android-test = { id = "pdfpro.android.test", version = "unspecified" }
+pdfpro-hilt = { id = "pdfpro.hilt", version = "unspecified" }

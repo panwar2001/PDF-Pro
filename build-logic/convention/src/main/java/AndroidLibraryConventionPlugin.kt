@@ -7,7 +7,7 @@ import org.gradle.kotlin.dsl.dependencies
 import org.gradle.kotlin.dsl.kotlin
 
 class AndroidLibraryConventionPlugin : Plugin<Project> {
-    private val androidApplicationPluginId = "com.android.application"
+    private val androidLibraryPluginId = "com.android.library"
     private val kotlinAndroidPluginId = "org.jetbrains.kotlin.android"
     private val testInstrumentationRunner= "androidx.test.runner.AndroidJUnitRunner"
     private val androidTestImplementation= "androidTestImplementation"
@@ -16,10 +16,9 @@ class AndroidLibraryConventionPlugin : Plugin<Project> {
     override fun apply(target: Project) {
         with(target) {
             with(pluginManager) {
-                apply(androidApplicationPluginId)
+                apply(androidLibraryPluginId)
                 apply(kotlinAndroidPluginId)
             }
-
             extensions.configure<LibraryExtension> {
                 configureAndroid(this)
                 @Suppress("UnstableApiUsage")
