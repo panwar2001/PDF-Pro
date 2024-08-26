@@ -12,6 +12,5 @@ dependencies {
     implementation(projects.core.data)
     implementation(projects.core.ui)
 
-    androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
 }

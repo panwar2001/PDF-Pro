@@ -27,14 +27,13 @@ class HiltConventionPlugin : Plugin<Project> {
             pluginManager.withPlugin(androidBase) {
                 pluginManager.apply(daggerHiltPlugin)
                 dependencies {
-                    add(implementation, libs.findLibrary(hiltAndroidCompiler).get())
                     add(implementation, libs.findLibrary(hiltAndroid).get())
                 }
                 /**
                  * https://dagger.dev/hilt/gradle-setup#aggregating-task
                  */
                 extensions.configure<HiltExtension> {
-                    enableAggregatingTask = true
+                 enableAggregatingTask=true
                 }
             }
         }

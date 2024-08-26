@@ -1,8 +1,12 @@
 plugins {
     alias(libs.plugins.pdfpro.android.library)
+    alias(libs.plugins.pdfpro.android.library.compose)
 }
 
 android {
     namespace = "com.panwar2001.pdfpro.model"
-    compileSdk = 34
+}
+dependencies{
+    implementation(libs.androidx.ui)
+    implementation(libs.androidx.ui.graphics)
 }

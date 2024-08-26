@@ -28,7 +28,5 @@ dependencies {
 
     implementation(libs.android.pdf.viewer)
 
-    testImplementation(libs.junit)
-    androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
 }

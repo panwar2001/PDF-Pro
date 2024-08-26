@@ -26,5 +26,6 @@ internal fun Project.configureAndroidCompose(
         composeOptions {
             kotlinCompilerExtensionVersion = "1.5.1"
         }
+
     }
 }

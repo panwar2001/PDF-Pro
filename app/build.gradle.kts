@@ -21,6 +21,13 @@ android {
             useSupportLibrary = true
         }
     }
+    packaging {
+        resources {
+            excludes += "/META-INF/LICENSE.md"
+            excludes += "META-INF/LICENSE-notice.md"
+            excludes += "/META-INF/{AL2.0,LGPL2.1}"
+        }
+    }
     buildTypes {
         release {
             isDebuggable=false
@@ -48,13 +55,6 @@ android {
         }
     }
 
-    packaging {
-        resources {
-            excludes += "/META-INF/{AL2.0,LGPL2.1}"
-        }
-    }
-    //https://dagger.dev/hilt/gradle-setup#aggregating-task
-    hilt {    enableAggregatingTask = true }
 }
 
 dependencies {
@@ -62,6 +62,7 @@ dependencies {
     implementation(projects.feature.onboard)
     implementation(projects.feature.settings)
     implementation(projects.feature.img2pdf)
+    implementation(projects.core.data)
     /**
      * Android Dependencies
      */

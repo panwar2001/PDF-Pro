@@ -44,9 +44,9 @@ fun NavGraphBuilder.onBoardGraph(navActions: NavigationActions) {
 
 
 internal val onBoardList= listOf(
-    OnBoardData(icon= R.drawable.ocr,
-        title= R.string.pdf2text,
-        description = R.string.pdf2txt_description),
+//    OnBoardData(icon= R.drawable.ocr,
+//        title= R.string.pdf2text,
+//        description = R.string.pdf2txt_description),
     OnBoardData(icon= R.drawable.pdf_svg,
         title= R.string.img2pdf,
         description = R.string.img2pdf_description)

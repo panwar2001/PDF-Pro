@@ -13,6 +13,5 @@ dependencies {
     implementation(projects.core.ui)
     implementation(projects.feature.languagepicker)
 
-    androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
 }

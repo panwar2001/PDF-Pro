@@ -9,11 +9,11 @@ import com.panwar2001.pdfpro.model.ToolsData
 import com.panwar2001.pdfpro.screens.Screens
 object DataSource {
     val ToolsList = listOf(
-        ToolsData(iconId= R.drawable.outline_text,
-                  title = R.string.pdf2text,
-                  route= Screens.PdfToText.route,
-                  iconColor= 0xff54e1b6
-        ),
+//        ToolsData(iconId= R.drawable.outline_text,
+//                  title = R.string.pdf2text,
+//                  route= Screens.PdfToText.route,
+//                  iconColor= 0xff54e1b6
+//        ),
 //        ToolsData(R.drawable.ion_images,
 //                  title= R.string.pdf2img,
 //                  route= Screens.PdfToImage.route,
@@ -47,12 +47,12 @@ object DataSource {
             route= Screens.Home.route,
             iconColor= 0xff34e1b6
         ),
-        DrawerItemData(
-            icon= R.drawable.outline_text,
-            title = R.string.pdf2text,
-            route= Screens.PdfToText.route,
-            iconColor= 0xff54e1b6
-        ),
+//        DrawerItemData(
+//            icon= R.drawable.outline_text,
+//            title = R.string.pdf2text,
+//            route= Screens.PdfToText.route,
+//            iconColor= 0xff54e1b6
+//        ),
         DrawerItemData(
             icon = R.drawable.pdf_icon,
             title= R.string.img2pdf,

@@ -13,6 +13,5 @@ dependencies {
     implementation(projects.core.screens)
     implementation(projects.core.data)
 
-    androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
 }

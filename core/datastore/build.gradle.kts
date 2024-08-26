@@ -12,5 +12,4 @@ dependencies {
     implementation(libs.androidx.datastore.preferences)
     implementation(libs.androidx.lifecycle.runtime.ktx)
     api(projects.core.model)
-    testImplementation(libs.junit)
 }

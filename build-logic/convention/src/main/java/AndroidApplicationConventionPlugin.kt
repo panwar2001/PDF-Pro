@@ -2,6 +2,7 @@ import com.android.build.api.dsl.ApplicationExtension
 import com.panwar2001.pdfpro.convention.configureAndroid
 import org.gradle.api.Plugin
 import org.gradle.api.Project
+import org.gradle.api.plugins.JavaPluginExtension
 import org.gradle.kotlin.dsl.configure
 
 class AndroidApplicationConventionPlugin : Plugin<Project> {

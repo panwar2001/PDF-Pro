@@ -13,6 +13,5 @@ dependencies {
     implementation(projects.core.data)
 
     implementation(libs.gms.play.services.mlkit.document.scanner)
-    androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
 }
