@@ -20,7 +20,12 @@ dependencyResolutionManagement {
     }
 }
 
-rootProject.name = "PDF Pro"
+rootProject.name = "pdfpro"
+/**
+ * keep root project name in non capital letters without space to avoid error
+ * enable type-safe project accessors
+ */
+enableFeaturePreview("TYPESAFE_PROJECT_ACCESSORS")
 include(":app")
 include(":core:domain")
 include(":core:database")

@@ -8,5 +8,5 @@ android {
     namespace = "com.panwar2001.pdfpro.core.database"
 }
 dependencies {
-    api(project(":core:model"))
+    api(projects.core.model)
 }

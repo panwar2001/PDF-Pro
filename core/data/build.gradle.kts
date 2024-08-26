@@ -9,9 +9,9 @@ android {
 }
 
 dependencies {
-    api(project(":core:datastore"))
-    implementation(project(":core:database"))
-    implementation(project(":core:screens"))
+    api(projects.core.datastore)
+    implementation(projects.core.database)
+    implementation(projects.core.screens)
 
     implementation(libs.androidx.appcompat)
     implementation(libs.androidx.documentfile)

@@ -8,8 +8,8 @@ android {
 }
 
 dependencies {
-    api(project(":core:model"))
-    api(project(":core:screens"))
+    api(projects.core.model)
+    api(projects.core.screens)
 
     api(libs.androidx.core.ktx)
     api(libs.androidx.lifecycle.runtime.ktx)

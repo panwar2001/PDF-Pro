@@ -9,7 +9,7 @@ android {
 
 dependencies {
     implementation(libs.androidx.core.ktx)
-    implementation(project(":core:data"))
+    implementation(projects.core.data)
     implementation(libs.pdfbox.android)
     testImplementation(libs.junit)
 }
