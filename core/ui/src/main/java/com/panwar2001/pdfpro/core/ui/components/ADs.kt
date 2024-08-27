@@ -8,6 +8,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -18,6 +19,9 @@ import androidx.compose.ui.viewinterop.AndroidView
 import com.google.android.gms.ads.AdRequest
 import com.google.android.gms.ads.AdSize
 import com.google.android.gms.ads.AdView
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 /** Display [BannerAd]
  *
@@ -39,6 +43,7 @@ fun BannerAd(modifier: Modifier = Modifier,@StringRes adUnitResID:Int) {
               Text(text = "Ads are displayed here")
         }
     }else {
+        val scope = rememberCoroutineScope()
         val adUnitID = stringResource(id = adUnitResID)
         AndroidView(
             modifier = modifier.fillMaxWidth(),
@@ -46,9 +51,14 @@ fun BannerAd(modifier: Modifier = Modifier,@StringRes adUnitResID:Int) {
                 AdView(context).apply {
                     setAdSize(AdSize.BANNER)
                     adUnitId = adUnitID
-                    loadAd(AdRequest.Builder().build())
                 }
             }
-        )
+        ){ adView->
+            scope.launch {
+                withContext(Dispatchers.Main){
+                    adView.loadAd(AdRequest.Builder().build())
+                }
+            }
+        }
     }
 }
