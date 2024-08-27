@@ -15,7 +15,7 @@ import javax.inject.Singleton
 
 //https://developer.android.com/codelabs/basic-android-kotlin-compose-add-repository#3
 
-@Singleton
+
 class ToolsRepositoryImpl @Inject
 constructor(
     @ApplicationContext private val context: Context

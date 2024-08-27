@@ -15,7 +15,7 @@ import javax.inject.Inject
 import javax.inject.Singleton
 
 
-@Singleton
+
 class Pdf2ImgRepositoryImpl @Inject constructor(@ApplicationContext private val context: Context) :
     Pdf2ImgRepository {
     private val _progress = MutableStateFlow(0f)
