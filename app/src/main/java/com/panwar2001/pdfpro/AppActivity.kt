@@ -125,6 +125,8 @@ class AppActivity : AppCompatActivity() {
      * which makes it difficult to miss thread policy violations.
      *
      * source: https://developer.android.com/topic/performance/appstartup/analysis-optimization#kotlin
+     *
+     * TODO("THERE IS DISK READ ON MAIN THREAD DUE TO PREFERENCES DATASTORE , THUS permitDiskRead() IS APPLIED FOR NOW WHICH MUST BE REMOVED, APP MUST FUNCTION PROPERLY , NO DISK READ ON MAIN THREAD")
      */
     private fun enableStrictModeOnDebug(){
         if(BuildConfig.DEBUG) {
@@ -133,6 +135,7 @@ class AppActivity : AppCompatActivity() {
                     .Builder()
                     .detectAll()
                     .penaltyDeath()
+                    .permitDiskReads()
                     .build()
             )
         }
