@@ -6,7 +6,9 @@ plugins {
 
 android {
     namespace = "com.panwar2001.pdfpro"
-
+    buildFeatures{
+        buildConfig=true
+    }
     defaultConfig {
         applicationId = "com.panwar2001.pdfpro"
         /**

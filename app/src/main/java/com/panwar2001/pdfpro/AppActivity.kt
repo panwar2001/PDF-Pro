@@ -1,6 +1,7 @@
 package com.panwar2001.pdfpro
 
 import android.os.Bundle
+import android.os.StrictMode
 import androidx.activity.SystemBarStyle
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
@@ -35,6 +36,7 @@ class AppActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         val splashScreen= installSplashScreen()
         super.onCreate(savedInstanceState)
+        enableStrictModeOnDebug()
         var uiState: AppUiState by mutableStateOf(AppUiState.Loading)
 
         // update the uiState
@@ -54,7 +56,6 @@ class AppActivity : AppCompatActivity() {
         enableEdgeToEdge()
 
         splashScreen.setKeepOnScreenCondition { uiState is AppUiState.Loading }
-
         setContent {
             Content(uiState)
         }
@@ -113,6 +114,27 @@ class AppActivity : AppCompatActivity() {
                 ) { darkTheme },
             )
             onDispose {}
+        }
+    }
+
+    /**
+     * Identify expensive operations on the main thread
+     *
+     * Using StrictMode.ThreadPolicy enables the thread policy on all debug builds
+     * and crashes the app whenever violations of the thread policy are detected,
+     * which makes it difficult to miss thread policy violations.
+     *
+     * source: https://developer.android.com/topic/performance/appstartup/analysis-optimization#kotlin
+     */
+    private fun enableStrictModeOnDebug(){
+        if(BuildConfig.DEBUG) {
+            StrictMode.setThreadPolicy(
+                StrictMode.ThreadPolicy
+                    .Builder()
+                    .detectAll()
+                    .penaltyDeath()
+                    .build()
+            )
         }
     }
 }
