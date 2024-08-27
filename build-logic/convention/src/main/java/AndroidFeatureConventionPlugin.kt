@@ -12,6 +12,7 @@ class AndroidFeatureConventionPlugin : Plugin<Project> {
     private val implementationConfiguration= "implementation"
     private val androidLibraryPluginId= "pdfpro.android.library"
     private val hiltPluginId="pdfpro.hilt"
+    private val detektPluginId= "io.gitlab.arturbosch.detekt"
     /**
      * Dependencies
      */
@@ -25,6 +26,7 @@ class AndroidFeatureConventionPlugin : Plugin<Project> {
             pluginManager.apply {
                 apply(androidLibraryPluginId)
                 apply(hiltPluginId)
+                apply(detektPluginId)
             }
             extensions.configure<LibraryExtension> {
                 testOptions.animationsDisabled = true

@@ -8,11 +8,13 @@ import org.gradle.kotlin.dsl.configure
 class AndroidApplicationConventionPlugin : Plugin<Project> {
     private val androidApplicationPluginId = "com.android.application"
     private val kotlinAndroidPluginId = "org.jetbrains.kotlin.android"
+    private val detektPluginId= "io.gitlab.arturbosch.detekt"
     override fun apply(target: Project) {
         with(target) {
             with(pluginManager) {
                 apply(androidApplicationPluginId)
                 apply(kotlinAndroidPluginId)
+                apply(detektPluginId)
             }
 
             extensions.configure<ApplicationExtension> {
