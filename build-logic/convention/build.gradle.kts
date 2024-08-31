@@ -121,7 +121,7 @@ gradlePlugin {
         register(configDetekt) {
             id = configDetektId
             implementationClass = configDetekt
-         }
+        }
     }
 }
 

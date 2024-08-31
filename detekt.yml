@@ -1,2 +1,9 @@
+naming:
+  FunctionNaming:
+    functionPattern: "[A-Za-z][_A-Za-z0-9]*"
+  TopLevelPropertyNaming:
+    constantPattern: "[A-Za-z][_A-Za-z0-9]*"
 formatting:
-  autoCorrect: true
+  Indentation:
+    active: true
+    autoCorrect: true

@@ -1,4 +1,4 @@
-package com.panwar2001.pdfpro.pdf2TextTest
+package com.panwar2001.pdfpro.core.data.pdf2TextTest
 
 import android.net.Uri
 import com.panwar2001.pdfpro.data.Pdf2TextInterface

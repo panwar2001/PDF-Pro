@@ -128,7 +128,9 @@ class AppActivity : AppCompatActivity() {
      *
      * source: https://developer.android.com/topic/performance/appstartup/analysis-optimization#kotlin
      *
-     * TODO("THERE IS DISK READ ON MAIN THREAD DUE TO PREFERENCES DATASTORE , THUS permitDiskRead() IS APPLIED FOR NOW WHICH MUST BE REMOVED, APP MUST FUNCTION PROPERLY , NO DISK READ ON MAIN THREAD")
+     * TODO("THERE IS DISK READ ON MAIN THREAD DUE TO PREFERENCES DATASTORE ,
+     *   THUS permitDiskRead() IS APPLIED FOR NOW WHICH MUST BE REMOVED,
+     *   APP MUST FUNCTION PROPERLY , NO DISK READ ON MAIN THREAD")
      */
     private fun enableStrictModeOnDebug() {
         if (BuildConfig.DEBUG) {
@@ -156,10 +158,19 @@ private fun shouldUseDarkTheme(
  * The default light scrim, as defined by androidx and the platform:
  * https://cs.android.com/androidx/platform/frameworks/support/+/androidx-main:activity/activity/src/main/java/androidx/activity/EdgeToEdge.kt;l=35-38;drc=27e7d52e8604a080133e8b842db10c89b4482598
  */
-private val lightScrim = android.graphics.Color.argb(0xe6, 0xFF, 0xFF, 0xFF)
+private const val ALPHA_LIGHT = 0xE6
+private const val RED_LIGHT = 0xFF
+private const val GREEN_LIGHT = 0xFF
+private const val BLUE_LIGHT = 0xFF
+
+private val lightScrim = android.graphics.Color.argb(ALPHA_LIGHT, RED_LIGHT, GREEN_LIGHT, BLUE_LIGHT)
 
 /**
  * The default dark scrim, as defined by androidx and the platform:
  * https://cs.android.com/androidx/platform/frameworks/support/+/androidx-main:activity/activity/src/main/java/androidx/activity/EdgeToEdge.kt;l=40-44;drc=27e7d52e8604a080133e8b842db10c89b4482598
  */
-private val darkScrim = android.graphics.Color.argb(0x80, 0x1b, 0x1b, 0x1b)
+private const val ALPHA_DARK = 0x80
+private const val RED_DARK = 0x1B
+private const val GREEN_DARK = 0x1B
+private const val BLUE_DARK = 0x1B
+private val darkScrim = android.graphics.Color.argb(ALPHA_DARK, RED_DARK, GREEN_DARK, BLUE_DARK)

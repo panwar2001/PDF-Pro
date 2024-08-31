@@ -1,4 +1,4 @@
-package com.panwar2001.pdfpro.UseCaseTest
+package com.panwar2001.pdfpro.core.data
 
 import com.panwar2001.pdfpro.core.domain.GetFileSizeUseCase
 import junit.framework.TestCase.assertEquals

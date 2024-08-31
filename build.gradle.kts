@@ -12,14 +12,3 @@ plugins {
     alias(libs.plugins.jetbrains.kotlin.jvm) apply false
     alias(libs.plugins.detekt) apply false
 }
-allprojects {
-    tasks.register<Detekt>("detektFix") {
-        doLast {
-            buildUponDefaultConfig=true
-            description = ""
-            ignoreFailures = false
-            autoCorrect = true
-            parallel = true
-        }
-    }
-}

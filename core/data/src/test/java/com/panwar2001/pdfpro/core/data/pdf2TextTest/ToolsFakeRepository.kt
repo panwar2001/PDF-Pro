@@ -1,4 +1,4 @@
-package com.panwar2001.pdfpro.pdf2TextTest
+package com.panwar2001.pdfpro.core.data.pdf2TextTest
 
 import android.graphics.Bitmap
 import android.net.Uri

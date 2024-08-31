@@ -1,4 +1,4 @@
-package com.panwar2001.pdfpro.pdf2TextTest
+package com.panwar2001.pdfpro.core.data.pdf2TextTest
 
 import android.content.Context
 import com.panwar2001.pdfpro.core.domain.GetFileSizeUseCase
@@ -39,6 +39,6 @@ class Dao : TextFileDao {
         return ""
     }
 
-    override suspend fun updatePath(id: Long, path: String) {
+    override suspend fun updatePath(id: Long, path: String) c{
     }
 }

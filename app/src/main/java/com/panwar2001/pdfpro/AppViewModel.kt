@@ -11,6 +11,8 @@ import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.flow.stateIn
 import javax.inject.Inject
 
+private const val STOP_TIMEOUT_MILLISECONDS: Long = 5_000
+
 @HiltViewModel
 class AppViewModel
 @Inject
@@ -21,7 +23,7 @@ constructor(userDataRepository: UserDataRepository) : ViewModel() {
         .map { AppUiState.Success(it) }
         .stateIn(
             scope = viewModelScope,
-            started = SharingStarted.WhileSubscribed(5_000),
+            started = SharingStarted.WhileSubscribed(STOP_TIMEOUT_MILLISECONDS),
             initialValue = AppUiState.Loading
         )
 }
