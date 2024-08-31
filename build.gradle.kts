@@ -1,3 +1,5 @@
+import io.gitlab.arturbosch.detekt.Detekt
+
 // Top-level build file where you can add configuration options common to all sub-projects/modules.
 
 plugins {
@@ -9,4 +11,15 @@ plugins {
     alias(libs.plugins.android.library) apply false
     alias(libs.plugins.jetbrains.kotlin.jvm) apply false
     alias(libs.plugins.detekt) apply false
+}
+allprojects {
+    tasks.register<Detekt>("detektFix") {
+        doLast {
+            buildUponDefaultConfig=true
+            description = ""
+            ignoreFailures = false
+            autoCorrect = true
+            parallel = true
+        }
+    }
 }

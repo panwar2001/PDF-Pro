@@ -1,6 +1,5 @@
 package com.panwar2001.pdfpro.pdf2TextTest
 
-import android.content.Context
 import android.graphics.Bitmap
 import android.net.Uri
 import com.panwar2001.pdfpro.compose.PdfRow
@@ -10,7 +9,7 @@ import com.panwar2001.pdfpro.view_models.AppUiState
 import io.mockk.mockk
 import kotlinx.coroutines.flow.StateFlow
 
-class ToolsFakeRepository(override val progress: StateFlow<Float>) :ToolsInterface {
+class ToolsFakeRepository(override val progress: StateFlow<Float>) : ToolsInterface {
 
     override suspend fun searchPdfs(
         sortingOrder: Int,
@@ -38,7 +37,6 @@ class ToolsFakeRepository(override val progress: StateFlow<Float>) :ToolsInterfa
     }
 
     override suspend fun setAppLocale(localeTag: String) {
-
     }
 
     override fun getImageInfo(uri: Uri, isDocScanUri: Boolean): ImageInfo {

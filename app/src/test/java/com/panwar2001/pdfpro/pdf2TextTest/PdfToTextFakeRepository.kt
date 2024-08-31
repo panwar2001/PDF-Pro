@@ -8,9 +8,9 @@ import io.mockk.mockk
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 
-class PdfToTextFakeRepository :Pdf2TextInterface {
-    private var textFiles= mutableListOf<TextFileInfo>()
-    private val uriMock= mockk<Uri>()
+class PdfToTextFakeRepository : Pdf2TextInterface {
+    private var textFiles = mutableListOf<TextFileInfo>()
+    private val uriMock = mockk<Uri>()
     init {
         repeat(5) {
             textFiles.add(TextFileInfo("", it.toLong(), mockk(), "1 mb"))
@@ -18,32 +18,33 @@ class PdfToTextFakeRepository :Pdf2TextInterface {
     }
     override fun initPdfToTextUiState(): PdfToTextUiState {
         return PdfToTextUiState(
-            uri= uriMock,
-            isLoading=false,
-            thumbnail= mockk(),
-            pdfFileName="file.pdf",
+            uri = uriMock,
+            isLoading = false,
+            thumbnail = mockk(),
+            pdfFileName = "file.pdf",
             textFileName = "",
-            text= "",
-            numPages=0,
-            fileUniqueId = 0)
+            text = "",
+            numPages = 0,
+            fileUniqueId = 0
+        )
     }
 
     override suspend fun createTextFile(text: String, fileName: String): Pair<Long, String> {
-        return Pair(0,"")
+        return Pair(0, "")
     }
 
     override suspend fun deleteTextFile(id: Long) {
-        if(id==0L){
+        if (id == 0L) {
             throw NullPointerException("error message")
         }
 
-        var index=-1
-        for(i in 0..<textFiles.size){
-            if(textFiles[i].id==id){
-                index=i
+        var index = -1
+        for (i in 0..<textFiles.size) {
+            if (textFiles[i].id == id) {
+                index = i
             }
         }
-        if(index!=-1) {
+        if (index != -1) {
             textFiles.removeAt(index)
         }
     }
@@ -53,10 +54,9 @@ class PdfToTextFakeRepository :Pdf2TextInterface {
     }
 
     override suspend fun getTextAndNameFromFile(id: Long): Pair<String, String> {
-        return Pair("text "," file name.txt")
+        return Pair("text ", " file name.txt")
     }
 
     override suspend fun modifyName(id: Long, name: String) {
-
     }
 }

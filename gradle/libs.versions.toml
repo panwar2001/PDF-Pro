@@ -4,6 +4,7 @@ androidPdfViewer = "3.2.0-beta.3"
 coilCompose = "2.7.0"
 coreSplashscreenVersion = "1.0.1"
 datastorePreferences = "1.1.1"
+detektFormatting = "1.23.6"
 hiltAndroid = "2.52"
 hiltNavigationCompose = "1.2.0"
 kotlin = "2.0.0"
@@ -45,6 +46,7 @@ room = "2.6.1"
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
 androidx-datastore-preferences = { module = "androidx.datastore:datastore-preferences", version.ref = "datastorePreferences" }
 core-splashscreen = { module = "androidx.core:core-splashscreen", version.ref = "coreSplashscreenVersion" }
+detekt-formatting = { module = "io.gitlab.arturbosch.detekt:detekt-formatting", version.ref = "detektFormatting" }
 gms-play-services-mlkit-document-scanner = { module = "com.google.android.gms:play-services-mlkit-document-scanner", version.ref = "playServicesMlkitDocumentScannerVersion" }
 androidx-lifecycle-runtime-ktx = { group = "androidx.lifecycle", name = "lifecycle-runtime-ktx", version.ref = "lifecycleRuntimeKtx" }
 kotlinx-coroutines-core = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-core", version.ref = "kotlinxCoroutinesCore" }
@@ -102,6 +104,7 @@ kotlin-gradlePlugin = { group = "org.jetbrains.kotlin", name = "kotlin-gradle-pl
 ksp-gradlePlugin = { group = "com.google.devtools.ksp", name = "com.google.devtools.ksp.gradle.plugin", version.ref = "ksp" }
 room-gradlePlugin = { group = "androidx.room", name = "room-gradle-plugin", version.ref = "room" }
 hilt-gradlePlugin = { group = "com.google.dagger", name = "hilt-android-gradle-plugin", version.ref = "hiltAndroid" }
+detekt-gradlePlugin = { group="io.gitlab.arturbosch.detekt", name="detekt-gradle-plugin", version.ref = "detekt"}
 
 [plugins]
 androidApplication = { id = "com.android.application", version.ref = "agp" }
@@ -123,3 +126,4 @@ pdfpro-android-feature = { id = "pdfpro.android.feature", version = "unspecified
 pdfpro-android-room = { id = "pdfpro.android.room", version = "unspecified" }
 pdfpro-android-test = { id = "pdfpro.android.test", version = "unspecified" }
 pdfpro-hilt = { id = "pdfpro.hilt", version = "unspecified" }
+

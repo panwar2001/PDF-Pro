@@ -14,19 +14,19 @@ import javax.inject.Inject
 @HiltViewModel
 class AppViewModel
 @Inject
-constructor(userDataRepository: UserDataRepository): ViewModel(){
-val userData = userDataRepository
-    .userData
-    .onStart { AppUiState.Loading }
-    .map { AppUiState.Success(it) }
-    .stateIn(
-        scope = viewModelScope,
-        started = SharingStarted.WhileSubscribed(5_000),
-        initialValue = AppUiState.Loading
-    )
+constructor(userDataRepository: UserDataRepository) : ViewModel() {
+    val userData = userDataRepository
+        .userData
+        .onStart { AppUiState.Loading }
+        .map { AppUiState.Success(it) }
+        .stateIn(
+            scope = viewModelScope,
+            started = SharingStarted.WhileSubscribed(5_000),
+            initialValue = AppUiState.Loading
+        )
 }
 
-sealed interface AppUiState{
-    data object Loading: AppUiState
-    data class Success(val userData: UserData): AppUiState
+sealed interface AppUiState {
+    data object Loading : AppUiState
+    data class Success(val userData: UserData) : AppUiState
 }

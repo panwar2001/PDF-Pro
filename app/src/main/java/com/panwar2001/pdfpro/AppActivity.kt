@@ -34,14 +34,14 @@ class AppActivity : AppCompatActivity() {
     private val viewModel: AppViewModel by viewModels()
 
     override fun onCreate(savedInstanceState: Bundle?) {
-        val splashScreen= installSplashScreen()
+        val splashScreen = installSplashScreen()
         super.onCreate(savedInstanceState)
         enableStrictModeOnDebug()
         var uiState: AppUiState by mutableStateOf(AppUiState.Loading)
 
         // update the uiState
         lifecycleScope.launch {
-            lifecycle.repeatOnLifecycle(Lifecycle.State.STARTED){
+            lifecycle.repeatOnLifecycle(Lifecycle.State.STARTED) {
                 viewModel.userData
                     .onEach { uiState = it }
                     .collect()
@@ -60,6 +60,7 @@ class AppActivity : AppCompatActivity() {
             Content(uiState)
         }
     }
+
     @Composable
     private fun Content(uiState: AppUiState) {
         val darkTheme = shouldUseDarkTheme(uiState)
@@ -71,17 +72,18 @@ class AppActivity : AppCompatActivity() {
              *  A surface container using the 'background' color from the theme
              */
             Surface(
-                    modifier = Modifier.fillMaxSize(),
-                    color = MaterialTheme.colorScheme.background
-                ) {
-                    if(uiState is AppUiState.Success) {
-                        NavigationController(
-                            startDestination = getStartingDestination(uiState.userData)
-                        )
-                    }
+                modifier = Modifier.fillMaxSize(),
+                color = MaterialTheme.colorScheme.background
+            ) {
+                if (uiState is AppUiState.Success) {
+                    NavigationController(
+                        startDestination = getStartingDestination(uiState.userData)
+                    )
                 }
             }
+        }
     }
+
     /**
      * If onboarding is done once when app is run for first time then always
      * home screen is opened after splash screen.
@@ -90,7 +92,7 @@ class AppActivity : AppCompatActivity() {
         userData: UserData
     ): String {
         userData.apply {
-            return if(shouldHideOnboarding) Screens.Home.route else Screens.OnBoard.route
+            return if (shouldHideOnboarding) Screens.Home.route else Screens.OnBoard.route
         }
     }
 
@@ -101,7 +103,7 @@ class AppActivity : AppCompatActivity() {
      * than the configuration's dark theme value based on the user preference.
      */
     @Composable
-    private fun EnableEdgeToEdge(darkTheme : Boolean){
+    private fun EnableEdgeToEdge(darkTheme: Boolean) {
         DisposableEffect(darkTheme) {
             enableEdgeToEdge(
                 statusBarStyle = SystemBarStyle.auto(
@@ -128,8 +130,8 @@ class AppActivity : AppCompatActivity() {
      *
      * TODO("THERE IS DISK READ ON MAIN THREAD DUE TO PREFERENCES DATASTORE , THUS permitDiskRead() IS APPLIED FOR NOW WHICH MUST BE REMOVED, APP MUST FUNCTION PROPERLY , NO DISK READ ON MAIN THREAD")
      */
-    private fun enableStrictModeOnDebug(){
-        if(BuildConfig.DEBUG) {
+    private fun enableStrictModeOnDebug() {
+        if (BuildConfig.DEBUG) {
             StrictMode.setThreadPolicy(
                 StrictMode.ThreadPolicy
                     .Builder()
@@ -145,11 +147,10 @@ class AppActivity : AppCompatActivity() {
 @Composable
 private fun shouldUseDarkTheme(
     uiState: AppUiState
-):Boolean = when(uiState){
+): Boolean = when (uiState) {
     AppUiState.Loading -> false
     is AppUiState.Success -> uiState.userData.darkThemeEnabled
 }
-
 
 /**
  * The default light scrim, as defined by androidx and the platform:

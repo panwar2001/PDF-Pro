@@ -33,6 +33,7 @@ dependencies {
     compileOnly(libs.ksp.gradlePlugin)
     compileOnly(libs.room.gradlePlugin)
     compileOnly(libs.hilt.gradlePlugin)
+    compileOnly(libs.detekt.gradlePlugin)
 }
 
 gradlePlugin {
@@ -59,6 +60,9 @@ gradlePlugin {
 
     val androidTest = "AndroidTestConventionPlugin"
     val androidTestId = "pdfpro.android.test"
+
+    val configDetekt= "DetektPlugin"
+    val configDetektId= "pdfpro.config.detekt"
 
     plugins {
         /**
@@ -111,6 +115,13 @@ gradlePlugin {
             id = androidTestId
             implementationClass = androidTest
         }
+        /**
+         * Apply detekt plugin with code formatting
+         */
+        register(configDetekt) {
+            id = configDetektId
+            implementationClass = configDetekt
+         }
     }
 }
 
