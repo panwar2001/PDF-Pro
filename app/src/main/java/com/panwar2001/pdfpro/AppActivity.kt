@@ -20,6 +20,8 @@ import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
+import com.panwar2001.pdfpro.core.ui.theme.BackgroundTheme
+import com.panwar2001.pdfpro.core.ui.theme.LocalBackgroundTheme
 import com.panwar2001.pdfpro.core.ui.theme.PDFProTheme
 import com.panwar2001.pdfpro.model.UserData
 import com.panwar2001.pdfpro.screens.Screens
@@ -39,7 +41,9 @@ class AppActivity : AppCompatActivity() {
         enableStrictModeOnDebug()
         var uiState: AppUiState by mutableStateOf(AppUiState.Loading)
 
-        // update the uiState
+        /**
+         * update the uiState
+         */
         lifecycleScope.launch {
             lifecycle.repeatOnLifecycle(Lifecycle.State.STARTED) {
                 viewModel.userData
@@ -73,7 +77,8 @@ class AppActivity : AppCompatActivity() {
              */
             Surface(
                 modifier = Modifier.fillMaxSize(),
-                color = MaterialTheme.colorScheme.background
+                color = LocalBackgroundTheme.current.color,
+                tonalElevation = LocalBackgroundTheme.current.tonalElevation
             ) {
                 if (uiState is AppUiState.Success) {
                     NavigationController(

@@ -13,8 +13,9 @@ import java.util.Locale
 import javax.inject.Inject
 import javax.inject.Singleton
 
-//https://developer.android.com/codelabs/basic-android-kotlin-compose-add-repository#3
-
+/**
+ * https://developer.android.com/codelabs/basic-android-kotlin-compose-add-repository#3
+ */
 
 class ToolsRepositoryImpl @Inject
 constructor(

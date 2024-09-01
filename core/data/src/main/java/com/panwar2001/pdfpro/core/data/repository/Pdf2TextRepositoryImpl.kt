@@ -19,8 +19,6 @@ import kotlinx.coroutines.withContext
 import java.io.File
 import java.io.FileOutputStream
 import javax.inject.Inject
-import javax.inject.Singleton
-
 
 
 class Pdf2TextRepositoryImpl @Inject

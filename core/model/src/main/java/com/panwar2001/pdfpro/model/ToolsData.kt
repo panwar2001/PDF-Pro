@@ -1,7 +1,5 @@
 package com.panwar2001.pdfpro.model
 
-import androidx.compose.ui.graphics.Color
-
 /**
  *  This data class represents the tool data mentioned in home screen
  *

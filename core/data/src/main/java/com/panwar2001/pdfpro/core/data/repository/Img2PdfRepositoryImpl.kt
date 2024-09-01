@@ -14,6 +14,7 @@ import androidx.core.net.toFile
 import androidx.documentfile.provider.DocumentFile
 import com.panwar2001.pdfpro.model.ImageInfo
 import com.panwar2001.pdfpro.model.Img2PdfUiState
+import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -21,9 +22,7 @@ import kotlinx.coroutines.withContext
 import java.io.File
 import java.io.FileOutputStream
 import java.io.InputStream
-import dagger.hilt.android.qualifiers.ApplicationContext
 import javax.inject.Inject
-import javax.inject.Singleton
 
 
 class Img2PdfRepositoryImpl
@@ -52,11 +51,10 @@ constructor(@ApplicationContext private val context: Context,
          *  Sol: Reading input stream from file.pdf from app storage and  a buffer of 8KB is created.
          *  The write operation is done on output stream by writing 8KB of buffered data until
          *  the file ends.
-         *  TODO
-         *  the way to use internalStoragePdfUri didn't worked as the uri is  from
-         *  FileProvider and it writing the data from it is generating a corrupted pdf on
-         *  output stream. Find out a way to read and write pdf data from content uri generated
-         *  from FileProvider to output stream.
+         *  TODO("the way to use internalStoragePdfUri didn't worked as the uri is  from
+         *   FileProvider and it writing the data from it is generating a corrupted pdf on
+         *   output stream. Find out a way to read and write pdf data from content uri generated
+         *   from FileProvider to output stream.")
          */
         context.contentResolver.apply {
             openOutputStream(externalStoragePdfUri,"w")?.use { outputStream->

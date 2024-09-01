@@ -4,7 +4,6 @@ package com.panwar2001.pdfpro.core.database.di
 import android.content.Context
 import androidx.room.Room
 import com.panwar2001.pdfpro.core.database.AppDatabase
-import com.panwar2001.pdfpro.core.database.dao.TextFileDao
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn

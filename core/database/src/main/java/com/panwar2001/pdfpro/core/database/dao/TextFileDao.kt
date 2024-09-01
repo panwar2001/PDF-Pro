@@ -4,7 +4,6 @@ import androidx.room.Dao
 import androidx.room.Insert
 import androidx.room.Query
 import com.panwar2001.pdfpro.core.database.entities.TextFileEntity
-import com.panwar2001.pdfpro.model.TextFileData
 import kotlinx.coroutines.flow.Flow
 
 @Dao
