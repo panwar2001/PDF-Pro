@@ -16,8 +16,8 @@ android {
          * version code = X * 100 + Y * 10 + Z
          * X = Major, Y = minor, Z = Patch level
          */
-        versionName = "1.0.1"
-        versionCode = 101
+        versionName = "1.1.0"
+        versionCode = 110
 
         vectorDrawables {
             useSupportLibrary = true
