@@ -75,6 +75,11 @@ dependencies {
     implementation(libs.androidx.lifecycle.viewmodel.ktx)
     implementation(libs.androidx.appcompat)
     implementation(libs.core.splashscreen)
+    /**
+     * in-app update
+     */
+    implementation(libs.app.update)
+    implementation(libs.app.update.ktx)
 }
 
 
