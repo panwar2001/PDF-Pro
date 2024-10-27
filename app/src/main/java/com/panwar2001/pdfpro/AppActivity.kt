@@ -5,10 +5,11 @@ import android.os.StrictMode
 import androidx.activity.SystemBarStyle
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
+import androidx.activity.result.ActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
@@ -20,7 +21,12 @@ import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
-import com.panwar2001.pdfpro.core.ui.theme.BackgroundTheme
+import com.google.android.play.core.appupdate.AppUpdateInfo
+import com.google.android.play.core.appupdate.AppUpdateManager
+import com.google.android.play.core.appupdate.AppUpdateManagerFactory
+import com.google.android.play.core.appupdate.AppUpdateOptions
+import com.google.android.play.core.install.model.AppUpdateType
+import com.google.android.play.core.install.model.UpdateAvailability
 import com.panwar2001.pdfpro.core.ui.theme.LocalBackgroundTheme
 import com.panwar2001.pdfpro.core.ui.theme.PDFProTheme
 import com.panwar2001.pdfpro.model.UserData
@@ -34,11 +40,15 @@ import kotlinx.coroutines.launch
 class AppActivity : AppCompatActivity() {
 
     private val viewModel: AppViewModel by viewModels()
+    private lateinit var appUpdateManager: AppUpdateManager
 
     override fun onCreate(savedInstanceState: Bundle?) {
         val splashScreen = installSplashScreen()
         super.onCreate(savedInstanceState)
         enableStrictModeOnDebug()
+
+        checkUpdate()
+
         var uiState: AppUiState by mutableStateOf(AppUiState.Loading)
 
         /**
@@ -65,6 +75,57 @@ class AppActivity : AppCompatActivity() {
         }
     }
 
+    private fun checkUpdate(){
+        appUpdateManager = AppUpdateManagerFactory.create(applicationContext)
+        // Returns an intent object that you use to check for an update.
+        val appUpdateInfoTask = appUpdateManager.appUpdateInfo
+
+        // Checks that the platform will allow the specified type of update.
+        appUpdateInfoTask.addOnSuccessListener { appUpdateInfo ->
+            if (appUpdateInfo.updateAvailability() == UpdateAvailability.UPDATE_AVAILABLE
+                // This example applies an immediate update. To apply a flexible update
+                // instead, pass in AppUpdateType.FLEXIBLE
+                && appUpdateInfo.isUpdateTypeAllowed(AppUpdateType.IMMEDIATE)
+            ) {
+                requestUpdate(appUpdateInfo)
+             }
+        }
+    }
+    private fun requestUpdate(appUpdateInfo: AppUpdateInfo){
+        val updateActivityLauncher= registerForActivityResult(
+            ActivityResultContracts.StartIntentSenderForResult()
+        ) { result: ActivityResult ->
+            // handle callback
+            if (result.resultCode != RESULT_OK) {
+                error("Update flow failed! Result code: " + result.resultCode)
+                // If the update is canceled or fails,
+                // you can request to start the update again.
+            }
+        }
+
+        // Request the update.
+        appUpdateManager.startUpdateFlowForResult(
+            // Pass the intent that is returned by 'getAppUpdateInfo()'.
+            appUpdateInfo,
+            // an activity result launcher registered via registerForActivityResult
+            updateActivityLauncher,
+            // Or pass 'AppUpdateType.FLEXIBLE' to newBuilder() for
+            // flexible updates.
+            AppUpdateOptions.newBuilder(AppUpdateType.IMMEDIATE).build())
+    }
+    /**
+     * Checks that the update is not installed during 'onResume()'.
+     * However, you should execute this check at all entry points into the app.
+     */
+    override fun onResume() {
+        super.onResume()
+        appUpdateManager.appUpdateInfo.addOnSuccessListener { appUpdateInfo->
+            // If an in-app update is already running, resume the update.
+            if(appUpdateInfo.updateAvailability() == UpdateAvailability.DEVELOPER_TRIGGERED_UPDATE_IN_PROGRESS){
+                requestUpdate(appUpdateInfo)
+            }
+        }
+    }
     @Composable
     private fun Content(uiState: AppUiState) {
         val darkTheme = shouldUseDarkTheme(uiState)
